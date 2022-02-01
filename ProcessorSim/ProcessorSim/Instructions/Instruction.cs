@@ -2,5 +2,8 @@ namespace ProcessorSim.Instructions;
 
 public abstract class Instruction
 {
-    public bool performInstruction;
+    public bool execute(Resources resources)
+    {
+        return true;
+    }
 }

@@ -2,7 +2,7 @@ namespace ProcessorSim.Instructions;
 
 public class Add : Instruction
 {
-    public bool performInstruction()
+    public bool execute()
     {
         return true;
     }

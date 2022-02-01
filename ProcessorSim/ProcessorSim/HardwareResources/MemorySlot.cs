@@ -2,19 +2,18 @@ namespace ProcessorSim.HardwareResources;
 
 public class MemorySlot
 {
-    private byte[] value;
+    private int value;
 
     public MemorySlot()
     {
-        value = new byte[4];
     }
 
-    public bool setValue(byte[] value)
+    public bool setValue(int value)
     {
         this.value = value;
         return true;
     }
-    public byte[] getValue()
+    public int getValue()
     {
         return this.value;
     }

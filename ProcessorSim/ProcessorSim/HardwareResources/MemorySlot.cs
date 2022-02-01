@@ -1,10 +1,10 @@
-namespace ProcessorSim;
+namespace ProcessorSim.HardwareResources;
 
-public class Register
+public class MemorySlot
 {
     private byte[] value;
 
-    public Register()
+    public MemorySlot()
     {
         value = new byte[4];
     }
@@ -18,5 +18,4 @@ public class Register
     {
         return this.value;
     }
-
 }

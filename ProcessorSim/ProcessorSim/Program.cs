@@ -10,9 +10,16 @@ class ProcessorSim
     {
         Resources resources = new Resources(32, 512, 1024);
         loadProgram(resources);
-        while (true)
+        try
         {
-            tick(resources);
+            while (true)
+            {
+                tick(resources);
+            }
+        }
+        catch (NullReferenceException)
+        {
+            Console.WriteLine("Computation Finished!");
         }
     }
 

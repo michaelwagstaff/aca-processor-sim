@@ -11,7 +11,7 @@ public class Compare : Instruction
         this.reg2 = register2;
     }
 
-    public bool execute()
+    public bool execute(Resources resources)
     {
         this.flag.setValue((this.reg1.getValue() == this.reg2.getValue()) ? 1 : 0);
         return true;

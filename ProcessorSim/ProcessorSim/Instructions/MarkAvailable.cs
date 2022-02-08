@@ -11,7 +11,7 @@ public class MarkAvailable : Instruction
         this.reg = register;
     }
 
-    public bool execute()
+    public bool execute(Resources resources)
     {
         this.reg.available = true;
         return true;

@@ -4,18 +4,16 @@ namespace ProcessorSim.Instructions;
 
 public class Branch : Instruction
 {
-    private Resources resources;
     private Register newAddress;
 
-    public Branch(Resources resources, Register newAddress)
+    public Branch(Register newAddress)
     {
-        this.resources = resources;
         this.newAddress = newAddress;
     }
 
-    public bool execute()
+    public bool execute(Resources resources)
     {
-        this.resources.pc.setValue(newAddress.getValue());
+        resources.pc.setValue(newAddress.getValue());
         return true;
     }
 }

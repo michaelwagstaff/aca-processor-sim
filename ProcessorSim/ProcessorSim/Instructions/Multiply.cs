@@ -11,7 +11,7 @@ public class Multiply : Instruction
         reg1 = register1;
         reg2 = register2;
     }
-    public bool execute()
+    public bool execute(Resources resources)
     {
         reg1.setValue(reg1.getValue() * reg2.getValue());
         return true;

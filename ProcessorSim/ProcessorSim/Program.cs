@@ -9,9 +9,25 @@ class ProcessorSim
     public static void Main(string[] args)
     {
         Resources resources = new Resources(32, 512, 1024);
-        
+        loadProgram(resources);
+        while (true)
+        {
+            tick(resources);
+        }
     }
 
+    public static void loadProgram(Resources resources)
+    {
+        StreamReader reader = new StreamReader(@"Programs/vectoradd.mpl");
+        int i = 0;
+        string line;
+        while ((line = reader.ReadLine()) != null)
+        {
+            resources.instructionMemory[i].setInstruction(line);
+            i++;
+        }
+        resources.pc.setValue(0);
+    }
     public static void tick(Resources resources)
     {
         int instructionRegister = fetch(resources);
@@ -21,7 +37,6 @@ class ProcessorSim
 
     public static int fetch(Resources resources)
     {
-        resources.pc.setValue(resources.pc.getValue() + 1);
         bool emptyRegisterFound = false;
         int registerIndex = 0;
         while (!emptyRegisterFound)
@@ -31,13 +46,15 @@ class ProcessorSim
             else
                 registerIndex++;
         }
-        resources.registers[registerIndex].setValue(resources.instructionMemory[resources.pc.getValue()].getValue());
+        resources.registers[registerIndex].setInstruction(resources.instructionMemory[resources.pc.getValue()].getInstruction());
+        resources.pc.setValue(resources.pc.getValue() + 1);
         return registerIndex;
     }
 
     public static Instruction decode(Resources resources, int instructionRegister)
     {
         string rawInstruction = resources.registers[instructionRegister].getInstruction();
+        // Console.WriteLine(resources.pc.getValue());
         string opCode = rawInstruction.Split(" ")[0];
         string op1 = null;
         string op2 = null;
@@ -79,11 +96,13 @@ class ProcessorSim
         switch(opCode)
         {
             case "Add":
-                return new Add(resources.registers[Int32.Parse(op1)], resources.registers[Int32.Parse(op2)]);
+                return new Add(reg1, reg2);
+            case "Blank":
+                return new Blank();
             case "Branch":
-                return new Branch(resources, reg1);
+                return new Branch(reg1);
             case "CondBranch":
-                return new CondBranch(resources, reg1, reg2);
+                return new CondBranch(reg1, reg2);
             case "Compare":
                 return new Compare(reg1, reg2, reg3);
             case "CompareI":
@@ -100,6 +119,10 @@ class ProcessorSim
                 return new MarkAvailable(reg1);
             case "Multiply":
                 return new Multiply(reg1, reg2);
+            case "Not":
+                return new Not(reg1);
+            case "Print":
+                return new Print(reg1);
             case "Store":
                 return new Store(reg1, Int32.Parse(op2));
             case "StoreR":
@@ -107,11 +130,12 @@ class ProcessorSim
             case "Subtract":
                 return new Subtract(reg1, reg2);
         }
-        return new Add(null, null);
+        return new Blank();
     }
 
     public static void execute(Resources resources, Instruction instruction)
     {
+        // Console.WriteLine(instruction.ToString());
         instruction.execute(resources);
     }
 }

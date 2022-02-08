@@ -4,21 +4,21 @@ namespace ProcessorSim.Instructions;
 
 public class CondBranch : Instruction
 {
-    private Resources resources;
     private Register flag;
     private Register newAddress;
 
-    public CondBranch(Resources resources, Register flag, Register newAddress)
+    public CondBranch(Register flag, Register newAddress)
     {
-        this.resources = resources;
         this.flag = flag;
         this.newAddress = newAddress;
     }
 
-    public bool execute()
+    public bool execute(Resources resources)
     {
-        if(this.flag.getValue() == 1)
-            this.resources.pc.setValue(newAddress.getValue());
+        if (this.flag.getValue() == 1)
+        {
+            resources.pc.setValue(newAddress.getValue());
+        }
         return true;
     }
 }

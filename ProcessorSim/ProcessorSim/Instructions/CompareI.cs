@@ -12,7 +12,7 @@ public class CompareI : Instruction
         this.value = value;
     }
 
-    public bool execute()
+    public bool execute(Resources resources)
     {
         this.flag.setValue((this.reg1.getValue() == value) ? 1 : 0);
         return true;

@@ -1,6 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using ProcessorSim.Instructions;
 using ProcessorSim.HardwareResources;
+using System.Threading;
 
 namespace ProcessorSim;
 
@@ -15,6 +16,7 @@ class ProcessorSim
             while (true)
             {
                 tick(resources);
+                Thread.Sleep(10);
             }
         }
         catch (NullReferenceException)
@@ -25,7 +27,8 @@ class ProcessorSim
 
     public static void loadProgram(Resources resources)
     {
-        StreamReader reader = new StreamReader(@"Programs/vectoradd.mpl");
+        // StreamReader reader = new StreamReader(@"Programs/vectoradd.mpl");
+        StreamReader reader = new StreamReader(@"Programs/fact.mpl");
         int i = 0;
         string line;
         while ((line = reader.ReadLine()) != null)

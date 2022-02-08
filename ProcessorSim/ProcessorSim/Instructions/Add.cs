@@ -13,6 +13,7 @@ public class Add : Instruction
     }
     public bool execute()
     {
+        reg1.setValue(reg1.getValue() + reg2.getValue());
         return true;
     }
 }

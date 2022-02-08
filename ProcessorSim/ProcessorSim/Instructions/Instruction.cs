@@ -1,7 +1,7 @@
 using ProcessorSim.HardwareResources;
 namespace ProcessorSim.Instructions;
 
-public abstract class Instruction
+public interface Instruction
 {
     public bool execute(Resources resources)
     {

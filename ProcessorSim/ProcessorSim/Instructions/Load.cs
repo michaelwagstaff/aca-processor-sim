@@ -9,6 +9,9 @@ public class Load
     {
         this.reg = register;
         this.memoryIndex = memoryIndex;
+
+        this.reg.available = false;
+        // Rather important, once decoded, we can't change register, so need to make sure nothing else uses it!
     }
     public bool execute(Resources resources)
     {

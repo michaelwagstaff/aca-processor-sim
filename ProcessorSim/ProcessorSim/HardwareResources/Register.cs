@@ -3,9 +3,10 @@ namespace ProcessorSim.HardwareResources;
 public class Register
 {
     private int value;
-
+    public bool available;
     public Register()
     {
+        available = true;
     }
 
     public bool setValue(int value)
@@ -17,5 +18,4 @@ public class Register
     {
         return this.value;
     }
-
 }

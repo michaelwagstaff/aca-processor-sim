@@ -50,7 +50,7 @@ class ProcessorSim
             op1 = rawInstruction.Split(" ")[1];
             try
             {
-                reg1 = resources.registers[Int32.Parse(op1)];
+                reg1 = resources.registers[Int32.Parse(op1.Substring(1))];
             }
             catch { }
         }
@@ -60,7 +60,7 @@ class ProcessorSim
             op2 = rawInstruction.Split(" ")[2];
             try
             {
-                reg2 = resources.registers[Int32.Parse(op2)];
+                reg2 = resources.registers[Int32.Parse(op2.Substring(1))];
             }
             catch { }
         }
@@ -70,7 +70,7 @@ class ProcessorSim
             op3 = rawInstruction.Split(" ")[3];
             try
             {
-                reg3 = resources.registers[Int32.Parse(op3)];
+                reg3 = resources.registers[Int32.Parse(op3.Substring(1))];
             }
             catch { }
         }
@@ -94,12 +94,16 @@ class ProcessorSim
                 return new Load(reg1, Int32.Parse(op2));
             case "LoadI":
                 return new LoadI(reg1, Int32.Parse(op2));
+            case "LoadR":
+                return new LoadR(reg1, reg2);
             case "MarkAvailable":
                 return new MarkAvailable(reg1);
             case "Multiply":
                 return new Multiply(reg1, reg2);
             case "Store":
                 return new Store(reg1, Int32.Parse(op2));
+            case "StoreR":
+                return new StoreR(reg1, reg2);
             case "Subtract":
                 return new Subtract(reg1, reg2);
         }

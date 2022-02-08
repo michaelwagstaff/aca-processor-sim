@@ -3,6 +3,7 @@ namespace ProcessorSim.HardwareResources;
 public class MemorySlot
 {
     private int value;
+    private string instruction;
 
     public MemorySlot()
     {
@@ -16,5 +17,14 @@ public class MemorySlot
     public int getValue()
     {
         return this.value;
+    }
+    public bool setInstruction(string instruction)
+    {
+        this.instruction = instruction;
+        return true;
+    }
+    public string getInstruction()
+    {
+        return this.instruction;
     }
 }

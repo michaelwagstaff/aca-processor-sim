@@ -36,49 +36,16 @@ class ProcessorSim
 
     public static Instruction decode(Resources resources, int instructionRegister)
     {
-        int rawInstruction = resources.registers[instructionRegister].getValue();
-        rawInstruction = rawInstruction >> 16;
-        // First 6 bits are opcode
-        // Next 5 for operand 1
-        // Final 5 for operand 2
-        int opCode = rawInstruction >> 10;
-        int operand1 = (rawInstruction >> 5) & 31;
-        int operand2 = rawInstruction & 31;
-        if ((opCode >> 5) == 1)
+        string rawInstruction = resources.registers[instructionRegister].getInstruction();
+        string opCode = rawInstruction.Split(" ")[0];
+        string op1 = rawInstruction.Split(" ")[1];
+        string op2 = rawInstruction.Split(" ")[2];
+        switch(opCode)
         {
-            // Arithmetic
-            if ((opCode >> 3 & 3) == 0)
-            {
-                // Add
-            }
-            if ((opCode >> 3 & 3) == 1)
-            {
-                // Subtract
-            }
-            if ((opCode >> 3 & 3) == 2)
-            {
-                // Multiply
-            }
-            if ((opCode >> 3 & 3) == 3)
-            {
-                // Divide
-            }
+            case "Add":
+                return new Add(resources.registers[Int32.Parse(op1)], resources.registers[Int32.Parse(op2)]);
         }
-        else
-        {
-            if ((opCode >> 3 & 3) == 0)
-            {
-                // Load
-            }
-
-            if ((opCode >> 3 & 3) == 1)
-            {
-                // Store
-            }
-            // Everything Else
-        }
-        // Actually decode
-        return new Add();
+        return new Add(null, null);
     }
 
     public static void execute(Resources resources, Instruction instruction)

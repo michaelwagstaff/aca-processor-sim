@@ -1,3 +1,4 @@
+using ProcessorSim.HardwareResources;
 namespace ProcessorSim.Instructions;
 
 public abstract class Instruction

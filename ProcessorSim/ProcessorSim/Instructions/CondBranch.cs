@@ -2,7 +2,7 @@ using ProcessorSim.HardwareResources;
 
 namespace ProcessorSim.Instructions;
 
-public class CondBranch
+public class CondBranch : Instruction
 {
     private Resources resources;
     private Register flag;

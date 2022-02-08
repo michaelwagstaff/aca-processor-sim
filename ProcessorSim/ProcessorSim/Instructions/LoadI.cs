@@ -1,7 +1,7 @@
 using ProcessorSim.HardwareResources;
 namespace ProcessorSim.Instructions;
 
-public class LoadI
+public class LoadI : Instruction
 {
     private Register reg;
     private int value;

@@ -2,7 +2,7 @@ using ProcessorSim.HardwareResources;
 
 namespace ProcessorSim.Instructions;
 
-public class Branch
+public class Branch : Instruction
 {
     private Resources resources;
     private Register newAddress;

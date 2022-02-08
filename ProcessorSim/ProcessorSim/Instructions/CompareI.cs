@@ -1,7 +1,7 @@
 using ProcessorSim.HardwareResources;
 namespace ProcessorSim.Instructions;
 
-public class CompareI
+public class CompareI : Instruction
 {
     private Register flag, reg1;
     private int value;

@@ -2,7 +2,7 @@ using ProcessorSim.HardwareResources;
 
 namespace ProcessorSim.Instructions;
 
-public class MarkAvailable
+public class MarkAvailable : Instruction
 {
     private Register reg;
 

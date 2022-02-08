@@ -1,7 +1,7 @@
 using ProcessorSim.HardwareResources;
 namespace ProcessorSim.Instructions;
 
-public class Store
+public class Store : Instruction
 {
     private Register reg;
     private int memoryIndex;

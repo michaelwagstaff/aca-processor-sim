@@ -13,7 +13,7 @@ public class Branch : Instruction
 
     public bool execute(Resources resources)
     {
-        resources.pc.setValue(newAddress.getValue());
+        resources.pc.setValue(newAddress.getValue() - 1);
         return true;
     }
 }

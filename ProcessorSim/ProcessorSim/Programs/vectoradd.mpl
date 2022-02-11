@@ -28,7 +28,7 @@ LoadI r4 21 -- memory addresses for each array respectively
 LoadR r5 r2
 LoadR r6 r3
 LoadI r7 1 -- Increment
-LoadI r8 32 -- Address to jump to
+LoadI r8 28 -- Address to jump to
 Add r5 r6
 StoreR r5 r4 -- Store r5 in address in r4
 Add r1 r7

@@ -28,7 +28,8 @@ class ProcessorSim
     public static void loadProgram(Resources resources)
     {
         // StreamReader reader = new StreamReader(@"Programs/vectoradd.mpl");
-        StreamReader reader = new StreamReader(@"Programs/fact.mpl");
+        // StreamReader reader = new StreamReader(@"Programs/fact.mpl");
+        StreamReader reader = new StreamReader(@"Programs/bubblesort.mpl");
         int i = 0;
         string line;
         while ((line = reader.ReadLine()) != null)
@@ -117,6 +118,10 @@ class ProcessorSim
                 return new Compare(reg1, reg2, reg3);
             case "CompareI":
                 return new CompareI(reg1, reg2, Int32.Parse(op3));
+            case "CompareLT":
+                return new CompareLT(reg1, reg2, reg3);
+            case "Copy":
+                return new Copy(reg1, reg2);
             case "Divide":
                 return new Divide(reg1, reg2);
             case "Load":

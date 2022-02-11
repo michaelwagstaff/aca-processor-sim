@@ -13,7 +13,6 @@ public class Subtract : Instruction
     }
     public bool execute(Resources resources)
     {
-        Console.WriteLine("Subtracting");
         reg1.setValue(reg1.getValue() - reg2.getValue());
         return true;
     }

@@ -29,7 +29,7 @@ class ProcessorSim
     {
         // StreamReader reader = new StreamReader(@"Programs/bubblesort.mpl");
         // StreamReader reader = new StreamReader(@"Programs/fact.mpl");
-        StreamReader reader = new StreamReader(@"Programs/gcd.mpl");
+        StreamReader reader = new StreamReader(@"Programs/gcd-original.mpl");
         // StreamReader reader = new StreamReader(@"Programs/vectoradd.mpl");
         int i = 0;
         string line;
@@ -50,7 +50,7 @@ class ProcessorSim
     public static int fetch(Resources resources)
     {
         bool emptyRegisterFound = false;
-        int registerIndex = 0;
+        int registerIndex = 16;
         while (!emptyRegisterFound)
         {
             if (resources.registers[registerIndex].available)

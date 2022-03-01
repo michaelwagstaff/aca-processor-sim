@@ -14,7 +14,7 @@ Subtract r1 r2
 Branch r7
 Subtract r2 r1
 
-Print r1
+
 
 Branch r8
 

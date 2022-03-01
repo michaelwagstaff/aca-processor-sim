@@ -1,4 +1,5 @@
 using ProcessorSim.HardwareResources;
+using ProcessorSim.Enums;
 namespace ProcessorSim;
 
 public class Resources
@@ -8,6 +9,7 @@ public class Resources
 
     public MemorySlot[] instructionMemory;
     public MemorySlot[] dataMemory;
+    public ExecutionUnit[] executionUnits;
     public Resources(int regCount, int instCount, int dataCount)
     {
         registers = new Register[regCount];
@@ -27,6 +29,15 @@ public class Resources
         for(int i = 0; i < dataMemory.Length; i++)
         {
             dataMemory[i] = new MemorySlot();
+        }
+    }
+
+    public void setExecutionUnits(int generalExecutionUnits)
+    {
+        executionUnits = new ExecutionUnit[generalExecutionUnits];
+        for (int i = 0; i < generalExecutionUnits; i++)
+        {
+            this.executionUnits[i] = new ExecutionUnit(ExecutionTypes.General);
         }
     }
 }

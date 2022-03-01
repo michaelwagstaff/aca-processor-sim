@@ -10,6 +10,7 @@ class ProcessorSim
     public static void Main(string[] args)
     {
         Resources resources = new Resources(32, 512, 1024);
+        resources.setExecutionUnits(1);
         loadProgram(resources);
         try
         {
@@ -152,6 +153,15 @@ class ProcessorSim
     public static void execute(Resources resources, Instruction instruction)
     {
         // Console.WriteLine(instruction.ToString());
-        instruction.execute(resources);
+        resources.executionUnits[0].execute(resources, instruction);
+    }
+
+    public static void memory(Resources resources, Instruction instruction)
+    {
+        
+    }
+    public static void writeback(Resources resources, Instruction instruction)
+    {
+        
     }
 }

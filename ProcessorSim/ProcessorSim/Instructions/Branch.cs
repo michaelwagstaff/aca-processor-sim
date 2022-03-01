@@ -1,3 +1,4 @@
+using ProcessorSim.Enums;
 using ProcessorSim.HardwareResources;
 
 namespace ProcessorSim.Instructions;
@@ -9,6 +10,7 @@ public class Branch : Instruction
     public Branch(Register newAddress)
     {
         this.newAddress = newAddress;
+        this.executionType = ExecutionTypes.Branch;
     }
 
     public bool execute(Resources resources)

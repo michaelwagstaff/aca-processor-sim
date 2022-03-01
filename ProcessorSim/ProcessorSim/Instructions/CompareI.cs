@@ -1,3 +1,4 @@
+using ProcessorSim.Enums;
 using ProcessorSim.HardwareResources;
 namespace ProcessorSim.Instructions;
 
@@ -10,6 +11,7 @@ public class CompareI : Instruction
         this.flag = flag;
         this.reg1 = register1;
         this.value = value;
+        this.executionType = ExecutionTypes.Arithmetic;
     }
 
     public bool execute(Resources resources)

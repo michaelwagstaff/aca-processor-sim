@@ -1,3 +1,4 @@
+using ProcessorSim.Enums;
 using ProcessorSim.HardwareResources;
 namespace ProcessorSim.Instructions;
 
@@ -9,6 +10,7 @@ public class StoreR : Instruction
     {
         this.reg = register;
         this.memoryIndex = memoryIndex;
+        this.executionType = ExecutionTypes.LoadStore;
     }
     public bool execute(Resources resources)
     {

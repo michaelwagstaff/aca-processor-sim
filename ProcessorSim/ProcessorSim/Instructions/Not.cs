@@ -1,3 +1,4 @@
+using ProcessorSim.Enums;
 using ProcessorSim.HardwareResources;
 
 namespace ProcessorSim.Instructions;
@@ -8,6 +9,7 @@ public class Not : Instruction
     public Not(Register reg)
     {
         this.reg = reg;
+        this.executionType = ExecutionTypes.Arithmetic;
     }
 
     public bool execute(Resources resources)

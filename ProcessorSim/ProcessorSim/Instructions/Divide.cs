@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using ProcessorSim.Enums;
 using ProcessorSim.HardwareResources;
 
 namespace ProcessorSim.Instructions;
@@ -10,6 +11,7 @@ public class Divide : Instruction
     {
         reg1 = register1;
         reg2 = register2;
+        this.executionType = ExecutionTypes.Arithmetic;
     }
     public bool execute(Resources resources)
     {

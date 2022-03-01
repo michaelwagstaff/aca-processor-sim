@@ -6,4 +6,5 @@ public enum ExecutionTypes
     General,
     Vector,
     LoadStore,
+    Branch
 }

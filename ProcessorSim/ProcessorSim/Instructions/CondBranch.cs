@@ -1,3 +1,4 @@
+using ProcessorSim.Enums;
 using ProcessorSim.HardwareResources;
 
 namespace ProcessorSim.Instructions;
@@ -11,6 +12,7 @@ public class CondBranch : Instruction
     {
         this.flag = flag;
         this.newAddress = newAddress;
+        this.executionType = ExecutionTypes.Branch;
     }
 
     public bool execute(Resources resources)

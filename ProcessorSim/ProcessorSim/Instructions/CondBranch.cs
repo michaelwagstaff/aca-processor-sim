@@ -5,6 +5,7 @@ namespace ProcessorSim.Instructions;
 
 public class CondBranch : Instruction
 {
+    public ExecutionTypes executionType { get; set; }
     private Register flag;
     private Register newAddress;
 

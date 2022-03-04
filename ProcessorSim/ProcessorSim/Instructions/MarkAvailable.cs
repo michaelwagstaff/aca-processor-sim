@@ -5,6 +5,7 @@ namespace ProcessorSim.Instructions;
 
 public class MarkAvailable : Instruction
 {
+    public ExecutionTypes executionType { get; set; }
     private Register reg;
 
     public MarkAvailable(Register register)

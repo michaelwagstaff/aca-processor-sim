@@ -4,6 +4,7 @@ namespace ProcessorSim.Instructions;
 
 public class Store : Instruction
 {
+    public ExecutionTypes executionType { get; set; }
     private Register reg;
     private int memoryIndex;
     public Store(Register register, int memoryIndex)

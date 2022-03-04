@@ -4,6 +4,7 @@ namespace ProcessorSim.Instructions;
 
 public class CompareLT : Instruction
 {
+    public ExecutionTypes executionType { get; set; }
     private Register flag, reg1, reg2;
     public CompareLT(Register flag, Register register1, Register register2)
     {

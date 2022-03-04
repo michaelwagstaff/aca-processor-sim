@@ -5,6 +5,7 @@ namespace ProcessorSim.Instructions;
 
 public class Branch : Instruction
 {
+    public ExecutionTypes executionType { get; set; }
     private Register newAddress;
 
     public Branch(Register newAddress)
@@ -15,6 +16,7 @@ public class Branch : Instruction
 
     public bool execute(Resources resources)
     {
+        Console.WriteLine("Branching");
         resources.pc.setValue(newAddress.getValue() - 1);
         return true;
     }

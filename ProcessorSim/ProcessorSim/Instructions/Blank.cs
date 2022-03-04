@@ -5,6 +5,7 @@ namespace ProcessorSim.Instructions;
 
 public class Blank : Instruction
 {
+    public ExecutionTypes executionType { get; set; }
     public Blank()
     {
         this.executionType = ExecutionTypes.General;

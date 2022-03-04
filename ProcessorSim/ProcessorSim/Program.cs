@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Data;
+using System.Runtime.CompilerServices;
 using ProcessorSim.Instructions;
 using ProcessorSim.HardwareResources;
 using System.Threading;
@@ -7,23 +8,27 @@ namespace ProcessorSim;
 
 class ProcessorSim
 {
+    static int? instructionRegister;
+    static Instruction? decodedInstruction;
     public static void Main(string[] args)
     {
         Resources resources = new Resources(32, 512, 1024);
         resources.setExecutionUnits(1);
         loadProgram(resources);
-        try
-        {
+        instructionRegister = null;
+        decodedInstruction = null;
+        //try
+        //{
             while (true)
             {
                 tick(resources);
                 Thread.Sleep(10);
             }
-        }
+        /*}
         catch (NullReferenceException)
         {
             Console.WriteLine("Computation Finished!");
-        }
+        }*/
     }
 
     public static void loadProgram(Resources resources)
@@ -43,9 +48,10 @@ class ProcessorSim
     }
     public static void tick(Resources resources)
     {
-        int instructionRegister = fetch(resources);
-        Instruction decodedInstruction = decode(resources, instructionRegister);
         execute(resources, decodedInstruction);
+        decodedInstruction = decode(resources, instructionRegister);
+        instructionRegister = fetch(resources);
+        Console.WriteLine("Tick");
     }
 
     public static int fetch(Resources resources)
@@ -59,15 +65,23 @@ class ProcessorSim
             else
                 registerIndex++;
         }
+        Console.WriteLine(resources.pc.getValue());
         resources.registers[registerIndex].setInstruction(resources.instructionMemory[resources.pc.getValue()].getInstruction());
+        resources.registers[registerIndex].available = false;
         resources.pc.setValue(resources.pc.getValue() + 1);
         return registerIndex;
     }
 
-    public static Instruction decode(Resources resources, int instructionRegister)
+    public static Instruction decode(Resources resources, int? instructionRegister)
     {
-        string rawInstruction = resources.registers[instructionRegister].getInstruction();
-        // Console.WriteLine(resources.pc.getValue());
+        if (instructionRegister == null)
+            return null;
+        string rawInstruction = resources.registers[(int) instructionRegister].getInstruction();
+        resources.registers[(int) instructionRegister].available = true;
+        if (rawInstruction == null)
+        {
+            return null;
+        }
         string opCode = rawInstruction.Split(" ")[0];
         string op1 = null;
         string op2 = null;
@@ -150,10 +164,19 @@ class ProcessorSim
         return new Blank();
     }
 
-    public static void execute(Resources resources, Instruction instruction)
+    public static void execute(Resources resources, Instruction? instruction)
     {
-        // Console.WriteLine(instruction.ToString());
-        resources.executionUnits[0].execute(resources, instruction);
+        try
+        {
+            resources.executionUnits[0].execute(resources, instruction);
+            Console.WriteLine(instruction.ToString());
+        }
+        catch (NullReferenceException)
+        {
+            Console.WriteLine("Null instruction");
+            return;
+        }
+        
     }
 
     public static void memory(Resources resources, Instruction instruction)

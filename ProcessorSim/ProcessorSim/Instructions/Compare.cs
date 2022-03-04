@@ -4,6 +4,7 @@ namespace ProcessorSim.Instructions;
 
 public class Compare : Instruction
 {
+    public ExecutionTypes executionType { get; set; }
     private Register flag, reg1, reg2;
     public Compare(Register flag, Register register1, Register register2)
     {

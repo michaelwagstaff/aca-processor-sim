@@ -1,4 +1,4 @@
-LoadI r3 3
+LoadI r3 4
 LoadI r1 1
 LoadI r2 1
 Print r1

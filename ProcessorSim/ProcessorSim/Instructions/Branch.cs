@@ -5,6 +5,7 @@ namespace ProcessorSim.Instructions;
 
 public class Branch : Instruction
 {
+    public ExecutionTypes executionType { get; set; }
     private Register newAddress;
 
     public Branch(Register newAddress)

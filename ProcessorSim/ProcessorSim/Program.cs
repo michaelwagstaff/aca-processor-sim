@@ -1,36 +1,37 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System.Data;
+using System.Runtime.CompilerServices;
 using ProcessorSim.Instructions;
 using ProcessorSim.HardwareResources;
 using System.Threading;
+using ProcessorSim.Enums;
 
 namespace ProcessorSim;
 
 class ProcessorSim
 {
+    static int? instructionRegister;
+    static Instruction? decodedInstruction;
+    static bool verbose;
     public static void Main(string[] args)
     {
+        verbose = false;
         Resources resources = new Resources(32, 512, 1024);
         resources.setExecutionUnits(1);
         loadProgram(resources);
-        try
+        instructionRegister = null;
+        decodedInstruction = null;
+        while (true)
         {
-            while (true)
-            {
-                tick(resources);
-                Thread.Sleep(10);
-            }
-        }
-        catch (NullReferenceException)
-        {
-            Console.WriteLine("Computation Finished!");
+            tick(resources);
+            Thread.Sleep(10);
         }
     }
 
     public static void loadProgram(Resources resources)
     {
-        // StreamReader reader = new StreamReader(@"Programs/bubblesort.mpl");
+        StreamReader reader = new StreamReader(@"Programs/bubblesort.mpl");
         // StreamReader reader = new StreamReader(@"Programs/fact.mpl");
-        StreamReader reader = new StreamReader(@"Programs/gcd-original.mpl");
+        // StreamReader reader = new StreamReader(@"Programs/gcd-original.mpl");
         // StreamReader reader = new StreamReader(@"Programs/vectoradd.mpl");
         int i = 0;
         string line;
@@ -43,15 +44,18 @@ class ProcessorSim
     }
     public static void tick(Resources resources)
     {
-        int instructionRegister = fetch(resources);
-        Instruction decodedInstruction = decode(resources, instructionRegister);
         execute(resources, decodedInstruction);
+        decodedInstruction = decode(resources, instructionRegister);
+        instructionRegister = fetch(resources);
+        if(verbose)
+            Console.WriteLine("Tick");
     }
 
     public static int fetch(Resources resources)
     {
-        bool emptyRegisterFound = false;
-        int registerIndex = 16;
+        //bool emptyRegisterFound = false;
+        int registerIndex = 31;
+        /*
         while (!emptyRegisterFound)
         {
             if (resources.registers[registerIndex].available)
@@ -59,15 +63,25 @@ class ProcessorSim
             else
                 registerIndex++;
         }
+        */
+        if(verbose)
+            Console.WriteLine(resources.pc.getValue());
         resources.registers[registerIndex].setInstruction(resources.instructionMemory[resources.pc.getValue()].getInstruction());
+        resources.registers[registerIndex].available = false;
         resources.pc.setValue(resources.pc.getValue() + 1);
         return registerIndex;
     }
 
-    public static Instruction decode(Resources resources, int instructionRegister)
+    public static Instruction decode(Resources resources, int? instructionRegister)
     {
-        string rawInstruction = resources.registers[instructionRegister].getInstruction();
-        // Console.WriteLine(resources.pc.getValue());
+        if (instructionRegister == null)
+            return null;
+        string rawInstruction = resources.registers[(int) instructionRegister].getInstruction();
+        resources.registers[(int) instructionRegister].available = true;
+        if (rawInstruction == null)
+        {
+            return null;
+        }
         string opCode = rawInstruction.Split(" ")[0];
         string op1 = null;
         string op2 = null;
@@ -126,6 +140,8 @@ class ProcessorSim
                 return new Copy(reg1, reg2);
             case "Divide":
                 return new Divide(reg1, reg2);
+            case "End":
+                return new End();
             case "Load":
                 return new Load(reg1, Int32.Parse(op2));
             case "LoadI":
@@ -150,10 +166,39 @@ class ProcessorSim
         return new Blank();
     }
 
-    public static void execute(Resources resources, Instruction instruction)
+    public static void execute(Resources resources, Instruction? instruction)
     {
-        // Console.WriteLine(instruction.ToString());
-        resources.executionUnits[0].execute(resources, instruction);
+        try
+        {
+            if (instruction.executionType == ExecutionTypes.Branch)
+            {
+                bool pipelineFlush = (bool)resources.executionUnits[0].execute(resources, instruction);
+                if (pipelineFlush)
+                {
+                    instructionRegister = null;
+                    if (instructionRegister != null)
+                    {
+                        resources.registers[(int) instructionRegister].available = true;
+                        instructionRegister = null;
+                    }
+
+                    decodedInstruction = null;
+                }
+                if(verbose)
+                    Console.WriteLine("Branch -- Pipeline Flush");
+            }
+            else
+                resources.executionUnits[0].execute(resources, instruction);
+            if(verbose)
+                Console.WriteLine(instruction.ToString());
+        }
+        catch (NullReferenceException)
+        {
+            if(verbose)
+                Console.WriteLine("Null Instruction in Pipeline");
+            return;
+        }
+        
     }
 
     public static void memory(Resources resources, Instruction instruction)

@@ -4,6 +4,7 @@ namespace ProcessorSim.Instructions;
 
 public class LoadR : Instruction
 {
+    public ExecutionTypes executionType { get; set; }
     private Register reg;
     private Register memoryIndex;
     public LoadR(Register register, Register memoryIndex)

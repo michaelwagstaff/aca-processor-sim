@@ -5,6 +5,7 @@ namespace ProcessorSim.Instructions;
 
 public class Print : Instruction
 {
+    public ExecutionTypes executionType { get; set; }
     private Register reg;
 
     public Print(Register register)

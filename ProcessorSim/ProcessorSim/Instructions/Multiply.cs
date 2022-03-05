@@ -6,6 +6,7 @@ namespace ProcessorSim.Instructions;
 
 public class Multiply : Instruction
 {
+    public ExecutionTypes executionType { get; set; }
     private Register reg1, reg2;
     public Multiply(Register register1, Register register2)
     {

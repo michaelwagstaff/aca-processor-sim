@@ -5,6 +5,7 @@ namespace ProcessorSim.Instructions;
 
 public class Not : Instruction
 {
+    public ExecutionTypes executionType { get; set; }
     private Register reg;
     public Not(Register reg)
     {

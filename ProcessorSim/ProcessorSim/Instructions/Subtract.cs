@@ -6,6 +6,7 @@ namespace ProcessorSim.Instructions;
 
 public class Subtract : Instruction
 {
+    public ExecutionTypes executionType { get; set; }
     private Register reg1, reg2;
     public Subtract(Register register1, Register register2)
     {

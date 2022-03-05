@@ -14,7 +14,7 @@ class ProcessorSim
     static bool verbose;
     public static void Main(string[] args)
     {
-        verbose = true;
+        verbose = false;
         Resources resources = new Resources(32, 512, 1024);
         resources.setExecutionUnits(1);
         loadProgram(resources);
@@ -53,8 +53,9 @@ class ProcessorSim
 
     public static int fetch(Resources resources)
     {
-        bool emptyRegisterFound = false;
-        int registerIndex = 16;
+        //bool emptyRegisterFound = false;
+        int registerIndex = 31;
+        /*
         while (!emptyRegisterFound)
         {
             if (resources.registers[registerIndex].available)
@@ -62,6 +63,7 @@ class ProcessorSim
             else
                 registerIndex++;
         }
+        */
         if(verbose)
             Console.WriteLine(resources.pc.getValue());
         resources.registers[registerIndex].setInstruction(resources.instructionMemory[resources.pc.getValue()].getInstruction());

@@ -21,7 +21,9 @@ public class CondBranch : Instruction
         if (this.flag.getValue() == 1)
         {
             resources.pc.setValue(newAddress.getValue() - 1);
+            return true;
         }
-        return true;
+
+        return false; // Return true only if pipeline needs flushing
     }
 }

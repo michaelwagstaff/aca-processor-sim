@@ -3,6 +3,7 @@ using System.Runtime.CompilerServices;
 using ProcessorSim.Instructions;
 using ProcessorSim.HardwareResources;
 using System.Threading;
+using ProcessorSim.Enums;
 
 namespace ProcessorSim;
 
@@ -172,13 +173,25 @@ class ProcessorSim
     {
         try
         {
-            resources.executionUnits[0].execute(resources, instruction);
+            if (instruction.executionType == ExecutionTypes.Branch)
+            {
+                bool pipelineFlush = (bool)resources.executionUnits[0].execute(resources, instruction);
+                if (pipelineFlush)
+                {
+                    instructionRegister = null;
+                    decodedInstruction = null;
+                }
+                if(verbose)
+                    Console.WriteLine("Branch -- Pipeline Flush");
+            }
+            else
+                resources.executionUnits[0].execute(resources, instruction);
             if(verbose)
                 Console.WriteLine(instruction.ToString());
         }
         catch (NullReferenceException)
         {
-            Console.WriteLine("Null instruction");
+            Console.WriteLine("Null Instruction in Pipeline");
             return;
         }
         

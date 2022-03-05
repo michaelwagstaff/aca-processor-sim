@@ -16,7 +16,6 @@ public class Branch : Instruction
 
     public bool execute(Resources resources)
     {
-        Console.WriteLine("Branching");
         resources.pc.setValue(newAddress.getValue() - 1);
         return true;
     }

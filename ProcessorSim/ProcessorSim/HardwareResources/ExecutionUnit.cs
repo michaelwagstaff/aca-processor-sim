@@ -12,8 +12,12 @@ public class ExecutionUnit
     {
         this.type = type;
     }
-    public void execute(Resources resources, Instruction instruction)
+    public bool? execute(Resources resources, Instruction instruction)
     {
-        instruction.execute(resources);
+        if (instruction.executionType == ExecutionTypes.Branch)
+            return instruction.execute(resources);
+        else
+            instruction.execute(resources);
+        return null;
     }
 }

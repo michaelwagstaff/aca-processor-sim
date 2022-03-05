@@ -20,18 +20,11 @@ class ProcessorSim
         loadProgram(resources);
         instructionRegister = null;
         decodedInstruction = null;
-        //try
-        //{
-            while (true)
-            {
-                tick(resources);
-                Thread.Sleep(10);
-            }
-        /*}
-        catch (NullReferenceException)
+        while (true)
         {
-            Console.WriteLine("Computation Finished!");
-        }*/
+            tick(resources);
+            Thread.Sleep(10);
+        }
     }
 
     public static void loadProgram(Resources resources)

@@ -10,8 +10,10 @@ class ProcessorSim
 {
     static int? instructionRegister;
     static Instruction? decodedInstruction;
+    static bool verbose;
     public static void Main(string[] args)
     {
+        verbose = false;
         Resources resources = new Resources(32, 512, 1024);
         resources.setExecutionUnits(1);
         loadProgram(resources);
@@ -51,7 +53,8 @@ class ProcessorSim
         execute(resources, decodedInstruction);
         decodedInstruction = decode(resources, instructionRegister);
         instructionRegister = fetch(resources);
-        Console.WriteLine("Tick");
+        if(verbose)
+            Console.WriteLine("Tick");
     }
 
     public static int fetch(Resources resources)
@@ -65,7 +68,8 @@ class ProcessorSim
             else
                 registerIndex++;
         }
-        Console.WriteLine(resources.pc.getValue());
+        if(verbose)
+            Console.WriteLine(resources.pc.getValue());
         resources.registers[registerIndex].setInstruction(resources.instructionMemory[resources.pc.getValue()].getInstruction());
         resources.registers[registerIndex].available = false;
         resources.pc.setValue(resources.pc.getValue() + 1);
@@ -169,7 +173,8 @@ class ProcessorSim
         try
         {
             resources.executionUnits[0].execute(resources, instruction);
-            Console.WriteLine(instruction.ToString());
+            if(verbose)
+                Console.WriteLine(instruction.ToString());
         }
         catch (NullReferenceException)
         {

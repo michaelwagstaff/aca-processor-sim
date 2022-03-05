@@ -14,7 +14,7 @@ class ProcessorSim
     static bool verbose;
     public static void Main(string[] args)
     {
-        verbose = false;
+        verbose = true;
         Resources resources = new Resources(32, 512, 1024);
         resources.setExecutionUnits(1);
         loadProgram(resources);
@@ -36,9 +36,9 @@ class ProcessorSim
 
     public static void loadProgram(Resources resources)
     {
-        // StreamReader reader = new StreamReader(@"Programs/bubblesort.mpl");
-        StreamReader reader = new StreamReader(@"Programs/fact.mpl");
-        //StreamReader reader = new StreamReader(@"Programs/gcd-original.mpl");
+        StreamReader reader = new StreamReader(@"Programs/bubblesort.mpl");
+        // StreamReader reader = new StreamReader(@"Programs/fact.mpl");
+        // StreamReader reader = new StreamReader(@"Programs/gcd-original.mpl");
         // StreamReader reader = new StreamReader(@"Programs/vectoradd.mpl");
         int i = 0;
         string line;
@@ -145,6 +145,8 @@ class ProcessorSim
                 return new Copy(reg1, reg2);
             case "Divide":
                 return new Divide(reg1, reg2);
+            case "End":
+                return new End();
             case "Load":
                 return new Load(reg1, Int32.Parse(op2));
             case "LoadI":
@@ -179,6 +181,12 @@ class ProcessorSim
                 if (pipelineFlush)
                 {
                     instructionRegister = null;
+                    if (instructionRegister != null)
+                    {
+                        resources.registers[(int) instructionRegister].available = true;
+                        instructionRegister = null;
+                    }
+
                     decodedInstruction = null;
                 }
                 if(verbose)
@@ -191,7 +199,8 @@ class ProcessorSim
         }
         catch (NullReferenceException)
         {
-            Console.WriteLine("Null Instruction in Pipeline");
+            if(verbose)
+                Console.WriteLine("Null Instruction in Pipeline");
             return;
         }
         

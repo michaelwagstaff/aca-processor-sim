@@ -47,6 +47,7 @@ class ProcessorSim
         execute(resources, decodedInstruction);
         decodedInstruction = decode(resources, instructionRegister);
         instructionRegister = fetch(resources);
+        resources.monitor.incrementCyclesTaken();
         if(verbose)
             Console.WriteLine("Tick");
     }

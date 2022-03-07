@@ -1,5 +1,7 @@
 using ProcessorSim.HardwareResources;
 using ProcessorSim.Enums;
+using Monitor = System.Threading.Monitor;
+
 namespace ProcessorSim;
 
 public class Resources
@@ -10,6 +12,7 @@ public class Resources
     public MemorySlot[] instructionMemory;
     public MemorySlot[] dataMemory;
     public ExecutionUnit[] executionUnits;
+    public HardwareResources.Monitor monitor;
     public Resources(int regCount, int instCount, int dataCount)
     {
         registers = new Register[regCount];
@@ -30,6 +33,8 @@ public class Resources
         {
             dataMemory[i] = new MemorySlot();
         }
+
+        monitor = new HardwareResources.Monitor();
     }
 
     public void setExecutionUnits(int generalExecutionUnits)

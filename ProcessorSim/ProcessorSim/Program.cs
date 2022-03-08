@@ -16,7 +16,7 @@ class ProcessorSim
     {
         verbose = false;
         Resources resources = new Resources(32, 512, 1024);
-        resources.setExecutionUnits(1);
+        resources.setExecutionUnits(1,1,1,1);
         loadProgram(resources);
         instructionRegister = null;
         decodedInstruction = null;
@@ -176,7 +176,7 @@ class ProcessorSim
         {
             if (instruction.executionType == ExecutionTypes.Branch)
             {
-                bool pipelineFlush = (bool)resources.executionUnits[0].execute(resources, instruction);
+                bool pipelineFlush = (bool)resources.executionUnits[instruction.executionType][0].execute(resources, instruction);
                 if (pipelineFlush)
                 {
                     instructionRegister = null;
@@ -193,7 +193,7 @@ class ProcessorSim
                 }
             }
             else
-                resources.executionUnits[0].execute(resources, instruction);
+                resources.executionUnits[instruction.executionType][0].execute(resources, instruction);
             if(verbose)
                 Console.WriteLine(instruction.ToString());
         }

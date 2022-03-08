@@ -44,9 +44,11 @@ class ProcessorSim
     }
     public static void tick(Resources resources)
     {
-        execute(resources, decodedInstruction);
-        decodedInstruction = decode(resources, instructionRegister);
-        instructionRegister = fetch(resources);
+        if (execute(resources, decodedInstruction) != 1) // If pipeline flush isn't occuring
+        {
+            decodedInstruction = decode(resources, instructionRegister);
+            instructionRegister = fetch(resources);
+        }
         resources.monitor.incrementCyclesTaken();
         if(verbose)
             Console.WriteLine("Tick");
@@ -167,8 +169,9 @@ class ProcessorSim
         return new Blank();
     }
 
-    public static void execute(Resources resources, Instruction? instruction)
+    public static int execute(Resources resources, Instruction? instruction)
     {
+        int returnVal = 0;
         try
         {
             if (instruction.executionType == ExecutionTypes.Branch)
@@ -184,9 +187,10 @@ class ProcessorSim
                     }
 
                     decodedInstruction = null;
+                    if(verbose)
+                        Console.WriteLine("Branch -- Pipeline Flush");
+                    returnVal = 1;
                 }
-                if(verbose)
-                    Console.WriteLine("Branch -- Pipeline Flush");
             }
             else
                 resources.executionUnits[0].execute(resources, instruction);
@@ -197,9 +201,10 @@ class ProcessorSim
         {
             if(verbose)
                 Console.WriteLine("Null Instruction in Pipeline");
-            return;
+            return -1;
         }
-        
+
+        return returnVal;
     }
 
     public static void memory(Resources resources, Instruction instruction)

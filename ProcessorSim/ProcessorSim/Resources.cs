@@ -11,9 +11,13 @@ public class Resources
 
     public MemorySlot[] instructionMemory;
     public MemorySlot[] dataMemory;
+    
+    public List<FetchUnit> fetchUnits;
+    public List<DecodeUnit> decodeUnits;
     public Dictionary<ExecutionTypes, List<ExecutionUnit>> executionUnits;
+    
     public HardwareResources.Monitor monitor;
-    public Resources(int regCount, int instCount, int dataCount)
+    public Resources(int regCount, int instCount, int dataCount, int superscalarCount=2)
     {
         registers = new Register[regCount];
         for(int i = 0; i < registers.Length; i++)
@@ -35,6 +39,13 @@ public class Resources
         }
 
         monitor = new HardwareResources.Monitor();
+        fetchUnits = new List<FetchUnit>();
+        decodeUnits = new List<DecodeUnit>();
+        for (int i = 0; i < superscalarCount; i++)
+        {
+            fetchUnits.Add(new FetchUnit());
+            decodeUnits.Add(new DecodeUnit());
+        }
     }
 
     public void setExecutionUnits(int generalExecutionUnits, int arithmeticUnits, int loadStoreUnits, int branchUnits)

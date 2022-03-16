@@ -30,8 +30,8 @@ class ProcessorSim
     {
         // StreamReader reader = new StreamReader(@"Programs/bubblesort.mpl");
         // StreamReader reader = new StreamReader(@"Programs/fact.mpl");
-        // StreamReader reader = new StreamReader(@"Programs/gcd-original.mpl");
-        StreamReader reader = new StreamReader(@"Programs/vectoradd.mpl");
+        StreamReader reader = new StreamReader(@"Programs/gcd-original.mpl");
+        // StreamReader reader = new StreamReader(@"Programs/vectoradd.mpl");
         int i = 0;
         string line;
         while ((line = reader.ReadLine()) != null)

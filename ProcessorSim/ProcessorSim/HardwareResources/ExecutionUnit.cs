@@ -14,7 +14,9 @@ public class ExecutionUnit
     }
     public bool? execute(Resources resources, Instruction instruction)
     {
-        resources.monitor.incrementInsructionsExecuted();
+        if(instruction.executionType != ExecutionTypes.General)
+            // Possibly change so only blank is excluded?
+            resources.monitor.incrementInsructionsExecuted();
         if (instruction.executionType == ExecutionTypes.Branch)
             return instruction.execute(resources);
         else

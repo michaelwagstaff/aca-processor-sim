@@ -15,6 +15,11 @@ public class End : Instruction
         Console.WriteLine();
         Console.WriteLine("-- Fin --");
         Console.WriteLine();
+        Console.WriteLine("Program Stats:");
+        Console.WriteLine("Instructions Executed: {0}", resources.monitor.getInstructionsExecuted());
+        Console.WriteLine("Cycles Executed: {0}", resources.monitor.getCyclesTaken());
+        Console.WriteLine("IPC: {0}", resources.monitor.getIPC());
+        
         Environment.Exit(0);
         return true;
     }

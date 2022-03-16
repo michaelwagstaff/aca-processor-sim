@@ -1,5 +1,7 @@
 using ProcessorSim.HardwareResources;
 using ProcessorSim.Enums;
+using Monitor = System.Threading.Monitor;
+
 namespace ProcessorSim;
 
 public class Resources
@@ -9,8 +11,13 @@ public class Resources
 
     public MemorySlot[] instructionMemory;
     public MemorySlot[] dataMemory;
-    public ExecutionUnit[] executionUnits;
-    public Resources(int regCount, int instCount, int dataCount)
+    
+    public List<FetchUnit> fetchUnits;
+    public List<DecodeUnit> decodeUnits;
+    public Dictionary<ExecutionTypes, List<ExecutionUnit>> executionUnits;
+    
+    public HardwareResources.Monitor monitor;
+    public Resources(int regCount, int instCount, int dataCount, int superscalarCount=2)
     {
         registers = new Register[regCount];
         for(int i = 0; i < registers.Length; i++)
@@ -30,14 +37,39 @@ public class Resources
         {
             dataMemory[i] = new MemorySlot();
         }
+
+        monitor = new HardwareResources.Monitor();
+        fetchUnits = new List<FetchUnit>();
+        decodeUnits = new List<DecodeUnit>();
+        for (int i = 0; i < superscalarCount; i++)
+        {
+            fetchUnits.Add(new FetchUnit());
+            decodeUnits.Add(new DecodeUnit());
+        }
     }
 
-    public void setExecutionUnits(int generalExecutionUnits)
+    public void setExecutionUnits(int generalExecutionUnits, int arithmeticUnits, int loadStoreUnits, int branchUnits)
     {
-        executionUnits = new ExecutionUnit[generalExecutionUnits];
+        executionUnits = new Dictionary<ExecutionTypes, List<ExecutionUnit>>();
+        executionUnits.Add(ExecutionTypes.General, new List<ExecutionUnit>());
         for (int i = 0; i < generalExecutionUnits; i++)
         {
-            this.executionUnits[i] = new ExecutionUnit(ExecutionTypes.General);
+            executionUnits[ExecutionTypes.General].Add(new ExecutionUnit(ExecutionTypes.General));
+        }
+        executionUnits.Add(ExecutionTypes.Arithmetic, new List<ExecutionUnit>());
+        for (int i = 0; i < generalExecutionUnits; i++)
+        {
+            executionUnits[ExecutionTypes.Arithmetic].Add(new ExecutionUnit(ExecutionTypes.Arithmetic));
+        }
+        executionUnits.Add(ExecutionTypes.LoadStore, new List<ExecutionUnit>());
+        for (int i = 0; i < generalExecutionUnits; i++)
+        {
+            executionUnits[ExecutionTypes.LoadStore].Add(new ExecutionUnit(ExecutionTypes.LoadStore));
+        }
+        executionUnits.Add(ExecutionTypes.Branch, new List<ExecutionUnit>());
+        for (int i = 0; i < generalExecutionUnits; i++)
+        {
+            executionUnits[ExecutionTypes.Branch].Add(new ExecutionUnit(ExecutionTypes.Branch));
         }
     }
 }

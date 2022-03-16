@@ -14,10 +14,11 @@ public class Resources
     
     public List<FetchUnit> fetchUnits;
     public List<DecodeUnit> decodeUnits;
+    public ReservationStation reservationStation;
     public Dictionary<ExecutionTypes, List<ExecutionUnit>> executionUnits;
     
     public HardwareResources.Monitor monitor;
-    public Resources(int regCount, int instCount, int dataCount, int superscalarCount=2)
+    public Resources(int regCount, int instCount, int dataCount, int superscalarCount=1)
     {
         registers = new Register[regCount];
         for(int i = 0; i < registers.Length; i++)
@@ -41,6 +42,7 @@ public class Resources
         monitor = new HardwareResources.Monitor();
         fetchUnits = new List<FetchUnit>();
         decodeUnits = new List<DecodeUnit>();
+        reservationStation = new ReservationStation(ExecutionTypes.General, 1);
         for (int i = 0; i < superscalarCount; i++)
         {
             fetchUnits.Add(new FetchUnit());

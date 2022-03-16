@@ -20,7 +20,6 @@ public class End : Instruction
         Console.WriteLine("Cycles Executed: {0}", resources.monitor.getCyclesTaken());
         Console.WriteLine("IPC: {0}", resources.monitor.getIPC());
         
-        
         Environment.Exit(0);
         return true;
     }

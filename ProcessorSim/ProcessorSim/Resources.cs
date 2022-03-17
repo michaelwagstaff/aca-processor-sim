@@ -1,5 +1,6 @@
 using ProcessorSim.HardwareResources;
 using ProcessorSim.Enums;
+using ProcessorSim.Instructions;
 using Monitor = System.Threading.Monitor;
 
 namespace ProcessorSim;
@@ -16,6 +17,8 @@ public class Resources
     public List<DecodeUnit> decodeUnits;
     public ReservationStation reservationStation;
     public Dictionary<ExecutionTypes, List<ExecutionUnit>> executionUnits;
+    public Instruction instructionWaitingMemory;
+    public Instruction instructionWaitingWriteback;
     
     public HardwareResources.Monitor monitor;
     public Resources(int regCount, int instCount, int dataCount, int superscalarCount=1)
@@ -43,6 +46,8 @@ public class Resources
         fetchUnits = new List<FetchUnit>();
         decodeUnits = new List<DecodeUnit>();
         reservationStation = new ReservationStation(ExecutionTypes.General, 1);
+        instructionWaitingMemory = null;
+        instructionWaitingWriteback = null;
         for (int i = 0; i < superscalarCount; i++)
         {
             fetchUnits.Add(new FetchUnit());

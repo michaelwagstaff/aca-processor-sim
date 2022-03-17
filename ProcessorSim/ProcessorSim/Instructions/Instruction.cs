@@ -9,4 +9,12 @@ public interface Instruction
     {
         return true;
     }
+    public bool memory(Resources resources)
+    {
+        return true;
+    }
+    public bool writeback(Resources resources)
+    {
+        return true;
+    }
 }

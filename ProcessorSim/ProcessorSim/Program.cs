@@ -43,6 +43,8 @@ class ProcessorSim
     }
     public static bool tick(Resources resources)
     {
+        writeback(resources);
+        memory(resources);
         if (execute(resources) != 1) // If pipeline flush isn't occuring
         {
             bool instructionDecoded = decode(resources, instructionRegister);
@@ -116,12 +118,14 @@ class ProcessorSim
         return returnVal;
     }
 
-    public static void memory(Resources resources, Instruction instruction)
+    public static void memory(Resources resources)
     {
-        
+        if(resources.instructionWaitingMemory != null)
+            resources.instructionWaitingMemory.memory(resources);
     }
-    public static void writeback(Resources resources, Instruction instruction)
+    public static void writeback(Resources resources)
     {
-        
+        if(resources.instructionWaitingWriteback != null)
+            resources.instructionWaitingWriteback.writeback(resources);
     }
 }

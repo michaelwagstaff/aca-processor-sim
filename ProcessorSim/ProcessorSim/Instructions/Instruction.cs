@@ -11,22 +11,6 @@ public interface Instruction
     {
         return true;
     }
-    public bool memory(Resources resources)
-    {
-        if (this.executionType == ExecutionTypes.SimpleArithmetic)
-        {
-            resources.forwardedResults[targetRegister] = result;
-        }
-        return true;
-    }
-    public bool writeback(Resources resources)
-    {
-        if (this.executionType == ExecutionTypes.SimpleArithmetic)
-        {
-            targetRegister.setValue(result);
-        }
-        return true;
-    }
 
     public int getVal(Resources resources, Register register)
     {
@@ -39,4 +23,5 @@ public interface Instruction
 
         return val;
     }
+    
 }

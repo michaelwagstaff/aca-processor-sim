@@ -26,4 +26,5 @@ public class Add : Instruction
         this.result = val1 + val2;
         return true;
     }
+    
 }

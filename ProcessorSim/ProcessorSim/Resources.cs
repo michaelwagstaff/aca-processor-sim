@@ -7,6 +7,8 @@ namespace ProcessorSim;
 
 public class Resources
 {
+    public bool verbose;
+    
     public Register[] registers;
     public Register pc;
 
@@ -18,12 +20,15 @@ public class Resources
     public ReservationStation reservationStation;
     public Dictionary<ExecutionTypes, List<ExecutionUnit>> executionUnits;
     public Instruction instructionWaitingMemory;
+    public MemoryUnit memoryUnit;
     public Dictionary<Register, int?> forwardedResults;
     public Instruction instructionWaitingWriteback;
+    public WritebackUnit writebackUnit;
     
     public HardwareResources.Monitor monitor;
-    public Resources(int regCount, int instCount, int dataCount, int superscalarCount=1)
+    public Resources(int regCount, int instCount, int dataCount, bool verbose = false, int superscalarCount=1)
     {
+        this.verbose = verbose;
         registers = new Register[regCount];
         for(int i = 0; i < registers.Length; i++)
         {
@@ -49,6 +54,8 @@ public class Resources
         reservationStation = new ReservationStation(ExecutionTypes.General, 1);
         instructionWaitingMemory = null;
         forwardedResults = new Dictionary<Register, int?>();
+        memoryUnit = new MemoryUnit();
+        writebackUnit = new WritebackUnit();
         for (int i = 0; i < regCount; i++)
         {
             forwardedResults[registers[i]] = null;

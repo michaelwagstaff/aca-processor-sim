@@ -13,8 +13,8 @@ class ProcessorSim
     static bool verbose;
     public static void Main(string[] args)
     {
-        verbose = true;
-        Resources resources = new Resources(32, 512, 1024);
+        verbose = false;
+        Resources resources = new Resources(32, 512, 1024, verbose);
         resources.setExecutionUnits(1,1,1,1);
         loadProgram(resources);
         instructionRegister = null;
@@ -121,12 +121,11 @@ class ProcessorSim
 
     public static void memory(Resources resources)
     {
-        if(resources.instructionWaitingMemory != null)
-            resources.instructionWaitingMemory.memory(resources);
+        resources.memoryUnit.memory(resources);
     }
     public static void writeback(Resources resources)
     {
         if(resources.instructionWaitingWriteback != null)
-            resources.instructionWaitingWriteback.writeback(resources);
+            resources.writebackUnit.writeback(resources, resources.instructionWaitingWriteback);
     }
 }

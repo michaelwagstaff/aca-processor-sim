@@ -27,12 +27,15 @@ public class DecodeUnit
         Register reg1 = null;
         Register reg2 = null;
         Register reg3 = null;
+        List<Register> unclearedDependencies = new List<Register>();
         try
         {
             op1 = rawInstruction.Split(" ")[1];
             try
             {
                 reg1 = resources.registers[Int32.Parse(op1.Substring(1))];
+                if(resources.dataHazards[reg1])
+                    unclearedDependencies.Add(reg1);
             }
             catch { }
         }
@@ -43,6 +46,8 @@ public class DecodeUnit
             try
             {
                 reg2 = resources.registers[Int32.Parse(op2.Substring(1))];
+                if(resources.dataHazards[reg2])
+                    unclearedDependencies.Add(reg2);
             }
             catch { }
         }
@@ -53,11 +58,12 @@ public class DecodeUnit
             try
             {
                 reg3 = resources.registers[Int32.Parse(op3.Substring(1))];
+                if(resources.dataHazards[reg3])
+                    unclearedDependencies.Add(reg3);
             }
             catch { }
         }
         catch { }
-        
         switch(opCode)
         {
             case "Add":

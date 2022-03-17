@@ -2,7 +2,8 @@ namespace ProcessorSim.Enums;
 
 public enum ExecutionTypes
 {
-    Arithmetic,
+    SimpleArithmetic,
+    ComplexArithmetic,
     General,
     Vector,
     LoadStore,

@@ -6,23 +6,25 @@ namespace ProcessorSim.Instructions;
 public class Not : Instruction
 {
     public ExecutionTypes executionType { get; set; }
+    public Register targetRegister { get; set; }
+    public int result { get; set; }
     private Register reg;
     public Not(Register reg)
     {
         this.reg = reg;
-        this.executionType = ExecutionTypes.Arithmetic;
+        this.targetRegister = reg;
+        this.executionType = ExecutionTypes.SimpleArithmetic;
     }
 
     public bool execute(Resources resources)
     {
-        if (this.reg.getValue() == 1)
+        int val = this.reg.getValue();
+        if (resources.forwardedResults[reg] != null)
         {
-            this.reg.setValue(0);
+            val = (int) resources.forwardedResults[reg];
         }
-        else
-        {
-            this.reg.setValue(1);
-        }
+
+        this.result = val == 1 ? 0 : 1;
         return true;
     }
 }

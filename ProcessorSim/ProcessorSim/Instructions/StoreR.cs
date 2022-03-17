@@ -5,6 +5,8 @@ namespace ProcessorSim.Instructions;
 public class StoreR : Instruction
 {
     public ExecutionTypes executionType { get; set; }
+    public Register targetRegister { get; set; }
+    public int result { get; set; }
     private Register reg;
     private Register memoryIndex;
     public StoreR(Register register, Register memoryIndex)

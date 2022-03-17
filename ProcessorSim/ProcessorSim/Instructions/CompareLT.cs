@@ -5,18 +5,34 @@ namespace ProcessorSim.Instructions;
 public class CompareLT : Instruction
 {
     public ExecutionTypes executionType { get; set; }
-    private Register flag, reg1, reg2;
+    public Register targetRegister { get; set; }
+    public int result { get; set; }
+    private Register reg1, reg2;
     public CompareLT(Register flag, Register register1, Register register2)
     {
-        this.flag = flag;
+        this.targetRegister = flag;
         this.reg1 = register1;
         this.reg2 = register2;
-        this.executionType = ExecutionTypes.Arithmetic;
+        this.executionType = ExecutionTypes.SimpleArithmetic;
     }
 
     public bool execute(Resources resources)
     {
-        this.flag.setValue((this.reg1.getValue() < this.reg2.getValue()) ? 1 : 0);
+        int val1 = reg1.getValue();
+        int val2 = reg2.getValue();
+        if (resources.forwardedResults[reg1] != null)
+        {
+            val1 = (int) resources.forwardedResults[reg1];
+            resources.forwardedResults[reg1] = null;
+        }
+
+        if (resources.forwardedResults[reg2] != null)
+        {
+            val2 = (int) resources.forwardedResults[reg2];
+            resources.forwardedResults[reg2] = null;
+        }
+
+        this.result = val1 < val2 ? 1 : 0;
         return true;
     }
 }

@@ -18,6 +18,7 @@ public class Resources
     public ReservationStation reservationStation;
     public Dictionary<ExecutionTypes, List<ExecutionUnit>> executionUnits;
     public Instruction instructionWaitingMemory;
+    public Dictionary<Register, int?> forwardedResults;
     public Instruction instructionWaitingWriteback;
     
     public HardwareResources.Monitor monitor;
@@ -47,6 +48,11 @@ public class Resources
         decodeUnits = new List<DecodeUnit>();
         reservationStation = new ReservationStation(ExecutionTypes.General, 1);
         instructionWaitingMemory = null;
+        forwardedResults = new Dictionary<Register, int?>();
+        for (int i = 0; i < regCount; i++)
+        {
+            forwardedResults[registers[i]] = null;
+        }
         instructionWaitingWriteback = null;
         for (int i = 0; i < superscalarCount; i++)
         {
@@ -63,10 +69,10 @@ public class Resources
         {
             executionUnits[ExecutionTypes.General].Add(new ExecutionUnit(ExecutionTypes.General));
         }
-        executionUnits.Add(ExecutionTypes.Arithmetic, new List<ExecutionUnit>());
+        executionUnits.Add(ExecutionTypes.SimpleArithmetic, new List<ExecutionUnit>());
         for (int i = 0; i < generalExecutionUnits; i++)
         {
-            executionUnits[ExecutionTypes.Arithmetic].Add(new ExecutionUnit(ExecutionTypes.Arithmetic));
+            executionUnits[ExecutionTypes.SimpleArithmetic].Add(new ExecutionUnit(ExecutionTypes.SimpleArithmetic));
         }
         executionUnits.Add(ExecutionTypes.LoadStore, new List<ExecutionUnit>());
         for (int i = 0; i < generalExecutionUnits; i++)

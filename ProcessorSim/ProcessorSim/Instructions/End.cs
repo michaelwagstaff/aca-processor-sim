@@ -1,10 +1,13 @@
 using ProcessorSim.Enums;
+using ProcessorSim.HardwareResources;
 
 namespace ProcessorSim.Instructions;
 
 public class End : Instruction
 {
     public ExecutionTypes executionType { get; set; }
+    public Register targetRegister { get; set; }
+    public int result { get; set; }
     public End()
     {
         this.executionType = ExecutionTypes.General;

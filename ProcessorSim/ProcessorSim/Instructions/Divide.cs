@@ -7,12 +7,14 @@ namespace ProcessorSim.Instructions;
 public class Divide : Instruction
 {
     public ExecutionTypes executionType { get; set; }
+    public Register targetRegister { get; set; }
+    public int result { get; set; }
     private Register reg1, reg2;
     public Divide(Register register1, Register register2)
     {
         reg1 = register1;
         reg2 = register2;
-        this.executionType = ExecutionTypes.Arithmetic;
+        this.executionType = ExecutionTypes.ComplexArithmetic;
     }
     public bool execute(Resources resources)
     {

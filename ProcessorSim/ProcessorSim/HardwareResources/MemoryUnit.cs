@@ -23,6 +23,7 @@ public class MemoryUnit
 
                 resources.forwardedResults[instruction.targetRegister] = instruction.result;
                 resources.dataHazards[instruction.targetRegister] = false;
+                resources.reservationStation.markRegisterUnblocked(instruction.targetRegister);
             }
             if (instruction.executionType == ExecutionTypes.LoadStore)
             {
@@ -38,6 +39,7 @@ public class MemoryUnit
                     // Do loads get forwarded here or do we have to wait until writeback??
                     resources.forwardedResults[instruction.targetRegister] = instruction.result;
                     resources.dataHazards[instruction.targetRegister] = false;
+                    resources.reservationStation.markRegisterUnblocked(instruction.targetRegister);
                 }
                 // Else do nothing until writeback?
             }

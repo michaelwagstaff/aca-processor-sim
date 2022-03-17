@@ -55,6 +55,22 @@ public class ReservationStation
         return new Blank();
     }
 
+    public bool markRegisterUnblocked(Register register)
+    {
+        for (int i = 0; i < size; i++)
+        {
+            if (!this.internalArray[i].isEmpty && !this.internalArray[i].isUnblocked)
+            {
+                this.internalArray[i].instructionObject.Item2.Remove(register); // List of blocking registers
+                if (this.internalArray[i].instructionObject.Item2.Count == 0)
+                {
+                    this.internalArray[i].isUnblocked = true;
+                }
+            }
+        }
+        return true;
+    }
+
     public bool flush()
     {
         // Used for pipeline flush

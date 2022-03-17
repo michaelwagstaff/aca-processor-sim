@@ -26,7 +26,7 @@ public class ReservationStation
         return this.emptySlots != 0;
     }
 
-    public bool addItem(Instruction instruction)
+    public bool addItem((Instruction, List<Register>) instructionObject)
     {
         if (hasSpace())
         {
@@ -34,7 +34,7 @@ public class ReservationStation
             {
                 if (this.internalArray[i].isEmpty)
                 {
-                    this.internalArray[i].addItem(instruction);
+                    this.internalArray[i].addItem(instructionObject);
                     return true;
                 }
             }

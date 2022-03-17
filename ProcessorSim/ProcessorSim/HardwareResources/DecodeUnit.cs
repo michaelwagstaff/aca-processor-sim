@@ -10,15 +10,15 @@ public class DecodeUnit
     public DecodeUnit()
     {
     }
-    public Instruction decode(Resources resources, int? instructionRegister)
+    public (Instruction, List<Register>) decode(Resources resources, int? instructionRegister)
     {
         if (instructionRegister == null)
-            return null;
+            return (null, null);
         string rawInstruction = resources.registers[(int) instructionRegister].getInstruction();
         resources.registers[(int) instructionRegister].available = true;
         if (rawInstruction == null)
         {
-            return new Blank();
+            return (new Blank(), new List<Register>());
         }
         string opCode = rawInstruction.Split(" ")[0];
         string op1 = null;
@@ -52,18 +52,28 @@ public class DecodeUnit
             catch { }
         }
         catch { }
+
         try
         {
             op3 = rawInstruction.Split(" ")[3];
             try
             {
                 reg3 = resources.registers[Int32.Parse(op3.Substring(1))];
-                if(resources.dataHazards[reg3])
+                if (resources.dataHazards[reg3])
                     unclearedDependencies.Add(reg3);
             }
-            catch { }
+            catch
+            {
+            }
         }
-        catch { }
+        catch
+        { }
+        Instruction instruction = findInstruction(opCode, op1, op2, op3, reg1, reg2, reg3);
+        return (instruction, unclearedDependencies);
+    }
+
+    private Instruction findInstruction(string opCode, string op1, string op2, string op3, Register reg1, Register reg2, Register reg3)
+    {
         switch(opCode)
         {
             case "Add":

@@ -6,18 +6,23 @@ namespace ProcessorSim.HardwareResources;
 public class ReservationStationSlot
 {
     public bool isEmpty;
-    public Instruction instruction;
+    public (Instruction, List<Register>) instructionObject;
+    public bool isUnblocked;
 
     public ReservationStationSlot()
     {
-        this.instruction = null;
+        this.instructionObject = (null, null);
         isEmpty = true;
     }
-    public bool addItem(Instruction instruction)
+    public bool addItem((Instruction, List<Register>) instruction)
     {
-        if (instruction != null)
+        if (instruction != (null, null))
         {
-            this.instruction = instruction;
+            this.instructionObject = instruction;
+            if (instruction.Item2.Count == 0)
+                isUnblocked = true;
+            else
+                isUnblocked = false;
             this.isEmpty = false;
         }
         return true;
@@ -25,8 +30,8 @@ public class ReservationStationSlot
 
     public Instruction removeItem()
     {
-        Instruction instruction = this.instruction;
-        this.instruction = null;
+        Instruction instruction = this.instructionObject.Item1;
+        this.instructionObject = (null, null);
         this.isEmpty = true;
         return instruction;
     }
@@ -34,7 +39,7 @@ public class ReservationStationSlot
     public bool hasType(ExecutionTypes executionType)
     {
         if (!this.isEmpty)
-            return instruction.executionType == executionType;
+            return instructionObject.Item1.executionType == executionType;
         return false;
     }
 }

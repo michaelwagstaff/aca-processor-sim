@@ -19,19 +19,9 @@ public class Subtract : Instruction
     }
     public bool execute(Resources resources)
     {
-        int val1 = reg1.getValue();
-        int val2 = reg2.getValue();
-        if (resources.forwardedResults[reg1] != null)
-        {
-            val1 = (int) resources.forwardedResults[reg1];
-            resources.forwardedResults[reg1] = null;
-        }
-
-        if (resources.forwardedResults[reg2] != null)
-        {
-            val2 = (int) resources.forwardedResults[reg2];
-            resources.forwardedResults[reg2] = null;
-        }
+        Instruction instruction = (Instruction) this;
+        int val1 = instruction.getVal(resources, reg1);
+        int val2 = instruction.getVal(resources, reg2);
 
         this.result = val1 - val2;
         reg1.setValue(reg1.getValue() - reg2.getValue());

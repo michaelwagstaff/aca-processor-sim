@@ -18,11 +18,8 @@ public class Not : Instruction
 
     public bool execute(Resources resources)
     {
-        int val = this.reg.getValue();
-        if (resources.forwardedResults[reg] != null)
-        {
-            val = (int) resources.forwardedResults[reg];
-        }
+        Instruction instruction = (Instruction) this;
+        int val = instruction.getVal(resources, reg);
 
         this.result = val == 1 ? 0 : 1;
         return true;

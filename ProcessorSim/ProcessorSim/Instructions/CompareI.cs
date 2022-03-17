@@ -19,12 +19,8 @@ public class CompareI : Instruction
 
     public bool execute(Resources resources)
     {
-        int val1 = reg1.getValue();
-        if (resources.forwardedResults[reg1] != null)
-        {
-            val1 = (int) resources.forwardedResults[reg1];
-            resources.forwardedResults[reg1] = null;
-        }
+        Instruction instruction = (Instruction) this;
+        int val1 = instruction.getVal(resources, reg1);
         this.result = (val1 == value) ? 1 : 0;
         return true;
     }

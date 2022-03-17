@@ -13,7 +13,7 @@ class ProcessorSim
     static bool verbose;
     public static void Main(string[] args)
     {
-        verbose = false;
+        verbose = true;
         Resources resources = new Resources(32, 512, 1024);
         resources.setExecutionUnits(1,1,1,1);
         loadProgram(resources);
@@ -29,7 +29,8 @@ class ProcessorSim
     public static void loadProgram(Resources resources)
     {
         // StreamReader reader = new StreamReader(@"Programs/bubblesort.mpl");
-        StreamReader reader = new StreamReader(@"Programs/fact.mpl");
+        // StreamReader reader = new StreamReader(@"Programs/fact.mpl");
+        StreamReader reader = new StreamReader(@"Programs/fact-safe.mpl");
         // StreamReader reader = new StreamReader(@"Programs/gcd-original.mpl");
         // StreamReader reader = new StreamReader(@"Programs/vectoradd.mpl");
         int i = 0;

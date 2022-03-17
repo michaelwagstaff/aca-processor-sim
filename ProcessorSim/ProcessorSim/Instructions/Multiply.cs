@@ -18,7 +18,10 @@ public class Multiply : Instruction
     }
     public bool execute(Resources resources)
     {
-        reg1.setValue(reg1.getValue() * reg2.getValue());
+        Instruction instruction = (Instruction) this;
+        int val1 = instruction.getVal(resources, reg1);
+        int val2 = instruction.getVal(resources, reg2);
+        reg1.setValue(val1 * val2);
         return true;
     }
 }

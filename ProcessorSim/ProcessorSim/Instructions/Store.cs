@@ -17,7 +17,9 @@ public class Store : Instruction
     }
     public bool execute(Resources resources)
     {
-        resources.dataMemory[this.memoryIndex].setValue(this.reg.getValue());
+        Instruction instruction = (Instruction) this;
+        int val = instruction.getVal(resources, reg);
+        resources.dataMemory[this.memoryIndex].setValue(val);
         return true;
     }
 }

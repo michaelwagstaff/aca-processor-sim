@@ -24,7 +24,9 @@ public class Print : Instruction
         }
         else
         {
-            Console.WriteLine(reg.getValue());
+            Instruction instruction = (Instruction) this;
+            int val = instruction.getVal(resources, reg);
+            Console.WriteLine(val);
         }
         return true;
     }

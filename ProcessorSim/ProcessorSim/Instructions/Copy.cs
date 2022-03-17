@@ -19,7 +19,9 @@ public class Copy : Instruction
     }
     public bool execute(Resources resources)
     {
-        this.dest.setValue(this.reg.getValue());
+        Instruction instruction = (Instruction) this;
+        int val = instruction.getVal(resources, reg);
+        this.dest.setValue(val);
         return true;
     }
 }

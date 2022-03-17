@@ -13,12 +13,13 @@ public class LoadI : Instruction
     {
         this.reg = register;
         this.value = value;
-        this.executionType = ExecutionTypes.LoadStore;
+        this.executionType = ExecutionTypes.SimpleArithmetic;
         this.reg.available = false;
     }
     public bool execute(Resources resources)
     {
-        this.reg.setValue(this.value);
+        result = value;
+        targetRegister = reg;
         return true;
     }
 }

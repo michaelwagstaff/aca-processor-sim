@@ -19,7 +19,8 @@ public class Load : Instruction
     }
     public bool execute(Resources resources)
     {
-        this.reg.setValue(resources.dataMemory[this.memoryIndex].getValue());
+        targetRegister = reg;
+        result = memoryIndex;
         return true;
     }
 }

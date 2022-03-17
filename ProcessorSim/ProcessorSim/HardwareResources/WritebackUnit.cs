@@ -17,6 +17,20 @@ public class WritebackUnit
             }
             instruction.targetRegister.setValue(instruction.result);
         }
+        else if (instruction.executionType == ExecutionTypes.LoadStore)
+        {
+            if (instruction.targetRegister != null)
+            {
+                // Load operation
+                instruction.targetRegister.setValue(instruction.result);
+            }
+            else
+            {
+                StoreInstruction tempInstruction = (StoreInstruction) instruction;
+                // Need to do this to be able to access memory index
+                resources.dataMemory[tempInstruction.memoryIndex].setValue(instruction.result);
+            }
+        }
 
         resources.instructionWaitingWriteback = null;
         return true;

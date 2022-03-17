@@ -19,6 +19,7 @@ public class Resources
     public List<DecodeUnit> decodeUnits;
     public ReservationStation reservationStation;
     public Dictionary<ExecutionTypes, List<ExecutionUnit>> executionUnits;
+    public Dictionary<Register, bool> dataHazards;
     public Instruction instructionWaitingMemory;
     public MemoryUnit memoryUnit;
     public Dictionary<Register, int?> forwardedResults;
@@ -51,6 +52,7 @@ public class Resources
         monitor = new HardwareResources.Monitor();
         fetchUnits = new List<FetchUnit>();
         decodeUnits = new List<DecodeUnit>();
+        dataHazards = new Dictionary<Register, bool>();
         reservationStation = new ReservationStation(ExecutionTypes.General, 1);
         instructionWaitingMemory = null;
         forwardedResults = new Dictionary<Register, int?>();
@@ -58,6 +60,7 @@ public class Resources
         writebackUnit = new WritebackUnit();
         for (int i = 0; i < regCount; i++)
         {
+            dataHazards[registers[i]] = false;
             forwardedResults[registers[i]] = null;
         }
         instructionWaitingWriteback = null;

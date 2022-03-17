@@ -16,6 +16,8 @@ public class WritebackUnit
                     instruction.targetRegister);
             }
             instruction.targetRegister.setValue(instruction.result);
+            resources.dataHazards[instruction.targetRegister] = false; // Should be redundant!
+            // Would rather not take chances though
         }
         else if (instruction.executionType == ExecutionTypes.LoadStore)
         {
@@ -23,6 +25,7 @@ public class WritebackUnit
             {
                 // Load operation
                 instruction.targetRegister.setValue(instruction.result);
+                resources.dataHazards[instruction.targetRegister] = false; // 
             }
             else
             {

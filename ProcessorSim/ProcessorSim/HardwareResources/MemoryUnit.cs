@@ -22,6 +22,7 @@ public class MemoryUnit
                 }
 
                 resources.forwardedResults[instruction.targetRegister] = instruction.result;
+                resources.dataHazards[instruction.targetRegister] = false;
             }
             if (instruction.executionType == ExecutionTypes.LoadStore)
             {
@@ -34,7 +35,9 @@ public class MemoryUnit
                 if (instruction.targetRegister != null)
                 {
                     // i.e. we're doing a load
+                    // Do loads get forwarded here or do we have to wait until writeback??
                     resources.forwardedResults[instruction.targetRegister] = instruction.result;
+                    resources.dataHazards[instruction.targetRegister] = false;
                 }
                 // Else do nothing until writeback?
             }

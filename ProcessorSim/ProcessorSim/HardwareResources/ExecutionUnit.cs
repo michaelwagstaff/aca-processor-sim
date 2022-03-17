@@ -23,6 +23,8 @@ public class ExecutionUnit
             result = instruction.execute(resources);
         else
             instruction.execute(resources);
+        if (instruction.targetRegister != null)
+            resources.dataHazards[instruction.targetRegister] = true;
         if(instruction.GetType().Name != "Blank")
             resources.instructionWaitingMemory = instruction;
         return result;

@@ -8,11 +8,11 @@ public class LoadR : Instruction
     public Register targetRegister { get; set; }
     public int result { get; set; }
     private Register reg;
-    private Register memoryIndex;
-    public LoadR(Register register, Register memoryIndex)
+    private Register memoryIndexRegister;
+    public LoadR(Register register, Register memoryIndexRegister)
     {
         this.reg = register;
-        this.memoryIndex = memoryIndex;
+        this.memoryIndexRegister = memoryIndexRegister;
         this.executionType = ExecutionTypes.LoadStore;
         this.reg.available = false;
         // Rather important, once decoded, we can't change register, so need to make sure nothing else uses it!
@@ -20,7 +20,7 @@ public class LoadR : Instruction
     public bool execute(Resources resources)
     {
         Instruction instruction = (Instruction) this;
-        result = instruction.getVal(resources, memoryIndex);
+        result = resources.dataMemory[instruction.getVal(resources, memoryIndexRegister)].getValue();
         targetRegister = reg;
         return true;
     }

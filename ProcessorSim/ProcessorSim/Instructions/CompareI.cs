@@ -7,6 +7,7 @@ public class CompareI : Instruction
     public ExecutionTypes executionType { get; set; }
     public Register targetRegister { get; set; }
     public int result { get; set; }
+    public int registerFile { get; set; }
     private Register reg1;
     private int value;
     public CompareI(Register flag, Register register1, int value)

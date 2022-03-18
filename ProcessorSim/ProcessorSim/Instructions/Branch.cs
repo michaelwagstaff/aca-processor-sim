@@ -8,6 +8,7 @@ public class Branch : Instruction
     public ExecutionTypes executionType { get; set; }
     public Register targetRegister { get; set; }
     public int result { get; set; }
+    public int registerFile { get; set; }
     private Register newAddress;
 
     public Branch(Register newAddress)

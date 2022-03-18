@@ -8,6 +8,7 @@ public class Not : Instruction
     public ExecutionTypes executionType { get; set; }
     public Register targetRegister { get; set; }
     public int result { get; set; }
+    public int registerFile { get; set; }
     private Register reg;
     public Not(Register reg)
     {

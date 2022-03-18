@@ -7,6 +7,7 @@ public class CompareLT : Instruction
     public ExecutionTypes executionType { get; set; }
     public Register targetRegister { get; set; }
     public int result { get; set; }
+    public int registerFile { get; set; }
     private Register reg1, reg2;
     public CompareLT(Register flag, Register register1, Register register2)
     {

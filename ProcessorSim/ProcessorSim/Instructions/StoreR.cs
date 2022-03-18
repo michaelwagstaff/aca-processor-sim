@@ -7,6 +7,7 @@ public class StoreR : StoreInstruction
     public ExecutionTypes executionType { get; set; }
     public Register targetRegister { get; set; }
     public int result { get; set; }
+    public int registerFile { get; set; }
     private Register reg;
     private Register memoryIndexReg;
     public int memoryIndex { get; set; }

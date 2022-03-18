@@ -9,6 +9,7 @@ public class LoadR : Instruction
     public int result { get; set; }
     private Register reg;
     private Register memoryIndexRegister;
+    public int registerFile { get; set; }
     public LoadR(Register register, Register memoryIndexRegister)
     {
         this.reg = register;

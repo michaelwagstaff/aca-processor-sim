@@ -7,6 +7,7 @@ public interface Instruction
     ExecutionTypes executionType { get; set; }
     Register targetRegister { get; set; }
     int result { get; set; }
+    int registerFile { get; set; }
     public bool execute(Resources resources)
     {
         return true;

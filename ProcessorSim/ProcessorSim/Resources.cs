@@ -84,6 +84,11 @@ public class Resources
         {
             executionUnits[ExecutionTypes.SimpleArithmetic].Add(new ExecutionUnit(ExecutionTypes.SimpleArithmetic));
         }
+        executionUnits.Add(ExecutionTypes.ComplexArithmetic, new List<ExecutionUnit>());
+        for (int i = 0; i < generalExecutionUnits; i++)
+        {
+            executionUnits[ExecutionTypes.ComplexArithmetic].Add(new ExecutionUnit(ExecutionTypes.ComplexArithmetic));
+        }
         executionUnits.Add(ExecutionTypes.LoadStore, new List<ExecutionUnit>());
         for (int i = 0; i < generalExecutionUnits; i++)
         {

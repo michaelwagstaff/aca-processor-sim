@@ -30,9 +30,10 @@ class ProcessorSim
     {
         // StreamReader reader = new StreamReader(@"Programs/bubblesort.mpl");
         // StreamReader reader = new StreamReader(@"Programs/fact.mpl");
-        StreamReader reader = new StreamReader(@"Programs/fact-safe.mpl");
+        // StreamReader reader = new StreamReader(@"Programs/fact-safe.mpl");
         // StreamReader reader = new StreamReader(@"Programs/gcd-original.mpl");
         // StreamReader reader = new StreamReader(@"Programs/vectoradd.mpl");
+        StreamReader reader = new StreamReader(@"Programs/vectormult-safe.mpl");
         int i = 0;
         string line;
         while ((line = reader.ReadLine()) != null)
@@ -81,30 +82,36 @@ class ProcessorSim
             {
                 if (resources.executionUnits.ContainsKey(executionType))
                 {
-                    if (executionType == ExecutionTypes.Branch)
+                    if (resources.executionUnits[executionType][0].blocked)
                     {
-                        bool? nullablePipelineFlush = resources.executionUnits[executionType][0]
-                            .execute(resources, resources.reservationStation.getItem(executionType));
-                        bool pipelineFlush = nullablePipelineFlush == null ? false : (bool) nullablePipelineFlush;
-                        // If null, then there is no pipeline flush
-                        if (pipelineFlush)
-                        {
-                            instructionRegister = null;
-                            if (instructionRegister != null)
-                            {
-                                resources.registers[(int) instructionRegister].available = true;
-                                instructionRegister = null;
-                            }
-
-                            resources.reservationStation.flush();
-                            if (verbose)
-                                Console.WriteLine("Branch -- Pipeline Flush");
-                            returnVal = 1;
-                        }
+                        resources.executionUnits[executionType][0].execute(resources);
                     }
+                    else
+                    {
+                        if (executionType == ExecutionTypes.Branch)
+                        {
+                            bool? nullablePipelineFlush = resources.executionUnits[executionType][0]
+                                .execute(resources, resources.reservationStation.getItem(executionType));
+                            bool pipelineFlush = nullablePipelineFlush == null ? false : (bool) nullablePipelineFlush;
+                            // If null, then there is no pipeline flush
+                            if (pipelineFlush)
+                            {
+                                instructionRegister = null;
+                                if (instructionRegister != null)
+                                {
+                                    resources.registers[(int) instructionRegister].available = true;
+                                    instructionRegister = null;
+                                }
 
-                    resources.executionUnits[executionType][0]
-                        .execute(resources, resources.reservationStation.getItem(executionType));
+                                resources.reservationStation.flush();
+                                if (verbose)
+                                    Console.WriteLine("Branch -- Pipeline Flush");
+                                returnVal = 1;
+                            }
+                        }
+                        resources.executionUnits[executionType][0]
+                            .execute(resources, resources.reservationStation.getItem(executionType));
+                    }
                 }
             }
         /*}

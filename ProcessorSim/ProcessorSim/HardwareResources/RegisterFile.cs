@@ -30,4 +30,9 @@ public class RegisterFile
     {
         return this.internalFile[fileNum][logicalRegister].Item1;
     }
+
+    public int getCurrentFile()
+    {
+        return count - 1;
+    }
 }

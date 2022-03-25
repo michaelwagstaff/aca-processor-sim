@@ -102,6 +102,8 @@ public class DecodeUnit
                 return new LoadI(reg1, Int32.Parse(op2));
             case "LoadR":
                 return new LoadR(reg1, reg2);
+            case "IndexedLoad":
+                return new IndexedLoad(reg1, reg2, reg3);
             case "MarkAvailable":
                 return new MarkAvailable(reg1);
             case "Multiply":

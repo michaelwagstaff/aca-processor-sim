@@ -2,7 +2,7 @@ namespace ProcessorSim.HardwareResources;
 
 public class FetchUnit
 {
-    public int fetch(Resources resources, bool verbose=true)
+    public (int, bool) fetch(Resources resources, bool verbose=true)
     {
         try
         {
@@ -19,15 +19,19 @@ public class FetchUnit
             */
             if (verbose)
                 Console.WriteLine(resources.pc.getValue());
+            string instruction = resources.instructionMemory[resources.pc.getValue()].getInstruction();
             resources.registers[registerIndex]
-                .setInstruction(resources.instructionMemory[resources.pc.getValue()].getInstruction());
+                .setInstruction(instruction);
             resources.registers[registerIndex].available = false;
             resources.pc.setValue(resources.pc.getValue() + 1);
-            return registerIndex;
+            string instructionType = instruction.Split(" ")[0];
+            string[] stringMatches = new[] {"Load", "Compare", "Copy", "Add", "Subtract", "Divide", "Multiply"};
+            bool newArchitecturalRegisterNeeded = stringMatches.Any(s=>instructionType.Contains(s));
+            return (registerIndex, newArchitecturalRegisterNeeded);
         }
-        catch (IndexOutOfRangeException)
+        catch (Exception e)
         {
-            return -1;
+            return (-1, false);
         }
     }
 }

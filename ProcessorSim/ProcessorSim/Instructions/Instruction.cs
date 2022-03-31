@@ -24,5 +24,4 @@ public interface Instruction
 
         return val;
     }
-    
 }

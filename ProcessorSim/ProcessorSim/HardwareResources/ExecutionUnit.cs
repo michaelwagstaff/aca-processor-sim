@@ -25,6 +25,8 @@ public class ExecutionUnit
             Console.WriteLine("Executing Instruction: {0}", instruction);
         if(instruction.GetType().Name != "Blank")
             resources.monitor.incrementInsructionsExecuted();
+        Register actualTargetRegister =
+            resources.registerFile.getPhysicalRegister(instruction.registerFile, instruction.targetRegister);
         if (instruction.executionType == ExecutionTypes.Branch)
             result = instruction.execute(resources);
         else if (instruction.executionType == ExecutionTypes.ComplexArithmetic)
@@ -47,8 +49,8 @@ public class ExecutionUnit
         }
         else
             instruction.execute(resources);
-        if (instruction.targetRegister != null)
-            resources.dataHazards[instruction.targetRegister] = true;
+        if (actualTargetRegister != null)
+            resources.dataHazards[actualTargetRegister] = true;
         if (instruction.GetType().Name != "Blank")
         {
             if (instruction.GetType().Name == "ComplexArithmetic")

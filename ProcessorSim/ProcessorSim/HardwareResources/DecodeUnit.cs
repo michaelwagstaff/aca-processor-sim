@@ -10,7 +10,7 @@ public class DecodeUnit
     public DecodeUnit()
     {
     }
-    public (Instruction, List<Register>) decode(Resources resources, int? instructionRegister)
+    public (Instruction, List<Register>) decode(Resources resources, int? instructionRegister, bool newRegisterNeeded)
     {
         if (instructionRegister == null)
             return (null, null);
@@ -34,8 +34,9 @@ public class DecodeUnit
             try
             {
                 reg1 = resources.registers[Int32.Parse(op1.Substring(1))];
-                if(resources.dataHazards[reg1])
-                    unclearedDependencies.Add(reg1);
+                if(newRegisterNeeded)
+                    resources.registerFile.addFile(reg1);
+                reg1 = resources.registerFile.getPhysicalRegister(resources.registerFile.getCurrentFile(), reg1);
             }
             catch { }
         }
@@ -46,8 +47,7 @@ public class DecodeUnit
             try
             {
                 reg2 = resources.registers[Int32.Parse(op2.Substring(1))];
-                if(resources.dataHazards[reg2])
-                    unclearedDependencies.Add(reg2);
+                reg2 = resources.registerFile.getPhysicalRegister(resources.registerFile.getCurrentFile(), reg2);
             }
             catch { }
         }
@@ -59,6 +59,7 @@ public class DecodeUnit
             try
             {
                 reg3 = resources.registers[Int32.Parse(op3.Substring(1))];
+                reg3 = resources.registerFile.getPhysicalRegister(resources.registerFile.getCurrentFile(), reg3);
             }
             catch
             {
@@ -70,7 +71,7 @@ public class DecodeUnit
         if (instruction.GetType() == typeof(Load) || instruction.GetType() == typeof(IndexedLoad) || 
             instruction.GetType() == typeof(LoadI) || instruction.GetType() == typeof(LoadR))
         {
-            resources.registerFile.addFile(reg1);
+            
         }
         instruction.registerFile = resources.registerFile.getCurrentFile();
         try

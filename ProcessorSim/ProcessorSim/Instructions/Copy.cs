@@ -10,7 +10,7 @@ public class Copy : Instruction
     public int registerFile { get; set; }
     private Register reg;
     private Register dest;
-    public Copy(Register register, Register destination)
+    public Copy(Register destination, Register register)
     {
         this.reg = register;
         this.dest = destination;

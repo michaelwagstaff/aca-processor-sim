@@ -32,7 +32,6 @@ public class MemoryUnit
 
                 if (instruction.targetRegister != null)
                 {
-                    Console.WriteLine(actualTargetRegister.getValue());
                     resources.forwardedResults[actualTargetRegister] = instruction.result;
                     resources.dataHazards[actualTargetRegister] = false;
                     resources.reservationStation.markRegisterUnblocked(actualTargetRegister);

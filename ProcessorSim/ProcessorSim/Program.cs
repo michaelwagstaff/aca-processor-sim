@@ -10,10 +10,12 @@ namespace ProcessorSim;
 class ProcessorSim
 {
     static int? instructionRegister;
+    static bool nextInstructionNeedsNewRegister;
     static bool verbose;
     public static void Main(string[] args)
     {
         verbose = false;
+        nextInstructionNeedsNewRegister = false;
         Resources resources = new Resources(32, 512, 1024, verbose);
         resources.setExecutionUnits(1,1,1,1);
         loadProgram(resources);
@@ -29,11 +31,11 @@ class ProcessorSim
     public static void loadProgram(Resources resources)
     {
         // StreamReader reader = new StreamReader(@"Programs/bubblesort.mpl");
-        StreamReader reader = new StreamReader(@"Programs/fact.mpl");
+        // StreamReader reader = new StreamReader(@"Programs/fact.mpl");
         // StreamReader reader = new StreamReader(@"Programs/fact-safe.mpl");
         // StreamReader reader = new StreamReader(@"Programs/gcd-original.mpl");
         // StreamReader reader = new StreamReader(@"Programs/vectoradd.mpl");
-        // StreamReader reader = new StreamReader(@"Programs/vectormult-safe.mpl");
+        StreamReader reader = new StreamReader(@"Programs/vectormult-safe.mpl");
         int i = 0;
         string line;
         while ((line = reader.ReadLine()) != null)
@@ -49,8 +51,9 @@ class ProcessorSim
         memory(resources);
         if (execute(resources) != 1) // If pipeline flush isn't occuring
         {
-            bool instructionDecoded = decode(resources, instructionRegister);
-            instructionRegister = fetch(resources);
+            bool instructionDecoded = decode(resources, instructionRegister, nextInstructionNeedsNewRegister);
+            
+            (instructionRegister, nextInstructionNeedsNewRegister) = fetch(resources);
             if (instructionRegister == -1)
             {
                 return false;
@@ -62,15 +65,15 @@ class ProcessorSim
         return true;
     }
 
-    public static int fetch(Resources resources)
+    public static (int, bool) fetch(Resources resources)
     {
         return resources.fetchUnits[0].fetch(resources, verbose);
     }
 
-    public static bool decode(Resources resources, int? instructionRegister)
+    public static bool decode(Resources resources, int? instructionRegister, bool newRegisterNeeded)
     {
         return resources.reservationStation.addItem(
-            resources.decodeUnits[0].decode(resources, instructionRegister));
+            resources.decodeUnits[0].decode(resources, instructionRegister, newRegisterNeeded));
     }
 
     public static int execute(Resources resources)

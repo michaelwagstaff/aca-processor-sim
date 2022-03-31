@@ -12,7 +12,16 @@ public class MemoryUnit
         if (instruction != null)
         {
             if (resources.verbose)
+            {
                 Console.WriteLine("Memory Access for Instruction {0}", instruction);
+                Console.WriteLine("Register File {0}", instruction.registerFile);
+                Console.WriteLine("Instruction to Execute: {0}", instruction);
+                Console.WriteLine("Logical Output Register: {0}", instruction.targetRegister);
+                Console.WriteLine("Actual Output Register: {0}",
+                    resources.registerFile.getPhysicalRegister(instruction.registerFile, instruction.targetRegister));
+            }
+            Register actualTargetRegister =
+                resources.registerFile.getPhysicalRegister(instruction.registerFile, instruction.targetRegister);
             if (instruction.executionType == ExecutionTypes.SimpleArithmetic)
             {
                 if (resources.verbose)
@@ -21,9 +30,13 @@ public class MemoryUnit
                         instruction, instruction.result);
                 }
 
-                resources.forwardedResults[instruction.targetRegister] = instruction.result;
-                resources.dataHazards[instruction.targetRegister] = false;
-                resources.reservationStation.markRegisterUnblocked(instruction.targetRegister);
+                if (instruction.targetRegister != null)
+                {
+                    Console.WriteLine(actualTargetRegister.getValue());
+                    resources.forwardedResults[actualTargetRegister] = instruction.result;
+                    resources.dataHazards[actualTargetRegister] = false;
+                    resources.reservationStation.markRegisterUnblocked(actualTargetRegister);
+                }
             }
             if (instruction.executionType == ExecutionTypes.LoadStore)
             {
@@ -37,9 +50,9 @@ public class MemoryUnit
                 {
                     // i.e. we're doing a load
                     // Do loads get forwarded here or do we have to wait until writeback??
-                    resources.forwardedResults[instruction.targetRegister] = instruction.result;
-                    resources.dataHazards[instruction.targetRegister] = false;
-                    resources.reservationStation.markRegisterUnblocked(instruction.targetRegister);
+                    resources.forwardedResults[actualTargetRegister] = instruction.result;
+                    resources.dataHazards[actualTargetRegister] = false;
+                    resources.reservationStation.markRegisterUnblocked(actualTargetRegister);
                 }
                 // Else do nothing until writeback?
             }

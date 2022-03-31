@@ -20,6 +20,7 @@ public class Resources
     public ReservationStation reservationStation;
     public Dictionary<ExecutionTypes, List<ExecutionUnit>> executionUnits;
     public Dictionary<Register, bool> dataHazards;
+    public RegisterFile registerFile;
     public Instruction instructionWaitingMemory;
     public MemoryUnit memoryUnit;
     public Dictionary<Register, int?> forwardedResults;
@@ -53,6 +54,7 @@ public class Resources
         fetchUnits = new List<FetchUnit>();
         decodeUnits = new List<DecodeUnit>();
         dataHazards = new Dictionary<Register, bool>();
+        registerFile = new RegisterFile(this);
         reservationStation = new ReservationStation(ExecutionTypes.General, 1);
         instructionWaitingMemory = null;
         forwardedResults = new Dictionary<Register, int?>();

@@ -59,8 +59,6 @@ public class DecodeUnit
             try
             {
                 reg3 = resources.registers[Int32.Parse(op3.Substring(1))];
-                if (resources.dataHazards[reg3])
-                    unclearedDependencies.Add(reg3);
             }
             catch
             {
@@ -69,6 +67,30 @@ public class DecodeUnit
         catch
         { }
         Instruction instruction = findInstruction(opCode, op1, op2, op3, reg1, reg2, reg3);
+        if (instruction.GetType() == typeof(Load) || instruction.GetType() == typeof(IndexedLoad) || 
+            instruction.GetType() == typeof(LoadI) || instruction.GetType() == typeof(LoadR))
+        {
+            resources.registerFile.addFile(reg1);
+        }
+        instruction.registerFile = resources.registerFile.getCurrentFile();
+        try
+        {
+            if (resources.dataHazards[resources.registerFile.getPhysicalRegister(instruction.registerFile, reg1)])
+                unclearedDependencies.Add(reg1);
+        } catch {}
+
+        try
+        {
+            if (resources.dataHazards[resources.registerFile.getPhysicalRegister(instruction.registerFile, reg2)])
+                unclearedDependencies.Add(reg2);
+        } catch {}
+
+        try
+        {
+            if (resources.dataHazards[resources.registerFile.getPhysicalRegister(instruction.registerFile, reg3)])
+                unclearedDependencies.Add(reg3);
+        } catch {}
+
         return (instruction, unclearedDependencies);
     }
 

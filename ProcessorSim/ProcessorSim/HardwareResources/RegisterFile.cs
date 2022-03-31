@@ -2,7 +2,7 @@ namespace ProcessorSim.HardwareResources;
 
 public class RegisterFile
 {
-    private Dictionary<int, Dictionary<int, (Register, int)>> internalFile;
+    private Dictionary<int, Dictionary<Register, (Register, int)>> internalFile;
     // Int represents which mapping we're using to allow r1 to be mapped multiple times for instructions executing simultaneously
     // This int then provides the real current dictionary, types yet to be firmly decided, key is register val user included in code
     // The result of this dictionary mapping is a tuple, saying what physical register we use as well as what data dependency we have.
@@ -13,22 +13,49 @@ public class RegisterFile
     
     public RegisterFile(Resources resources)
     {
-        this.internalFile = new Dictionary<int, Dictionary<int, (Register, int)>>();
+        this.internalFile = new Dictionary<int, Dictionary<Register, (Register, int)>>();
         this.resources = resources;
     }
 
-    public int addFile(int logicalRegister)
+    public int addFile(Register logicalRegister)
     {
-        this.internalFile[count] = new Dictionary<int, (Register, int)>();
-        Register newReg = this.resources.registers[logicalRegister]; // Temporarily don't do any re-assigning
+        this.internalFile[count] = new Dictionary<Register, (Register, int)>();
+        if (count != 0)
+        {
+            foreach (KeyValuePair<Register, (Register, int)> registerMapping in this.internalFile[count - 1])
+            {
+                this.internalFile[count][registerMapping.Key] = registerMapping.Value;
+            }
+        }
+
+        Register newReg = logicalRegister; // Temporarily don't do any re-assigning
         this.internalFile[count][logicalRegister] = (newReg, -1); // Use -1 if we use an immediate load
         count++;
         return count - 1;
     }
 
-    public Register getPhysicalRegister(int fileNum, int logicalRegister)
+    public Dictionary<Register, (Register, int)> getFile(int index)
     {
-        return this.internalFile[fileNum][logicalRegister].Item1;
+        try
+        {
+            return this.internalFile[index];
+        }
+        catch (Exception e)
+        {
+            return null;
+        } 
+    }
+
+    public Register getPhysicalRegister(int fileNum, Register logicalRegister)
+    {
+        try
+        {
+            return this.internalFile[fileNum][logicalRegister].Item1;
+        }
+        catch
+        {
+            return null;
+        }
     }
 
     public int getCurrentFile()

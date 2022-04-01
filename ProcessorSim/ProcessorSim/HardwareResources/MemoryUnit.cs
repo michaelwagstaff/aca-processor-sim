@@ -6,9 +6,8 @@ namespace ProcessorSim.HardwareResources;
 
 public class MemoryUnit
 {
-    public bool memory(Resources resources)
+    public bool memory(Resources resources, Instruction instruction)
     {
-        Instruction instruction = resources.instructionWaitingMemory;
         if (instruction != null)
         {
             if (resources.verbose)
@@ -58,8 +57,8 @@ public class MemoryUnit
                 }
                 // Else do nothing until writeback?
             }
-            resources.instructionWaitingWriteback = instruction;
-            resources.instructionWaitingMemory = null;
+            resources.instructionsWaitingWriteback.Add(instruction);
+            resources.instructionsWaitingMemory.Remove(instruction);
         }
 
         return true;

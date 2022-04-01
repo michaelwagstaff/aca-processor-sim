@@ -12,11 +12,13 @@ class ProcessorSim
     static int? instructionRegister;
     static bool nextInstructionNeedsNewRegister;
     static bool verbose;
+    static int superscalarCount;
     public static void Main(string[] args)
     {
-        verbose = false;
+        verbose = true;
         nextInstructionNeedsNewRegister = false;
-        Resources resources = new Resources(32, 512, 1024, verbose);
+        superscalarCount = 2;
+        Resources resources = new Resources(32, 512, 1024, verbose, superscalarCount);
         resources.setExecutionUnits(1,1,1,1);
         loadProgram(resources);
         instructionRegister = null;
@@ -54,9 +56,9 @@ class ProcessorSim
         memory(resources);
         if (execute(resources) != 1) // If pipeline flush isn't occuring
         {
-            bool instructionDecoded = decode(resources, instructionRegister, nextInstructionNeedsNewRegister);
+            bool haltDecoding = decode(resources); // TODO: Improve this
             
-            (instructionRegister, nextInstructionNeedsNewRegister) = fetch(resources);
+            fetch(resources);
             if (instructionRegister == -1)
             {
                 return false;
@@ -68,22 +70,41 @@ class ProcessorSim
         return true;
     }
 
-    public static (int, bool) fetch(Resources resources)
+    public static void fetch(Resources resources)
     {
-        return resources.fetchUnits[0].fetch(resources, verbose);
+        while (resources.instructionsWaitingDecode.Count < superscalarCount)
+        {
+            resources.instructionsWaitingDecode.Add(resources.fetchUnits[0].fetch(resources, verbose));
+        }
     }
 
-    public static bool decode(Resources resources, int? instructionRegister, bool newRegisterNeeded)
+    public static bool decode(Resources resources)
     {
-        return resources.reservationStation.addItem(
-            resources.decodeUnits[0].decode(resources, instructionRegister, newRegisterNeeded));
+        // Returns true if we need to halt.
+        foreach ((int, (bool, bool)) instruction in resources.instructionsWaitingDecode.ToArray())
+        {
+            int? instructionRegister = instruction.Item1;
+            bool newRegisterNeeded = instruction.Item2.Item1;
+            bool branch = instruction.Item2.Item2;
+            bool result = resources.reservationStation.addItem(resources.decodeUnits[0].decode(resources, instructionRegister, newRegisterNeeded));
+            resources.instructionsWaitingDecode.Remove(instruction);
+            if (branch || !result)
+                return true;
+        }
+
+        return false;
     }
 
     public static int execute(Resources resources)
     {
         int returnVal = 0;
-        if(verbose)
+        if (verbose)
+        {
             Console.WriteLine("Execution Debug:");
+            Console.WriteLine("  Initial Reservation Station State:");
+            resources.reservationStation.printContents();
+        }
+
         //try
         //{
             foreach (ExecutionTypes executionType in Enum.GetValues(typeof(ExecutionTypes)))
@@ -141,13 +162,22 @@ class ProcessorSim
     {
         if(verbose)
             Console.WriteLine("Memory Debug:");
-        resources.memoryUnit.memory(resources);
+        int count = resources.instructionsWaitingMemory.Count > superscalarCount ? superscalarCount : resources.instructionsWaitingMemory.Count;
+        for (int i = 0; i < count; i++)
+        {
+            if (resources.instructionsWaitingMemory[i] != null)
+                resources.memoryUnit.memory(resources, resources.instructionsWaitingMemory[i]);
+        }
     }
     public static void writeback(Resources resources)
     {
         if(verbose)
             Console.WriteLine("Writeback Debug:");
-        if(resources.instructionWaitingWriteback != null)
-            resources.writebackUnit.writeback(resources, resources.instructionWaitingWriteback);
+        int count = resources.instructionsWaitingWriteback.Count > superscalarCount ? superscalarCount : resources.instructionsWaitingWriteback.Count;
+        for (int i = 0; i < count; i++)
+        {
+            if (resources.instructionsWaitingWriteback[i] != null)
+                resources.writebackUnit.writeback(resources, resources.instructionsWaitingWriteback[i]);
+        }
     }
 }

@@ -2,7 +2,7 @@ namespace ProcessorSim.HardwareResources;
 
 public class FetchUnit
 {
-    public (int, bool) fetch(Resources resources, bool verbose=true)
+    public (int, (bool, bool)) fetch(Resources resources, bool verbose=true)
     {
         try
         {
@@ -30,11 +30,12 @@ public class FetchUnit
             string instructionType = instruction.Split(" ")[0];
             string[] stringMatches = new[] {"Load", "Compare", "Copy", "Add", "Subtract", "Divide", "Multiply", "Not"};
             bool newArchitecturalRegisterNeeded = stringMatches.Any(s=>instructionType.Contains(s));
-            return (registerIndex, newArchitecturalRegisterNeeded);
+            bool possibleBranch = instructionType.Contains("Branch");
+            return (registerIndex, (newArchitecturalRegisterNeeded, possibleBranch));
         }
         catch (Exception e)
         {
-            return (-1, false);
+            return (-1, (false, false));
         }
     }
 }

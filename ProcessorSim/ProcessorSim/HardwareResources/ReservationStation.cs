@@ -46,7 +46,7 @@ public class ReservationStation
     {
         for (int i = 0; i < size; i++)
         {
-            if (this.internalArray[i].hasType(executionType))
+            if (this.internalArray[i].hasType(executionType) && this.internalArray[i].isUnblocked)
             {
                 return this.internalArray[i].removeItem();
             }
@@ -69,6 +69,18 @@ public class ReservationStation
             }
         }
         return true;
+    }
+
+    public void printContents()
+    {
+        for (int i = 0; i < internalArray.Length; i++)
+        {
+            ReservationStationSlot slot = internalArray[i];
+            if (!slot.isEmpty)
+            {
+                Console.WriteLine("    Slot {0}: {1}, blocked: {2}", i, slot.instructionObject.Item1, !slot.isUnblocked);
+            }
+        }
     }
 
     public bool flush()

@@ -35,7 +35,7 @@ public class WritebackUnit
             }
         }
 
-        resources.instructionWaitingWriteback = null;
+        resources.instructionsWaitingWriteback.Remove(instruction);
         return true;
     }
 }

@@ -33,6 +33,7 @@ public class ReservationStationSlot
         Instruction instruction = this.instructionObject.Item1;
         this.instructionObject = (null, null);
         this.isEmpty = true;
+        this.isUnblocked = true;
         return instruction;
     }
 

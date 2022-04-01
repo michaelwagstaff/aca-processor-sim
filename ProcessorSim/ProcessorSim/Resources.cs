@@ -16,15 +16,16 @@ public class Resources
     public MemorySlot[] dataMemory;
     
     public List<FetchUnit> fetchUnits;
+    public List<(int, (bool, bool))> instructionsWaitingDecode;
     public List<DecodeUnit> decodeUnits;
     public ReservationStation reservationStation;
     public Dictionary<ExecutionTypes, List<ExecutionUnit>> executionUnits;
     public Dictionary<Register, bool> dataHazards;
     public RegisterFile registerFile;
-    public Instruction instructionWaitingMemory;
+    public List<Instruction> instructionsWaitingMemory;
     public MemoryUnit memoryUnit;
     public Dictionary<Register, int?> forwardedResults;
-    public Instruction instructionWaitingWriteback;
+    public List<Instruction> instructionsWaitingWriteback;
     public WritebackUnit writebackUnit;
     
     public HardwareResources.Monitor monitor;
@@ -53,11 +54,12 @@ public class Resources
 
         monitor = new HardwareResources.Monitor();
         fetchUnits = new List<FetchUnit>();
+        instructionsWaitingDecode = new List<(int, (bool, bool))>();
         decodeUnits = new List<DecodeUnit>();
         dataHazards = new Dictionary<Register, bool>();
         registerFile = new RegisterFile(this);
-        reservationStation = new ReservationStation(ExecutionTypes.General, 1);
-        instructionWaitingMemory = null;
+        reservationStation = new ReservationStation(ExecutionTypes.General, 16);
+        instructionsWaitingMemory = new List<Instruction>();
         forwardedResults = new Dictionary<Register, int?>();
         memoryUnit = new MemoryUnit();
         writebackUnit = new WritebackUnit();
@@ -66,7 +68,8 @@ public class Resources
             dataHazards[registers[i]] = false;
             forwardedResults[registers[i]] = null;
         }
-        instructionWaitingWriteback = null;
+
+        instructionsWaitingWriteback = new List<Instruction>();
         for (int i = 0; i < superscalarCount; i++)
         {
             fetchUnits.Add(new FetchUnit());

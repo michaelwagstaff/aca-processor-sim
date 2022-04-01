@@ -11,11 +11,11 @@ public class Subtract : Instruction
     public int result { get; set; }
     public int registerFile { get; set; }
     private Register reg1, reg2;
-    public Subtract(Register register1, Register register2)
+    public Subtract(Register target, Register register1, Register register2)
     {
         reg1 = register1;
         reg2 = register2;
-        targetRegister = register1;
+        targetRegister = target;
         this.executionType = ExecutionTypes.SimpleArithmetic;
     }
     public bool execute(Resources resources)
@@ -25,7 +25,6 @@ public class Subtract : Instruction
         int val2 = instruction.getVal(resources, reg2);
 
         this.result = val1 - val2;
-        reg1.setValue(reg1.getValue() - reg2.getValue());
         return true;
     }
 }

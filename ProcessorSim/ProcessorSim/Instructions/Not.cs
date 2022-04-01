@@ -10,10 +10,10 @@ public class Not : Instruction
     public int result { get; set; }
     public int registerFile { get; set; }
     private Register reg;
-    public Not(Register reg)
+    public Not(Register target, Register reg)
     {
         this.reg = reg;
-        this.targetRegister = reg;
+        this.targetRegister = target;
         this.executionType = ExecutionTypes.SimpleArithmetic;
     }
 

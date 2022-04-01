@@ -12,11 +12,11 @@ public class Add : Instruction
     public int registerFile { get; set; }
     private Register reg1, reg2;
     
-    public Add(Register register1, Register register2)
+    public Add(Register target, Register register1, Register register2)
     {
         reg1 = register1;
         reg2 = register2;
-        this.targetRegister = reg1;
+        this.targetRegister = target;
         this.executionType = ExecutionTypes.SimpleArithmetic;
     }
     public bool execute(Resources resources)

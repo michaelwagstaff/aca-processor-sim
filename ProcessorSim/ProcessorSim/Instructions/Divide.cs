@@ -11,10 +11,11 @@ public class Divide : Instruction
     public int result { get; set; }
     public int registerFile { get; set; }
     private Register reg1, reg2;
-    public Divide(Register register1, Register register2)
+    public Divide(Register target, Register register1, Register register2)
     {
         reg1 = register1;
         reg2 = register2;
+        this.targetRegister = target;
         this.executionType = ExecutionTypes.ComplexArithmetic;
     }
     public bool execute(Resources resources)
@@ -22,7 +23,7 @@ public class Divide : Instruction
         Instruction instruction = (Instruction) this;
         int val1 = instruction.getVal(resources, reg1);
         int val2 = instruction.getVal(resources, reg2);
-        reg1.setValue(val1 / val2);
+        targetRegister.setValue(val1 / val2);
         return true;
     }
 }

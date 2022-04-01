@@ -27,6 +27,7 @@ public class DecodeUnit
         Register reg1 = null;
         Register reg2 = null;
         Register reg3 = null;
+        Register oldReg1 = null;
         List<Register> unclearedDependencies = new List<Register>();
         try
         {
@@ -34,6 +35,7 @@ public class DecodeUnit
             try
             {
                 reg1 = resources.registers[Int32.Parse(op1.Substring(1))];
+                oldReg1 = resources.registerFile.getPhysicalRegister(resources.registerFile.getCurrentFile(), reg1);
                 if(newRegisterNeeded)
                     resources.registerFile.addFile(reg1);
                 reg1 = resources.registerFile.getPhysicalRegister(resources.registerFile.getCurrentFile(), reg1);
@@ -67,7 +69,7 @@ public class DecodeUnit
         }
         catch
         { }
-        Instruction instruction = findInstruction(opCode, op1, op2, op3, reg1, reg2, reg3);
+        Instruction instruction = findInstruction(opCode, op1, op2, op3, reg1, reg2, reg3, oldReg1);
         instruction.registerFile = resources.registerFile.getCurrentFile();
         if (resources.verbose)
         {
@@ -96,12 +98,12 @@ public class DecodeUnit
         return (instruction, unclearedDependencies);
     }
 
-    private Instruction findInstruction(string opCode, string op1, string op2, string op3, Register reg1, Register reg2, Register reg3)
+    private Instruction findInstruction(string opCode, string op1, string op2, string op3, Register reg1, Register reg2, Register reg3, Register oldReg1)
     {
         switch(opCode)
         {
             case "Add":
-                return new Add(reg1, reg2);
+                return new Add(reg1, oldReg1, reg2);
             case "Blank":
                 return new Blank();
             case "Branch":
@@ -117,7 +119,7 @@ public class DecodeUnit
             case "Copy":
                 return new Copy(reg1, reg2);
             case "Divide":
-                return new Divide(reg1, reg2);
+                return new Divide(reg1, oldReg1, reg2);
             case "End":
                 return new End();
             case "Load":
@@ -131,9 +133,9 @@ public class DecodeUnit
             case "MarkAvailable":
                 return new MarkAvailable(reg1);
             case "Multiply":
-                return new Multiply(reg1, reg2);
+                return new Multiply(reg1, oldReg1, reg2);
             case "Not":
-                return new Not(reg1);
+                return new Not(reg1, oldReg1);
             case "Print":
                 return new Print(reg1);
             case "Store":
@@ -141,7 +143,7 @@ public class DecodeUnit
             case "StoreR":
                 return new StoreR(reg1, reg2);
             case "Subtract":
-                return new Subtract(reg1, reg2);
+                return new Subtract(reg1, oldReg1, reg2);
         }
         return new Blank();
     }

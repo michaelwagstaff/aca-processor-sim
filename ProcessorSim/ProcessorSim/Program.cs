@@ -14,28 +14,31 @@ class ProcessorSim
     static bool verbose;
     public static void Main(string[] args)
     {
-        verbose = true;
+        verbose = false;
         nextInstructionNeedsNewRegister = false;
         Resources resources = new Resources(32, 512, 1024, verbose);
         resources.setExecutionUnits(1,1,1,1);
         loadProgram(resources);
         instructionRegister = null;
-        bool contFlag = true;
-        while (contFlag)
+        bool fetchSuccessful = true;
+        int fetchFailedCount = 0;
+        while (fetchFailedCount < 2)
         {
-            contFlag = tick(resources);
+            fetchSuccessful = tick(resources);
+            if (!fetchSuccessful)
+                fetchFailedCount++;
             Thread.Sleep(10);
         }
     }
 
     public static void loadProgram(Resources resources)
     {
-        // StreamReader reader = new StreamReader(@"Programs/bubblesort.mpl");
+        StreamReader reader = new StreamReader(@"Programs/bubblesort.mpl");
         // StreamReader reader = new StreamReader(@"Programs/fact.mpl");
         // StreamReader reader = new StreamReader(@"Programs/fact-safe.mpl");
         // StreamReader reader = new StreamReader(@"Programs/gcd-original.mpl");
         // StreamReader reader = new StreamReader(@"Programs/vectoradd.mpl");
-        StreamReader reader = new StreamReader(@"Programs/vectormult-safe.mpl");
+        // StreamReader reader = new StreamReader(@"Programs/vectormult-safe.mpl");
         int i = 0;
         string line;
         while ((line = reader.ReadLine()) != null)

@@ -17,7 +17,7 @@ class ProcessorSim
     {
         verbose = true;
         nextInstructionNeedsNewRegister = false;
-        superscalarCount = 2;
+        superscalarCount = 1;
         Resources resources = new Resources(32, 512, 1024, verbose, superscalarCount);
         resources.setExecutionUnits(1,1,1,1);
         loadProgram(resources);

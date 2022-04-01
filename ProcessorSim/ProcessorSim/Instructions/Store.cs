@@ -2,11 +2,14 @@ using ProcessorSim.Enums;
 using ProcessorSim.HardwareResources;
 namespace ProcessorSim.Instructions;
 
-public class Store : Instruction
+public class Store : StoreInstruction
 {
     public ExecutionTypes executionType { get; set; }
+    public Register targetRegister { get; set; }
+    public int result { get; set; }
+    public int registerFile { get; set; }
     private Register reg;
-    private int memoryIndex;
+    public int memoryIndex { get; set; }
     public Store(Register register, int memoryIndex)
     {
         this.reg = register;
@@ -15,7 +18,8 @@ public class Store : Instruction
     }
     public bool execute(Resources resources)
     {
-        resources.dataMemory[this.memoryIndex].setValue(this.reg.getValue());
+        Instruction instruction = (Instruction) this;
+        result = instruction.getVal(resources, reg);
         return true;
     }
 }

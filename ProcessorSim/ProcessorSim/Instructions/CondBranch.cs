@@ -6,6 +6,9 @@ namespace ProcessorSim.Instructions;
 public class CondBranch : Instruction
 {
     public ExecutionTypes executionType { get; set; }
+    public Register targetRegister { get; set; }
+    public int result { get; set; }
+    public int registerFile { get; set; }
     private Register flag;
     private Register newAddress;
 
@@ -18,7 +21,9 @@ public class CondBranch : Instruction
 
     public bool execute(Resources resources)
     {
-        if (this.flag.getValue() == 1)
+        Instruction instruction = (Instruction) this;
+        int flagVal = instruction.getVal(resources, flag);
+        if (flagVal == 1)
         {
             resources.pc.setValue(newAddress.getValue() - 1);
             return true;

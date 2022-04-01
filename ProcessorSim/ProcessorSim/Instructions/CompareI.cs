@@ -5,19 +5,24 @@ namespace ProcessorSim.Instructions;
 public class CompareI : Instruction
 {
     public ExecutionTypes executionType { get; set; }
-    private Register flag, reg1;
+    public Register targetRegister { get; set; }
+    public int result { get; set; }
+    public int registerFile { get; set; }
+    private Register reg1;
     private int value;
     public CompareI(Register flag, Register register1, int value)
     {
-        this.flag = flag;
+        this.targetRegister = flag;
         this.reg1 = register1;
         this.value = value;
-        this.executionType = ExecutionTypes.Arithmetic;
+        this.executionType = ExecutionTypes.SimpleArithmetic;
     }
 
     public bool execute(Resources resources)
     {
-        this.flag.setValue((this.reg1.getValue() == value) ? 1 : 0);
+        Instruction instruction = (Instruction) this;
+        int val1 = instruction.getVal(resources, reg1);
+        this.result = (val1 == value) ? 1 : 0;
         return true;
     }
 }

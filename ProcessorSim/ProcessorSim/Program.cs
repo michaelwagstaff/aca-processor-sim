@@ -10,19 +10,25 @@ namespace ProcessorSim;
 class ProcessorSim
 {
     static int? instructionRegister;
-    static Instruction? decodedInstruction;
+    static bool nextInstructionNeedsNewRegister;
     static bool verbose;
+    static int superscalarCount;
     public static void Main(string[] args)
     {
-        verbose = false;
-        Resources resources = new Resources(32, 512, 1024);
+        verbose = true;
+        nextInstructionNeedsNewRegister = false;
+        superscalarCount = 1;
+        Resources resources = new Resources(32, 512, 1024, verbose, superscalarCount);
         resources.setExecutionUnits(1,1,1,1);
         loadProgram(resources);
         instructionRegister = null;
-        decodedInstruction = null;
-        while (true)
+        bool fetchSuccessful = true;
+        int fetchFailedCount = 0;
+        while (fetchFailedCount < 2)
         {
-            tick(resources);
+            fetchSuccessful = tick(resources);
+            if (!fetchSuccessful)
+                fetchFailedCount++;
             Thread.Sleep(10);
         }
     }
@@ -31,8 +37,10 @@ class ProcessorSim
     {
         StreamReader reader = new StreamReader(@"Programs/bubblesort.mpl");
         // StreamReader reader = new StreamReader(@"Programs/fact.mpl");
+        // StreamReader reader = new StreamReader(@"Programs/fact-safe.mpl");
         // StreamReader reader = new StreamReader(@"Programs/gcd-original.mpl");
         // StreamReader reader = new StreamReader(@"Programs/vectoradd.mpl");
+        // StreamReader reader = new StreamReader(@"Programs/vectormult-safe.mpl");
         int i = 0;
         string line;
         while ((line = reader.ReadLine()) != null)
@@ -42,72 +50,134 @@ class ProcessorSim
         }
         resources.pc.setValue(0);
     }
-    public static void tick(Resources resources)
+    public static bool tick(Resources resources)
     {
-        if (execute(resources, decodedInstruction) != 1) // If pipeline flush isn't occuring
+        writeback(resources);
+        memory(resources);
+        if (execute(resources) != 1) // If pipeline flush isn't occuring
         {
-            decodedInstruction = decode(resources, instructionRegister);
-            instructionRegister = fetch(resources);
+            bool haltDecoding = decode(resources); // TODO: Improve this
+            
+            fetch(resources);
+            if (instructionRegister == -1)
+            {
+                return false;
+            }
         }
         resources.monitor.incrementCyclesTaken();
         if(verbose)
             Console.WriteLine("Tick");
+        return true;
     }
 
-    public static int fetch(Resources resources)
+    public static void fetch(Resources resources)
     {
-        return resources.fetchUnits[0].fetch(resources, verbose);
+        while (resources.instructionsWaitingDecode.Count < superscalarCount)
+        {
+            resources.instructionsWaitingDecode.Add(resources.fetchUnits[0].fetch(resources, verbose));
+        }
     }
 
-    public static Instruction decode(Resources resources, int? instructionRegister)
+    public static bool decode(Resources resources)
     {
-        return resources.decodeUnits[0].decode(resources, instructionRegister);
+        // Returns true if we need to halt.
+        foreach ((int, (bool, bool)) instruction in resources.instructionsWaitingDecode.ToArray())
+        {
+            int? instructionRegister = instruction.Item1;
+            bool newRegisterNeeded = instruction.Item2.Item1;
+            bool branch = instruction.Item2.Item2;
+            bool result = resources.reservationStation.addItem(resources.decodeUnits[0].decode(resources, instructionRegister, newRegisterNeeded));
+            resources.instructionsWaitingDecode.Remove(instruction);
+            if (branch || !result)
+                return true;
+        }
+
+        return false;
     }
 
-    public static int execute(Resources resources, Instruction? instruction)
+    public static int execute(Resources resources)
     {
         int returnVal = 0;
-        try
+        if (verbose)
         {
-            if (instruction.executionType == ExecutionTypes.Branch)
-            {
-                bool pipelineFlush = (bool)resources.executionUnits[instruction.executionType][0].execute(resources, instruction);
-                if (pipelineFlush)
-                {
-                    instructionRegister = null;
-                    if (instructionRegister != null)
-                    {
-                        resources.registers[(int) instructionRegister].available = true;
-                        instructionRegister = null;
-                    }
+            Console.WriteLine("Execution Debug:");
+            Console.WriteLine("  Initial Reservation Station State:");
+            resources.reservationStation.printContents();
+        }
 
-                    decodedInstruction = null;
-                    if(verbose)
-                        Console.WriteLine("Branch -- Pipeline Flush");
-                    returnVal = 1;
+        //try
+        //{
+            foreach (ExecutionTypes executionType in Enum.GetValues(typeof(ExecutionTypes)))
+            {
+                if (resources.executionUnits.ContainsKey(executionType))
+                {
+                    if (resources.executionUnits[executionType][0].blocked)
+                    {
+                        resources.executionUnits[executionType][0].execute(resources);
+                    }
+                    else
+                    {
+                        if (executionType == ExecutionTypes.Branch)
+                        {
+                            bool? nullablePipelineFlush = resources.executionUnits[executionType][0]
+                                .execute(resources, resources.reservationStation.getItem(executionType));
+                            bool pipelineFlush = nullablePipelineFlush == null ? false : (bool) nullablePipelineFlush;
+                            // If null, then there is no pipeline flush
+                            if (pipelineFlush)
+                            {
+                                instructionRegister = null;
+                                if (instructionRegister != null)
+                                {
+                                    resources.registers[(int) instructionRegister].available = true;
+                                    instructionRegister = null;
+                                }
+
+                                resources.reservationStation.flush();
+                                if (verbose)
+                                    Console.WriteLine("Branch -- Pipeline Flush");
+                                returnVal = 1;
+                            }
+                        }
+                        else
+                        {
+                            resources.executionUnits[executionType][0]
+                                .execute(resources, resources.reservationStation.getItem(executionType));
+                        }
+                    }
                 }
             }
-            else
-                resources.executionUnits[instruction.executionType][0].execute(resources, instruction);
-            if(verbose)
-                Console.WriteLine(instruction.ToString());
-        }
+        /*}
+        
         catch (NullReferenceException)
         {
-            if(verbose)
+            if (verbose)
                 Console.WriteLine("Null Instruction in Pipeline");
             return -1;
-        }
+        }*/
 
         return returnVal;
     }
 
-    public static void memory(Resources resources, Instruction instruction)
+    public static void memory(Resources resources)
     {
-        
+        if(verbose)
+            Console.WriteLine("Memory Debug:");
+        int count = resources.instructionsWaitingMemory.Count > superscalarCount ? superscalarCount : resources.instructionsWaitingMemory.Count;
+        for (int i = 0; i < count; i++)
+        {
+            if (resources.instructionsWaitingMemory[i] != null)
+                resources.memoryUnit.memory(resources, resources.instructionsWaitingMemory[i]);
+        }
     }
-    public static void writeback(Resources resources, Instruction instruction)
+    public static void writeback(Resources resources)
     {
-        
+        if(verbose)
+            Console.WriteLine("Writeback Debug:");
+        int count = resources.instructionsWaitingWriteback.Count > superscalarCount ? superscalarCount : resources.instructionsWaitingWriteback.Count;
+        for (int i = 0; i < count; i++)
+        {
+            if (resources.instructionsWaitingWriteback[i] != null)
+                resources.writebackUnit.writeback(resources, resources.instructionsWaitingWriteback[i]);
+        }
     }
 }

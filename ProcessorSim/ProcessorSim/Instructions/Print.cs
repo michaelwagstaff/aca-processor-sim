@@ -6,6 +6,9 @@ namespace ProcessorSim.Instructions;
 public class Print : Instruction
 {
     public ExecutionTypes executionType { get; set; }
+    public Register targetRegister { get; set; }
+    public int result { get; set; }
+    public int registerFile { get; set; }
     private Register reg;
 
     public Print(Register register)
@@ -22,7 +25,9 @@ public class Print : Instruction
         }
         else
         {
-            Console.WriteLine(reg.getValue());
+            Instruction instruction = (Instruction) this;
+            int val = instruction.getVal(resources, reg);
+            Console.WriteLine(val);
         }
         return true;
     }

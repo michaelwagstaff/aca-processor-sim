@@ -18,14 +18,17 @@ public class FetchUnit
             }
             */
             if (verbose)
-                Console.WriteLine(resources.pc.getValue());
+            {
+                Console.WriteLine("Fetch Debug:");
+                Console.WriteLine("  PC Value: {0}", resources.pc.getValue());
+            }
             string instruction = resources.instructionMemory[resources.pc.getValue()].getInstruction();
             resources.registers[registerIndex]
                 .setInstruction(instruction);
             resources.registers[registerIndex].available = false;
             resources.pc.setValue(resources.pc.getValue() + 1);
             string instructionType = instruction.Split(" ")[0];
-            string[] stringMatches = new[] {"Load", "Compare", "Copy", "Add", "Subtract", "Divide", "Multiply"};
+            string[] stringMatches = new[] {"Load", "Compare", "Copy", "Add", "Subtract", "Divide", "Multiply", "Not"};
             bool newArchitecturalRegisterNeeded = stringMatches.Any(s=>instructionType.Contains(s));
             return (registerIndex, newArchitecturalRegisterNeeded);
         }

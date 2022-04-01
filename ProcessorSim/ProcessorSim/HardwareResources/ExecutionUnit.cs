@@ -22,7 +22,7 @@ public class ExecutionUnit
             instruction = currentInstruction;
         bool? result = null;
         if (resources.verbose)
-            Console.WriteLine("Executing Instruction: {0}", instruction);
+            Console.WriteLine("  Executing Instruction: {0}", instruction);
         if(instruction.GetType().Name != "Blank")
             resources.monitor.incrementInsructionsExecuted();
         Register actualTargetRegister =

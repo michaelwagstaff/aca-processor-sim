@@ -14,7 +14,7 @@ class ProcessorSim
     static bool verbose;
     public static void Main(string[] args)
     {
-        verbose = false;
+        verbose = true;
         nextInstructionNeedsNewRegister = false;
         Resources resources = new Resources(32, 512, 1024, verbose);
         resources.setExecutionUnits(1,1,1,1);
@@ -79,6 +79,8 @@ class ProcessorSim
     public static int execute(Resources resources)
     {
         int returnVal = 0;
+        if(verbose)
+            Console.WriteLine("Execution Debug:");
         //try
         //{
             foreach (ExecutionTypes executionType in Enum.GetValues(typeof(ExecutionTypes)))
@@ -112,8 +114,11 @@ class ProcessorSim
                                 returnVal = 1;
                             }
                         }
-                        resources.executionUnits[executionType][0]
-                            .execute(resources, resources.reservationStation.getItem(executionType));
+                        else
+                        {
+                            resources.executionUnits[executionType][0]
+                                .execute(resources, resources.reservationStation.getItem(executionType));
+                        }
                     }
                 }
             }
@@ -131,10 +136,14 @@ class ProcessorSim
 
     public static void memory(Resources resources)
     {
+        if(verbose)
+            Console.WriteLine("Memory Debug:");
         resources.memoryUnit.memory(resources);
     }
     public static void writeback(Resources resources)
     {
+        if(verbose)
+            Console.WriteLine("Writeback Debug:");
         if(resources.instructionWaitingWriteback != null)
             resources.writebackUnit.writeback(resources, resources.instructionWaitingWriteback);
     }

@@ -35,6 +35,7 @@ public class Resources
         for(int i = 0; i < registers.Length; i++)
         {
             registers[i] = new Register();
+            registers[i].index = i;
         }
         pc = registers[0];
         

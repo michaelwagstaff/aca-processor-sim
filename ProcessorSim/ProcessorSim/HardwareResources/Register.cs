@@ -8,6 +8,7 @@ public class Register
     private string instruction;
     public bool isInstruction;
     public bool available;
+    public int index;
     public Register()
     {
         available = true;

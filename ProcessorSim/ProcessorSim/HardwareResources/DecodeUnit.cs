@@ -68,27 +68,28 @@ public class DecodeUnit
         catch
         { }
         Instruction instruction = findInstruction(opCode, op1, op2, op3, reg1, reg2, reg3);
-        if (instruction.GetType() == typeof(Load) || instruction.GetType() == typeof(IndexedLoad) || 
-            instruction.GetType() == typeof(LoadI) || instruction.GetType() == typeof(LoadR))
-        {
-            
-        }
         instruction.registerFile = resources.registerFile.getCurrentFile();
+        if (resources.verbose)
+        {
+            Console.WriteLine("Decode Debug:");
+            Console.WriteLine("  {0}", rawInstruction);
+            resources.registerFile.printMapping();
+        }
         try
         {
-            if (resources.dataHazards[resources.registerFile.getPhysicalRegister(instruction.registerFile, reg1)])
+            if (resources.dataHazards[reg1])
                 unclearedDependencies.Add(reg1);
         } catch {}
 
         try
         {
-            if (resources.dataHazards[resources.registerFile.getPhysicalRegister(instruction.registerFile, reg2)])
+            if (resources.dataHazards[reg2])
                 unclearedDependencies.Add(reg2);
         } catch {}
 
         try
         {
-            if (resources.dataHazards[resources.registerFile.getPhysicalRegister(instruction.registerFile, reg3)])
+            if (resources.dataHazards[reg3])
                 unclearedDependencies.Add(reg3);
         } catch {}
 

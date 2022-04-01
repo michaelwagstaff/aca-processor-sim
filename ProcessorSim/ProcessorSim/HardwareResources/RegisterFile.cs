@@ -7,13 +7,19 @@ public class RegisterFile
     // This int then provides the real current dictionary, types yet to be firmly decided, key is register val user included in code
     // The result of this dictionary mapping is a tuple, saying what physical register we use as well as what data dependency we have.
     // This may be updated with more complex structs, but I very much hope to avoid this.
-    private Dictionary<Register, bool> availableRegisters;
+    private Queue<Register> availableRegisters;
     private Resources resources;
     private int count = 0;
     
     public RegisterFile(Resources resources)
     {
         this.internalFile = new Dictionary<int, Dictionary<Register, (Register, int)>>();
+        this.availableRegisters = new Queue<Register>();
+        for (int i = 1; i < resources.registers.Length - 1; i++)
+        {
+            // Starting at 1 to omit pc and ending at 30 to omit in flight instruction
+            this.availableRegisters.Enqueue(resources.registers[i]);
+        }
         this.resources = resources;
     }
 
@@ -28,7 +34,9 @@ public class RegisterFile
             }
         }
 
-        Register newReg = logicalRegister; // Temporarily don't do any re-assigning
+        Register newReg = this.availableRegisters.Dequeue(); // Temporarily don't do any re-assigning
+        if(this.internalFile[count].ContainsKey(logicalRegister))
+            this.availableRegisters.Enqueue(this.internalFile[count][logicalRegister].Item1);
         this.internalFile[count][logicalRegister] = (newReg, -1); // Use -1 if we use an immediate load
         count++;
         return count - 1;
@@ -61,5 +69,14 @@ public class RegisterFile
     public int getCurrentFile()
     {
         return count - 1;
+    }
+
+    public void printMapping()
+    {
+        Console.WriteLine("  Current Register Mappings");
+        foreach(KeyValuePair<Register, (Register, int)> registerMapping in this.internalFile[getCurrentFile()])
+        {
+            Console.WriteLine("    {0} |-> {1}", registerMapping.Key.index, registerMapping.Value.Item1.index);
+        }
     }
 }

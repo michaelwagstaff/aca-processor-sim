@@ -8,23 +8,23 @@ public class WritebackUnit
 {
     public bool writeback(Resources resources, Instruction instruction)
     {
-        Register actualTargetRegister =
-            resources.registerFile.getPhysicalRegister(instruction.registerFile, instruction.targetRegister);
-        if (instruction.executionType == ExecutionTypes.SimpleArithmetic && actualTargetRegister != null)
+        //Register actualTargetRegister =
+        //    resources.registerFile.getPhysicalRegister(instruction.registerFile, instruction.targetRegister);
+        if (instruction.executionType == ExecutionTypes.SimpleArithmetic && instruction.targetRegister != null)
         {
             if (resources.verbose)
             {
-                Console.WriteLine("Writeback stage for instruction {0}: saving result {1} into register {2}", instruction, instruction.result,
+                Console.WriteLine("  Instruction {0}: saving result {1} into register {2}", instruction, instruction.result,
                     instruction.targetRegister);
             }
-            actualTargetRegister.setValue(instruction.result);
+            instruction.targetRegister.setValue(instruction.result);
         }
         else if (instruction.executionType == ExecutionTypes.LoadStore)
         {
-            if (actualTargetRegister != null)
+            if (instruction.targetRegister != null)
             {
                 // Load operation
-                actualTargetRegister.setValue(instruction.result);
+                instruction.targetRegister.setValue(instruction.result);
                 // Depending on when we get result from memory unit may need to remove data hazard marker here
             }
             else

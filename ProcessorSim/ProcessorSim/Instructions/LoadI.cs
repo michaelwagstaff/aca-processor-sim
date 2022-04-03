@@ -13,6 +13,7 @@ public class LoadI : Instruction
     public LoadI(Register register, int value)
     {
         this.reg = register;
+        targetRegister = reg;
         this.value = value;
         this.executionType = ExecutionTypes.SimpleArithmetic;
         this.reg.available = false;
@@ -20,7 +21,6 @@ public class LoadI : Instruction
     public bool execute(Resources resources)
     {
         result = value;
-        targetRegister = reg;
         return true;
     }
 }

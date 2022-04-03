@@ -47,8 +47,6 @@ public class ExecutionUnit
         }
         else
             instruction.execute(resources);
-        if (instruction.targetRegister != null)
-            resources.dataHazards[instruction.targetRegister] = true;
         if (instruction.GetType().Name != "Blank")
         {
             if (instruction.GetType().Name == "ComplexArithmetic")

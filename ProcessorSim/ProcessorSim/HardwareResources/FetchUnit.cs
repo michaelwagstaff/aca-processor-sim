@@ -7,16 +7,11 @@ public class FetchUnit
         try
         {
             //bool emptyRegisterFound = false;
-            int registerIndex = 31;
-            /*
-            while (!emptyRegisterFound)
+            int registerIndex = 1;
+            if (!resources.registers[registerIndex].available)
             {
-                if (resources.registers[registerIndex].available)
-                    emptyRegisterFound = true;
-                else
-                    registerIndex++;
+                registerIndex++;
             }
-            */
             if (verbose)
             {
                 Console.WriteLine("Fetch Debug:");

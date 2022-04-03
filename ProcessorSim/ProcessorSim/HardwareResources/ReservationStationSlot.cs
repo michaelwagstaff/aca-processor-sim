@@ -6,7 +6,7 @@ namespace ProcessorSim.HardwareResources;
 public class ReservationStationSlot
 {
     public bool isEmpty;
-    public (Instruction, List<Register>) instructionObject;
+    public (Instruction, Dictionary<Register, int>) instructionObject;
     public bool isUnblocked;
 
     public ReservationStationSlot()
@@ -14,18 +14,33 @@ public class ReservationStationSlot
         this.instructionObject = (null, null);
         isEmpty = true;
     }
-    public bool addItem((Instruction, List<Register>) instruction)
+    public bool addItem((Instruction, Dictionary<Register, int>) instruction)
     {
         if (instruction != (null, null))
         {
             this.instructionObject = instruction;
-            if (instruction.Item2.Count == 0)
-                isUnblocked = true;
-            else
-                isUnblocked = false;
+            isUnblocked = true;
+            updateUnblocked();
             this.isEmpty = false;
         }
         return true;
+    }
+
+    public Dictionary<Register, int> getRegisterDict()
+    {
+        return instructionObject.Item2;
+    }
+    public void updateUnblocked()
+    {
+        isUnblocked = true;
+        foreach (KeyValuePair<Register, int> registerEntry in instructionObject.Item2)
+        {
+            if (registerEntry.Value > 0)
+            {
+                isUnblocked = false;
+                // Console.WriteLine("Blocked by register {0}", registerEntry.Key.index);
+            }
+        }
     }
 
     public Instruction removeItem()
@@ -42,5 +57,14 @@ public class ReservationStationSlot
         if (!this.isEmpty)
             return instructionObject.Item1.executionType == executionType;
         return false;
+    }
+
+    public void decrementRegisterCount(Register register)
+    {
+        if (instructionObject.Item2.Keys.Contains(register))
+        {
+            instructionObject.Item2[register]--;
+            updateUnblocked();
+        }
     }
 }

@@ -15,9 +15,9 @@ class ProcessorSim
     static int superscalarCount;
     public static void Main(string[] args)
     {
-        verbose = true;
+        verbose = false;
         nextInstructionNeedsNewRegister = false;
-        superscalarCount = 1;
+        superscalarCount = 2;
         Resources resources = new Resources(32, 512, 1024, verbose, superscalarCount);
         resources.setExecutionUnits(1,1,1,1);
         loadProgram(resources);
@@ -35,9 +35,9 @@ class ProcessorSim
 
     public static void loadProgram(Resources resources)
     {
-        StreamReader reader = new StreamReader(@"Programs/bubblesort.mpl");
+        // StreamReader reader = new StreamReader(@"Programs/bubblesort.mpl");
         // StreamReader reader = new StreamReader(@"Programs/fact.mpl");
-        // StreamReader reader = new StreamReader(@"Programs/fact-safe.mpl");
+        StreamReader reader = new StreamReader(@"Programs/fact-safe.mpl");
         // StreamReader reader = new StreamReader(@"Programs/gcd-original.mpl");
         // StreamReader reader = new StreamReader(@"Programs/vectoradd.mpl");
         // StreamReader reader = new StreamReader(@"Programs/vectormult-safe.mpl");
@@ -54,15 +54,25 @@ class ProcessorSim
     {
         writeback(resources);
         memory(resources);
-        if (execute(resources) != 1) // If pipeline flush isn't occuring
+        if (execute(resources) != 1 && !resources.reservationStation.hasType(ExecutionTypes.Branch)) // If pipeline flush isn't occuring
         {
-            bool haltDecoding = decode(resources); // TODO: Improve this
-            
-            fetch(resources);
+            bool haltPipeline = decode(resources); // TODO: Improve this
+            foreach ((int, (bool, bool)) instruction in resources.instructionsWaitingDecode)
+            {
+                if (instruction.Item2.Item2)
+                    haltPipeline = true;
+            }
+            if(!haltPipeline)
+                fetch(resources);
             if (instructionRegister == -1)
             {
                 return false;
             }
+        }
+        else if(verbose)
+        {
+            Console.WriteLine("Current Register Mapping:");
+            resources.registerFile.printMapping();
         }
         resources.monitor.incrementCyclesTaken();
         if(verbose)
@@ -81,7 +91,8 @@ class ProcessorSim
     public static bool decode(Resources resources)
     {
         // Returns true if we need to halt.
-        foreach ((int, (bool, bool)) instruction in resources.instructionsWaitingDecode.ToArray())
+        (int, (bool, bool))[] instructionArray = resources.instructionsWaitingDecode.ToArray();
+        foreach ((int, (bool, bool)) instruction in instructionArray)
         {
             int? instructionRegister = instruction.Item1;
             bool newRegisterNeeded = instruction.Item2.Item1;
@@ -132,7 +143,7 @@ class ProcessorSim
                                     instructionRegister = null;
                                 }
 
-                                resources.reservationStation.flush();
+                                resources.reservationStation.flush(resources);
                                 if (verbose)
                                     Console.WriteLine("Branch -- Pipeline Flush");
                                 returnVal = 1;
@@ -163,10 +174,11 @@ class ProcessorSim
         if(verbose)
             Console.WriteLine("Memory Debug:");
         int count = resources.instructionsWaitingMemory.Count > superscalarCount ? superscalarCount : resources.instructionsWaitingMemory.Count;
+        Instruction[] instructionsWaitingMemoryArray = resources.instructionsWaitingMemory.ToArray();
         for (int i = 0; i < count; i++)
         {
-            if (resources.instructionsWaitingMemory[i] != null)
-                resources.memoryUnit.memory(resources, resources.instructionsWaitingMemory[i]);
+            if (instructionsWaitingMemoryArray[i] != null)
+                resources.memoryUnit.memory(resources, instructionsWaitingMemoryArray[i]);
         }
     }
     public static void writeback(Resources resources)
@@ -174,10 +186,11 @@ class ProcessorSim
         if(verbose)
             Console.WriteLine("Writeback Debug:");
         int count = resources.instructionsWaitingWriteback.Count > superscalarCount ? superscalarCount : resources.instructionsWaitingWriteback.Count;
+        Instruction[] instructionsWaitingWritebackArray = resources.instructionsWaitingWriteback.ToArray();
         for (int i = 0; i < count; i++)
         {
-            if (resources.instructionsWaitingWriteback[i] != null)
-                resources.writebackUnit.writeback(resources, resources.instructionsWaitingWriteback[i]);
+            if (instructionsWaitingWritebackArray[i] != null)
+                resources.writebackUnit.writeback(resources, instructionsWaitingWritebackArray[i]);
         }
     }
 }

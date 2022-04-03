@@ -1,3 +1,5 @@
+using System.Security.AccessControl;
+
 namespace ProcessorSim.HardwareResources;
 
 public class RegisterFile
@@ -7,6 +9,7 @@ public class RegisterFile
     // This int then provides the real current dictionary, types yet to be firmly decided, key is register val user included in code
     // The result of this dictionary mapping is a tuple, saying what physical register we use as well as what data dependency we have.
     // This may be updated with more complex structs, but I very much hope to avoid this.
+    private Register[] physicalRegisters;
     private Queue<Register> availableRegisters;
     private Resources resources;
     private int count = 0;
@@ -14,11 +17,17 @@ public class RegisterFile
     public RegisterFile(Resources resources)
     {
         this.internalFile = new Dictionary<int, Dictionary<Register, (Register, int)>>();
-        this.availableRegisters = new Queue<Register>();
-        for (int i = 1; i < resources.registers.Length - 1; i++)
+        this.physicalRegisters = new Register[64];
+        for (int i = 0; i < physicalRegisters.Length; i++)
         {
-            // Starting at 1 to omit pc and ending at 30 to omit in flight instruction
-            this.availableRegisters.Enqueue(resources.registers[i]);
+            this.physicalRegisters[i] = new Register();
+            this.physicalRegisters[i].index = i;
+        }
+        this.availableRegisters = new Queue<Register>();
+        for (int i = 1 + resources.decodeUnits.Count; i < physicalRegisters.Length; i++)
+        {
+            // Starting at 1 + superscalar count to omit pc and in flight instruction
+            this.availableRegisters.Enqueue(physicalRegisters[i]);
         }
         this.resources = resources;
     }
@@ -78,5 +87,10 @@ public class RegisterFile
         {
             Console.WriteLine("    {0} |-> {1}", registerMapping.Key.index, registerMapping.Value.Item1.index);
         }
+    }
+
+    public Register[] getPhysicalRegisters()
+    {
+        return this.physicalRegisters;
     }
 }

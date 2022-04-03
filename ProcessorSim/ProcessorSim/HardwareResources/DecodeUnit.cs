@@ -10,15 +10,15 @@ public class DecodeUnit
     public DecodeUnit()
     {
     }
-    public (Instruction, List<Register>) decode(Resources resources, int? instructionRegister, bool newRegisterNeeded)
+    public (Instruction, Dictionary<Register, int>) decode(Resources resources, int? instructionRegister, bool newRegisterNeeded)
     {
-        if (instructionRegister == null)
+        if (instructionRegister == null || instructionRegister == -1)
             return (null, null);
         string rawInstruction = resources.registers[(int) instructionRegister].getInstruction();
         resources.registers[(int) instructionRegister].available = true;
         if (rawInstruction == null)
         {
-            return (new Blank(), new List<Register>());
+            return (new Blank(), new Dictionary<Register, int>());
         }
         string opCode = rawInstruction.Split(" ")[0];
         string op1 = null;
@@ -28,17 +28,20 @@ public class DecodeUnit
         Register reg2 = null;
         Register reg3 = null;
         Register oldReg1 = null;
-        List<Register> unclearedDependencies = new List<Register>();
+        Dictionary<Register, int> unclearedDependencies = new Dictionary<Register, int>();
         try
         {
             op1 = rawInstruction.Split(" ")[1];
             try
             {
-                reg1 = resources.registers[Int32.Parse(op1.Substring(1))];
-                oldReg1 = resources.registerFile.getPhysicalRegister(resources.registerFile.getCurrentFile(), reg1);
-                if(newRegisterNeeded)
-                    resources.registerFile.addFile(reg1);
-                reg1 = resources.registerFile.getPhysicalRegister(resources.registerFile.getCurrentFile(), reg1);
+                if (op1[0] == 'r')
+                {
+                    reg1 = resources.registers[Int32.Parse(op1.Substring(1))];
+                    oldReg1 = resources.registerFile.getPhysicalRegister(resources.registerFile.getCurrentFile(), reg1);
+                    if(newRegisterNeeded)
+                        resources.registerFile.addFile(reg1);
+                    reg1 = resources.registerFile.getPhysicalRegister(resources.registerFile.getCurrentFile(), reg1);
+                }
             }
             catch { }
         }
@@ -48,8 +51,11 @@ public class DecodeUnit
             op2 = rawInstruction.Split(" ")[2];
             try
             {
-                reg2 = resources.registers[Int32.Parse(op2.Substring(1))];
-                reg2 = resources.registerFile.getPhysicalRegister(resources.registerFile.getCurrentFile(), reg2);
+                if (op2[0] == 'r')
+                {
+                    reg2 = resources.registers[Int32.Parse(op2.Substring(1))];
+                    reg2 = resources.registerFile.getPhysicalRegister(resources.registerFile.getCurrentFile(), reg2);
+                }
             }
             catch { }
         }
@@ -60,8 +66,11 @@ public class DecodeUnit
             op3 = rawInstruction.Split(" ")[3];
             try
             {
-                reg3 = resources.registers[Int32.Parse(op3.Substring(1))];
-                reg3 = resources.registerFile.getPhysicalRegister(resources.registerFile.getCurrentFile(), reg3);
+                if (op3[0] == 'r')
+                {
+                    reg3 = resources.registers[Int32.Parse(op3.Substring(1))];
+                    reg3 = resources.registerFile.getPhysicalRegister(resources.registerFile.getCurrentFile(), reg3);
+                }
             }
             catch
             {
@@ -77,22 +86,37 @@ public class DecodeUnit
             Console.WriteLine("  {0}", rawInstruction);
             resources.registerFile.printMapping();
         }
+        // Add to the uncleared dependencies if *we* depend on the register
+        // Add to the instructions in flight if *we* may be the dependency
         try
         {
-            if (resources.dataHazards[reg1])
-                unclearedDependencies.Add(reg1);
+            if (!(instruction.executionType == ExecutionTypes.SimpleArithmetic ||
+                  instruction.executionType == ExecutionTypes.ComplexArithmetic ||
+                  (instruction.executionType == ExecutionTypes.LoadStore && instruction.targetRegister != null)))
+            {
+                unclearedDependencies[reg1] = resources.registerInstructionsInFlight[reg1];
+            }
+            //Console.WriteLine("Uncleared Dependencies: {0} count {1}", reg1.index, resources.registerInstructionsInFlight[reg1]);
+            if (instruction.executionType == ExecutionTypes.SimpleArithmetic ||
+                instruction.executionType == ExecutionTypes.ComplexArithmetic ||
+                (instruction.executionType == ExecutionTypes.LoadStore && instruction.targetRegister != null))
+            {
+                resources.registerInstructionsInFlight[reg1]++;
+                //Console.WriteLine("Instruction {0} blocking register {1}", instruction, reg1.index);
+            }
         } catch {}
-
         try
         {
-            if (resources.dataHazards[reg2])
-                unclearedDependencies.Add(reg2);
+            if(instruction.executionType != ExecutionTypes.LoadStore)
+                unclearedDependencies[oldReg1] = resources.registerInstructionsInFlight[oldReg1];
         } catch {}
-
         try
         {
-            if (resources.dataHazards[reg3])
-                unclearedDependencies.Add(reg3);
+            unclearedDependencies[reg2] = resources.registerInstructionsInFlight[reg2];
+        } catch {}
+        try
+        {
+            unclearedDependencies[reg3] = resources.registerInstructionsInFlight[reg3];
         } catch {}
 
         return (instruction, unclearedDependencies);

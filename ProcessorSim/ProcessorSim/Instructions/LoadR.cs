@@ -13,6 +13,7 @@ public class LoadR : Instruction
     public LoadR(Register register, Register memoryIndexRegister)
     {
         this.reg = register;
+        targetRegister = reg;
         this.memoryIndexRegister = memoryIndexRegister;
         this.executionType = ExecutionTypes.LoadStore;
         this.reg.available = false;
@@ -22,7 +23,6 @@ public class LoadR : Instruction
     {
         Instruction instruction = (Instruction) this;
         result = resources.dataMemory[instruction.getVal(resources, memoryIndexRegister)].getValue();
-        targetRegister = reg;
         return true;
     }
 }

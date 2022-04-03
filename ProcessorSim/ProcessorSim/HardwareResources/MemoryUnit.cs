@@ -33,11 +33,16 @@ public class MemoryUnit
                 if (instruction.targetRegister != null)
                 {
                     resources.forwardedResults[instruction.targetRegister] = instruction.result;
-                    resources.dataHazards[instruction.targetRegister] = false;
+                    resources.registerInstructionsInFlight[instruction.targetRegister]--;
                     resources.reservationStation.markRegisterUnblocked(instruction.targetRegister);
                 }
             }
-            if (instruction.executionType == ExecutionTypes.LoadStore)
+            else if (instruction.executionType == ExecutionTypes.ComplexArithmetic)
+            {
+                resources.registerInstructionsInFlight[instruction.targetRegister]--;
+                resources.reservationStation.markRegisterUnblocked(instruction.targetRegister);
+            }
+            else if (instruction.executionType == ExecutionTypes.LoadStore)
             {
                 if (resources.verbose)
                 {
@@ -52,7 +57,7 @@ public class MemoryUnit
                     // i.e. we're doing a load
                     // Do loads get forwarded here or do we have to wait until writeback??
                     resources.forwardedResults[instruction.targetRegister] = instruction.result;
-                    resources.dataHazards[instruction.targetRegister] = false;
+                    resources.registerInstructionsInFlight[instruction.targetRegister] --;
                     resources.reservationStation.markRegisterUnblocked(instruction.targetRegister);
                 }
                 // Else do nothing until writeback?

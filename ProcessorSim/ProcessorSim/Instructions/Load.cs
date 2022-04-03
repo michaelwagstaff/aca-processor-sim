@@ -13,6 +13,7 @@ public class Load : Instruction
     public Load(Register register, int memoryIndex)
     {
         this.reg = register;
+        targetRegister = reg;
         this.memoryIndex = memoryIndex;
         this.executionType = ExecutionTypes.LoadStore;
         this.reg.available = false;
@@ -20,8 +21,7 @@ public class Load : Instruction
     }
     public bool execute(Resources resources)
     {
-        targetRegister = reg;
-        result = memoryIndex;
+        result = resources.dataMemory[memoryIndex].getValue();
         return true;
     }
 }

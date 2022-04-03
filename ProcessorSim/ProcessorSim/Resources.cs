@@ -20,7 +20,7 @@ public class Resources
     public List<DecodeUnit> decodeUnits;
     public ReservationStation reservationStation;
     public Dictionary<ExecutionTypes, List<ExecutionUnit>> executionUnits;
-    public Dictionary<Register, bool> dataHazards;
+    public Dictionary<Register, int> registerInstructionsInFlight;
     public RegisterFile registerFile;
     public List<Instruction> instructionsWaitingMemory;
     public MemoryUnit memoryUnit;
@@ -56,17 +56,18 @@ public class Resources
         fetchUnits = new List<FetchUnit>();
         instructionsWaitingDecode = new List<(int, (bool, bool))>();
         decodeUnits = new List<DecodeUnit>();
-        dataHazards = new Dictionary<Register, bool>();
+        registerInstructionsInFlight = new Dictionary<Register, int>();
         registerFile = new RegisterFile(this);
+        Register[] physicalRegisters = registerFile.getPhysicalRegisters();
         reservationStation = new ReservationStation(ExecutionTypes.General, 16);
         instructionsWaitingMemory = new List<Instruction>();
         forwardedResults = new Dictionary<Register, int?>();
         memoryUnit = new MemoryUnit();
         writebackUnit = new WritebackUnit();
-        for (int i = 0; i < regCount; i++)
+        for (int i = 0; i < physicalRegisters.Length; i++)
         {
-            dataHazards[registers[i]] = false;
-            forwardedResults[registers[i]] = null;
+            registerInstructionsInFlight[physicalRegisters[i]] = 0;
+            forwardedResults[physicalRegisters[i]] = null;
         }
 
         instructionsWaitingWriteback = new List<Instruction>();

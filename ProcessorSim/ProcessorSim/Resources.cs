@@ -87,7 +87,7 @@ public class Resources
             executionUnits[ExecutionTypes.General].Add(new ExecutionUnit(ExecutionTypes.General));
         }
         executionUnits.Add(ExecutionTypes.SimpleArithmetic, new List<ExecutionUnit>());
-        for (int i = 0; i < generalExecutionUnits; i++)
+        for (int i = 0; i < arithmeticUnits; i++)
         {
             executionUnits[ExecutionTypes.SimpleArithmetic].Add(new ExecutionUnit(ExecutionTypes.SimpleArithmetic));
         }
@@ -97,12 +97,12 @@ public class Resources
             executionUnits[ExecutionTypes.ComplexArithmetic].Add(new ExecutionUnit(ExecutionTypes.ComplexArithmetic));
         }
         executionUnits.Add(ExecutionTypes.LoadStore, new List<ExecutionUnit>());
-        for (int i = 0; i < generalExecutionUnits; i++)
+        for (int i = 0; i < loadStoreUnits; i++)
         {
             executionUnits[ExecutionTypes.LoadStore].Add(new ExecutionUnit(ExecutionTypes.LoadStore));
         }
         executionUnits.Add(ExecutionTypes.Branch, new List<ExecutionUnit>());
-        for (int i = 0; i < generalExecutionUnits; i++)
+        for (int i = 0; i < branchUnits; i++)
         {
             executionUnits[ExecutionTypes.Branch].Add(new ExecutionUnit(ExecutionTypes.Branch));
         }

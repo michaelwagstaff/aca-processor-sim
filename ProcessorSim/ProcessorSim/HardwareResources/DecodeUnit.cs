@@ -14,8 +14,8 @@ public class DecodeUnit
     {
         if (instructionRegister == null || instructionRegister == -1)
             return (null, null);
-        string rawInstruction = resources.registers[(int) instructionRegister].getInstruction();
-        resources.registers[(int) instructionRegister].available = true;
+        string rawInstruction = resources.registerFile.getPhysicalRegisters()[(int) instructionRegister].getInstruction();
+        resources.registerFile.getPhysicalRegisters()[(int) instructionRegister].available = true;
         if (rawInstruction == null)
         {
             return (new Blank(), new Dictionary<Register, int>());
@@ -88,16 +88,12 @@ public class DecodeUnit
         // Add to the instructions in flight if *we* may be the dependency
         try
         {
-            if (!(instruction.executionType == ExecutionTypes.SimpleArithmetic ||
-                  instruction.executionType == ExecutionTypes.ComplexArithmetic ||
-                  (instruction.executionType == ExecutionTypes.LoadStore && instruction.targetRegister != null)))
+            if (!newRegisterNeeded)
             {
                 unclearedDependencies[reg1] = resources.registerInstructionsInFlight[reg1];
             }
             //Console.WriteLine("Uncleared Dependencies: {0} count {1}", reg1.index, resources.registerInstructionsInFlight[reg1]);
-            if (instruction.executionType == ExecutionTypes.SimpleArithmetic ||
-                instruction.executionType == ExecutionTypes.ComplexArithmetic ||
-                (instruction.executionType == ExecutionTypes.LoadStore && instruction.targetRegister != null))
+            if (newRegisterNeeded)
             {
                 resources.registerInstructionsInFlight[reg1]++;
                 //Console.WriteLine("Instruction {0} blocking register {1}", instruction, reg1.index);
@@ -105,7 +101,7 @@ public class DecodeUnit
         } catch {}
         try
         {
-            if(instruction.executionType != ExecutionTypes.LoadStore)
+            if(oldReg1 != reg1)
                 unclearedDependencies[oldReg1] = resources.registerInstructionsInFlight[oldReg1];
         } catch {}
         try

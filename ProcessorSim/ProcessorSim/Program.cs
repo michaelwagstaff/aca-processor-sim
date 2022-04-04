@@ -15,11 +15,11 @@ class ProcessorSim
     static int superscalarCount;
     public static void Main(string[] args)
     {
-        verbose = true;
+        verbose = false;
         nextInstructionNeedsNewRegister = false;
-        superscalarCount = 2;
+        superscalarCount = 3;
         Resources resources = new Resources(32, 512, 1024, verbose, superscalarCount);
-        resources.setExecutionUnits(1,1,1,1);
+        resources.setExecutionUnits(1,superscalarCount,superscalarCount,1);
         loadProgram(resources);
         instructionRegister = null;
         bool fetchSuccessful = true;
@@ -35,12 +35,12 @@ class ProcessorSim
 
     public static void loadProgram(Resources resources)
     {
-        StreamReader reader = new StreamReader(@"Programs/bubblesort.mpl");
+        // StreamReader reader = new StreamReader(@"Programs/bubblesort.mpl");
         // StreamReader reader = new StreamReader(@"Programs/fact.mpl");
         // StreamReader reader = new StreamReader(@"Programs/fact-safe.mpl");
         // StreamReader reader = new StreamReader(@"Programs/gcd-original.mpl");
         // StreamReader reader = new StreamReader(@"Programs/vectoradd.mpl");
-        // StreamReader reader = new StreamReader(@"Programs/vectormult-safe.mpl");
+        StreamReader reader = new StreamReader(@"Programs/vectormult-safe.mpl");
         int i = 0;
         string line;
         while ((line = reader.ReadLine()) != null)
@@ -86,9 +86,11 @@ class ProcessorSim
 
     public static void fetch(Resources resources)
     {
+        int i = 1;
         while (resources.instructionsWaitingDecode.Count < superscalarCount)
         {
-            resources.instructionsWaitingDecode.Add(resources.fetchUnits[0].fetch(resources, verbose));
+            resources.instructionsWaitingDecode.Add(resources.fetchUnits[0].fetch(resources, i));
+            i++;
         }
     }
 
@@ -134,37 +136,41 @@ class ProcessorSim
             {
                 if (resources.executionUnits.ContainsKey(executionType))
                 {
-                    if (resources.executionUnits[executionType][0].blocked)
+                    for (int i = 0; i < resources.executionUnits[executionType].Count; i++)
                     {
-                        resources.executionUnits[executionType][0].execute(resources);
-                    }
-                    else
-                    {
-                        if (executionType == ExecutionTypes.Branch)
+                        if (resources.executionUnits[executionType][i].blocked)
                         {
-                            bool? nullablePipelineFlush = resources.executionUnits[executionType][0]
-                                .execute(resources, resources.reservationStation.getItem(executionType));
-                            bool pipelineFlush = nullablePipelineFlush == null ? false : (bool) nullablePipelineFlush;
-                            // If null, then there is no pipeline flush
-                            if (pipelineFlush)
-                            {
-                                instructionRegister = null;
-                                if (instructionRegister != null)
-                                {
-                                    resources.registers[(int) instructionRegister].available = true;
-                                    instructionRegister = null;
-                                }
-
-                                resources.reservationStation.flush(resources);
-                                if (verbose)
-                                    Console.WriteLine("Branch -- Pipeline Flush");
-                                returnVal = 1;
-                            }
+                            resources.executionUnits[executionType][i].execute(resources);
                         }
                         else
                         {
-                            resources.executionUnits[executionType][0]
-                                .execute(resources, resources.reservationStation.getItem(executionType));
+                            if (executionType == ExecutionTypes.Branch)
+                            {
+                                bool? nullablePipelineFlush = resources.executionUnits[executionType][i]
+                                    .execute(resources, resources.reservationStation.getItem(executionType));
+                                bool pipelineFlush =
+                                    nullablePipelineFlush == null ? false : (bool) nullablePipelineFlush;
+                                // If null, then there is no pipeline flush
+                                if (pipelineFlush)
+                                {
+                                    instructionRegister = null;
+                                    if (instructionRegister != null)
+                                    {
+                                        resources.registers[(int) instructionRegister].available = true;
+                                        instructionRegister = null;
+                                    }
+
+                                    resources.reservationStation.flush(resources);
+                                    if (verbose)
+                                        Console.WriteLine("Branch -- Pipeline Flush");
+                                    returnVal = 1;
+                                }
+                            }
+                            else
+                            {
+                                resources.executionUnits[executionType][i]
+                                    .execute(resources, resources.reservationStation.getItem(executionType));
+                            }
                         }
                     }
                 }

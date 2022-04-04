@@ -56,6 +56,11 @@ public class Resources
         fetchUnits = new List<FetchUnit>();
         instructionsWaitingDecode = new List<(int, (bool, bool))>();
         decodeUnits = new List<DecodeUnit>();
+        for (int i = 0; i < superscalarCount; i++)
+        {
+            fetchUnits.Add(new FetchUnit());
+            decodeUnits.Add(new DecodeUnit());
+        }
         registerInstructionsInFlight = new Dictionary<Register, int>();
         registerFile = new RegisterFile(this);
         Register[] physicalRegisters = registerFile.getPhysicalRegisters();
@@ -71,11 +76,6 @@ public class Resources
         }
 
         instructionsWaitingWriteback = new List<Instruction>();
-        for (int i = 0; i < superscalarCount; i++)
-        {
-            fetchUnits.Add(new FetchUnit());
-            decodeUnits.Add(new DecodeUnit());
-        }
     }
 
     public void setExecutionUnits(int generalExecutionUnits, int arithmeticUnits, int loadStoreUnits, int branchUnits)

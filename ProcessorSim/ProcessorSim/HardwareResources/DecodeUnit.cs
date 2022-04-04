@@ -82,9 +82,7 @@ public class DecodeUnit
         instruction.registerFile = resources.registerFile.getCurrentFile();
         if (resources.verbose)
         {
-            Console.WriteLine("Decode Debug:");
             Console.WriteLine("  {0}", rawInstruction);
-            resources.registerFile.printMapping();
         }
         // Add to the uncleared dependencies if *we* depend on the register
         // Add to the instructions in flight if *we* may be the dependency

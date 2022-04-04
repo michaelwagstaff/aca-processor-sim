@@ -85,7 +85,7 @@ public class RegisterFile
         Console.WriteLine("  Current Register Mappings");
         foreach(KeyValuePair<Register, (Register, int)> registerMapping in this.internalFile[getCurrentFile()])
         {
-            Console.WriteLine("    {0} |-> {1}", registerMapping.Key.index, registerMapping.Value.Item1.index);
+            Console.WriteLine("    {0} |-> {1}, val {2}", registerMapping.Key.index, registerMapping.Value.Item1.index, registerMapping.Value.Item1.getValue());
         }
     }
 

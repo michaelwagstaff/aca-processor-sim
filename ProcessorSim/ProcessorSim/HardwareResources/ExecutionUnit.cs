@@ -21,10 +21,13 @@ public class ExecutionUnit
         if (instruction == null && blocked)
             instruction = currentInstruction;
         bool? result = null;
-        if (resources.verbose)
-            Console.WriteLine("  Executing Instruction: {0}", instruction);
-        if(instruction.GetType().Name != "Blank")
+        if (instruction.GetType().Name != "Blank")
+        {
             resources.monitor.incrementInsructionsExecuted();
+            if (resources.verbose)
+                Console.WriteLine("  Executing Instruction: {0}", instruction);
+        }
+
         if (instruction.executionType == ExecutionTypes.Branch)
             result = instruction.execute(resources);
         else if (instruction.executionType == ExecutionTypes.ComplexArithmetic)

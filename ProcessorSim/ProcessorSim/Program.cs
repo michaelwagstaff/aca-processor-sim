@@ -15,7 +15,7 @@ class ProcessorSim
     static int superscalarCount;
     public static void Main(string[] args)
     {
-        verbose = false;
+        verbose = true;
         nextInstructionNeedsNewRegister = false;
         superscalarCount = 2;
         Resources resources = new Resources(32, 512, 1024, verbose, superscalarCount);
@@ -35,9 +35,9 @@ class ProcessorSim
 
     public static void loadProgram(Resources resources)
     {
-        // StreamReader reader = new StreamReader(@"Programs/bubblesort.mpl");
+        StreamReader reader = new StreamReader(@"Programs/bubblesort.mpl");
         // StreamReader reader = new StreamReader(@"Programs/fact.mpl");
-        StreamReader reader = new StreamReader(@"Programs/fact-safe.mpl");
+        // StreamReader reader = new StreamReader(@"Programs/fact-safe.mpl");
         // StreamReader reader = new StreamReader(@"Programs/gcd-original.mpl");
         // StreamReader reader = new StreamReader(@"Programs/vectoradd.mpl");
         // StreamReader reader = new StreamReader(@"Programs/vectormult-safe.mpl");
@@ -75,8 +75,12 @@ class ProcessorSim
             resources.registerFile.printMapping();
         }
         resources.monitor.incrementCyclesTaken();
-        if(verbose)
-            Console.WriteLine("Tick");
+        if (verbose)
+        {
+            Console.WriteLine("Tick Ended: Press enter to continue...");
+            Console.ReadLine();
+        }
+
         return true;
     }
 
@@ -91,6 +95,8 @@ class ProcessorSim
     public static bool decode(Resources resources)
     {
         // Returns true if we need to halt.
+        if(verbose)
+            Console.WriteLine("Decode Debug:");
         (int, (bool, bool))[] instructionArray = resources.instructionsWaitingDecode.ToArray();
         foreach ((int, (bool, bool)) instruction in instructionArray)
         {
@@ -102,6 +108,12 @@ class ProcessorSim
             if (branch || !result)
                 return true;
         }
+
+        try
+        {
+            if (verbose)
+                resources.registerFile.printMapping();
+        } catch {}
 
         return false;
     }

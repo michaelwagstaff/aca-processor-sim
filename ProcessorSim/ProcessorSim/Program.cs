@@ -142,7 +142,7 @@ class ProcessorSim
                     {
                         if (resources.executionUnits[executionType][i].blocked)
                         {
-                            resources.executionUnits[executionType][i].execute(resources);
+                            resources.executionUnits[executionType][i].execute(resources, null);
                         }
                         else
                         {
@@ -161,8 +161,6 @@ class ProcessorSim
                                         resources.registers[(int) instructionRegister].available = true;
                                         instructionRegister = null;
                                     }
-
-                                    resources.reservationStation.flush(resources);
                                     if (verbose)
                                         Console.WriteLine("Branch -- Pipeline Flush");
                                     returnVal = 1;
@@ -170,8 +168,9 @@ class ProcessorSim
                             }
                             else
                             {
+                                
                                 resources.executionUnits[executionType][i]
-                                    .execute(resources, resources.reservationStation.getItem(executionType));
+                                    .execute(resources, resources.reservationStations[executionType].getItem());
                             }
                         }
                     }

@@ -54,7 +54,7 @@ class ProcessorSim
     {
         writeback(resources);
         memory(resources);
-        if (execute(resources) != 1 && !resources.reservationStation.hasType(ExecutionTypes.Branch)) // If pipeline flush isn't occuring
+        if (execute(resources) != 1 && !resources.reservationStations[ExecutionTypes.Branch].hasSpace()) // If pipeline flush isn't occuring
         {
             bool haltPipeline = decode(resources); // TODO: Improve this
             foreach ((int, (bool, bool)) instruction in resources.instructionsWaitingDecode)
@@ -105,7 +105,9 @@ class ProcessorSim
             int? instructionRegister = instruction.Item1;
             bool newRegisterNeeded = instruction.Item2.Item1;
             bool branch = instruction.Item2.Item2;
-            bool result = resources.reservationStation.addItem(resources.decodeUnits[0].decode(resources, instructionRegister, newRegisterNeeded));
+            Instruction instructionObject =
+                resources.decodeUnits[0].decode(resources, instructionRegister);
+            bool result = resources.reservationStations[instructionObject.executionType].addItem(instructionObject);
             resources.instructionsWaitingDecode.Remove(instruction);
             if (branch || !result)
                 return true;
@@ -127,7 +129,7 @@ class ProcessorSim
         {
             Console.WriteLine("Execution Debug:");
             Console.WriteLine("  Initial Reservation Station State:");
-            resources.reservationStation.printContents();
+            // resources.reservationStation.printContents();
         }
 
         //try
@@ -147,7 +149,7 @@ class ProcessorSim
                             if (executionType == ExecutionTypes.Branch)
                             {
                                 bool? nullablePipelineFlush = resources.executionUnits[executionType][i]
-                                    .execute(resources, resources.reservationStation.getItem(executionType));
+                                    .execute(resources, resources.reservationStations[ExecutionTypes.Branch].getItem());
                                 bool pipelineFlush =
                                     nullablePipelineFlush == null ? false : (bool) nullablePipelineFlush;
                                 // If null, then there is no pipeline flush

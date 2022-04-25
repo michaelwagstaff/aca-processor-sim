@@ -1,70 +1,71 @@
 using ProcessorSim.Enums;
 using ProcessorSim.Instructions;
+using ProcessorSim.HardwareResources;
 
 namespace ProcessorSim.HardwareResources;
 
 public class ReservationStationSlot
 {
-    public bool isEmpty;
-    public (Instruction, Dictionary<Register, int>) instructionObject;
-    public bool isUnblocked;
+    public Instruction Op;
+    public List<(ExecutionTypes, int)?> Q;
+    public List<int> V;
+    public bool Busy;
+    public (ExecutionTypes, int) number;
+    public Resources resources;
+    public bool ready;
 
-    public ReservationStationSlot()
+    public ReservationStationSlot((ExecutionTypes, int) number, Resources resources)
     {
-        this.instructionObject = (null, null);
-        isEmpty = true;
+        this.number = number;
+        this.resources = resources;
+        this.Q = new List<(ExecutionTypes, int)?>();
+        this.V = new List<int>();
     }
-    public bool addItem((Instruction, Dictionary<Register, int>) instruction)
+    public bool addItem(Instruction instruction)
     {
-        if (instruction != (null, null))
+        Register source1, source2;
+        // Assume complex arithmetic
+        // Should be source 1
+        for (int i = 0; i < instruction.inputRegisters.Count; i++)
         {
-            this.instructionObject = instruction;
-            isUnblocked = true;
-            updateUnblocked();
-            this.isEmpty = false;
+            Register inputRegister = instruction.inputRegisters[i];
+            if (resources.registerFile.getDependantStation(inputRegister).Item1 != null)
+                Q[i] = resources.registerFile.getDependantStation(inputRegister);
+            else
+                V[i] = instruction.inputRegisters[i].getValue();
         }
+        Busy = true;
+        resources.registerFile.setDependantStation(instruction.targetRegister, number);
         return true;
     }
 
-    public Dictionary<Register, int> getRegisterDict()
+    public void CDBupdate((ExecutionTypes, int) station, int value)
     {
-        return instructionObject.Item2;
-    }
-    public void updateUnblocked()
-    {
-        isUnblocked = true;
-        foreach (KeyValuePair<Register, int> registerEntry in instructionObject.Item2)
+        for (int i = 0; i < Q.Count; i++)
         {
-            if (registerEntry.Value > 0)
+            if (station == Q[i])
             {
-                isUnblocked = false;
-                // Console.WriteLine("Blocked by register {0}", registerEntry.Key.index);
+                Q[i] = null;
+                V[i] = value;
+            }
+        }
+
+        ready = true;
+        for (int i = 0; i < Q.Count; i++)
+        {
+            if (Q[i] != null)
+            {
+                ready = false;
             }
         }
     }
 
-    public Instruction removeItem()
+    public (Instruction, List<int>) getInstructionForExecution()
     {
-        Instruction instruction = this.instructionObject.Item1;
-        this.instructionObject = (null, null);
-        this.isEmpty = true;
-        this.isUnblocked = true;
-        return instruction;
-    }
-
-    public bool hasType(ExecutionTypes executionType)
-    {
-        if (!this.isEmpty)
-            return instructionObject.Item1.executionType == executionType;
-        return false;
-    }
-
-    public void decrementRegisterCount(Register register)
-    {
-        if (instructionObject.Item2.Keys.Contains(register))
-        {
-            instructionObject.Item2[register]--;
-            updateUnblocked();
-        }
+        List<int> returnV = new List<int>(V);
+        Op = null;
+        this.Q = new List<(ExecutionTypes, int)?>();
+        this.V = new List<int>();
+        return (Op, returnV);
     }
 }

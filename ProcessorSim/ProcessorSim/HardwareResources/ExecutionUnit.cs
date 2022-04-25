@@ -10,16 +10,28 @@ public class ExecutionUnit
     public ExecutionTypes type;
     public bool blocked;
     private Instruction currentInstruction;
+    private List<int> currentArgs;
 
     public ExecutionUnit(ExecutionTypes type)
     {
         this.type = type;
         blocked = false;
     }
-    public bool? execute(Resources resources, Instruction instruction=null)
+    public bool? execute(Resources resources, (Instruction, List<int>)? instructionObject)
     {
-        if (instruction == null && blocked)
+        Instruction instruction;
+        List<int> args;
+        if (instructionObject == null && blocked)
+        {
             instruction = currentInstruction;
+            args = currentArgs;
+        }
+        else
+        {
+            instruction = instructionObject.Value.Item1;
+            args = instructionObject.Value.Item2;
+        }
+
         bool? result = null;
         if (instruction.GetType().Name != "Blank")
         {
@@ -29,7 +41,7 @@ public class ExecutionUnit
         }
 
         if (instruction.executionType == ExecutionTypes.Branch)
-            result = instruction.execute(resources);
+            result = instruction.execute(resources, args);
         else if (instruction.executionType == ExecutionTypes.ComplexArithmetic)
         {
             if (blocked)
@@ -38,7 +50,7 @@ public class ExecutionUnit
                 if (cyclesToCompletion == 0)
                 {
                     blocked = false;
-                    instruction.execute(resources);
+                    instruction.execute(resources, args);
                 }
             }
             else
@@ -49,7 +61,7 @@ public class ExecutionUnit
             }
         }
         else
-            instruction.execute(resources);
+            instruction.execute(resources, args);
         if (instruction.GetType().Name != "Blank")
         {
             if (instruction.GetType().Name == "ComplexArithmetic")

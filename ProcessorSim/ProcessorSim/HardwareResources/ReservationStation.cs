@@ -9,15 +9,17 @@ public class ReservationStation
     private ReservationStationSlot[] internalArray;
     private int emptySlots;
     private int size;
-    public ReservationStation(ExecutionTypes executionType, int items)
+    private Resources resources;
+    public ReservationStation(ExecutionTypes executionType, int items, Resources resources)
     {
         this.executionType = executionType;
         internalArray = new ReservationStationSlot[items];
         emptySlots = items;
         size = items;
+        this.resources = resources;
         for (int i = 0; i < items; i++)
         {
-            internalArray[i] = new ReservationStationSlot();
+            internalArray[i] = new ReservationStationSlot((executionType, i), resources);
         }
     }
 
@@ -26,15 +28,16 @@ public class ReservationStation
         return this.emptySlots != 0;
     }
 
-    public bool addItem((Instruction, Dictionary<Register, int>) instructionObject)
+    public bool addItem(Instruction instruction)
     {
         if (hasSpace())
         {
             for (int i = 0; i < size; i++)
             {
-                if (this.internalArray[i].isEmpty)
+                if (this.internalArray[i].Op == null)
                 {
-                    this.internalArray[i].addItem(instructionObject);
+                    this.internalArray[i].addItem(instruction);
+                    this.emptySlots --;
                     return true;
                 }
             }
@@ -42,81 +45,37 @@ public class ReservationStation
         return false;
     }
 
-    public Instruction getItem(ExecutionTypes executionType)
+    public (Instruction, List<int>) getItem()
     {
         for (int i = 0; i < size; i++)
         {
-            if (this.internalArray[i].hasType(executionType) && this.internalArray[i].isUnblocked)
+            if (this.internalArray[i].ready)
             {
-                if(executionType != ExecutionTypes.Branch)
-                    return this.internalArray[i].removeItem();
-                else
-                {
-                    if (onlyBranches())
-                    {
-                        return this.internalArray[i].removeItem();
-                    }
-                }
+                this.emptySlots++;
+                return this.internalArray[i].getInstructionForExecution();
             }
         }
-
-        return new Blank();
+        return (new Blank(), new List<int>());
     }
-
-    private bool onlyBranches()
-    {
-        for (int i = 0; i < size; i++)
-        {
-            if (!this.internalArray[i].hasType(ExecutionTypes.Branch) && !this.internalArray[i].isEmpty)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public bool hasType(ExecutionTypes executionType)
-    {
-        for (int i = 0; i < size; i++)
-        {
-            if (this.internalArray[i].hasType(executionType))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public bool markRegisterUnblocked(Register register)
-    {
-        for (int i = 0; i < size; i++)
-        {
-            if (!this.internalArray[i].isEmpty && !this.internalArray[i].isUnblocked)
-            {
-                this.internalArray[i].decrementRegisterCount(register);
-            }
-        }
-        return true;
-    }
-
     public void printContents()
     {
         for (int i = 0; i < internalArray.Length; i++)
         {
             ReservationStationSlot slot = internalArray[i];
-            if (!slot.isEmpty)
+            if (slot.Busy)
             {
-                Console.WriteLine("    Slot {0}: {1}, blocked: {2}", i, slot.instructionObject.Item1, !slot.isUnblocked);
+                Console.WriteLine("    Slot {0}: {1}, blocked: {2}", i, slot.number, !slot.ready);
+                /*
                 Dictionary<Register, int> registerDict = slot.getRegisterDict();
                 foreach (KeyValuePair<Register, int> entry in registerDict)
                 {
                     Console.WriteLine("      Register {0} Count {1}", entry.Key.index, entry.Value);
                 }
+                */
             }
         }
     }
-
+    /*
     public bool flush(Resources resources)
     {
         // Used for pipeline flush
@@ -128,5 +87,6 @@ public class ReservationStation
         resources.instructionsWaitingDecode.Clear();
         return true;
     }
+    */
     
 }

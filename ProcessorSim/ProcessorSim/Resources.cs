@@ -18,7 +18,7 @@ public class Resources
     public List<FetchUnit> fetchUnits;
     public List<(int, (bool, bool))> instructionsWaitingDecode;
     public List<DecodeUnit> decodeUnits;
-    public ReservationStation reservationStation;
+    public Dictionary<ExecutionTypes, ReservationStation> reservationStations;
     public Dictionary<ExecutionTypes, List<ExecutionUnit>> executionUnits;
     public Dictionary<Register, int> registerInstructionsInFlight;
     public RegisterFile registerFile;
@@ -61,19 +61,17 @@ public class Resources
             fetchUnits.Add(new FetchUnit());
             decodeUnits.Add(new DecodeUnit());
         }
-        registerInstructionsInFlight = new Dictionary<Register, int>();
         registerFile = new RegisterFile(this);
-        Register[] physicalRegisters = registerFile.getPhysicalRegisters();
-        reservationStation = new ReservationStation(ExecutionTypes.General, 16);
+        reservationStations = new Dictionary<ExecutionTypes, ReservationStation>();
+        reservationStations[ExecutionTypes.General] = new ReservationStation(ExecutionTypes.General, 16, this);
+        reservationStations[ExecutionTypes.SimpleArithmetic] = new ReservationStation(ExecutionTypes.SimpleArithmetic, 16, this);
+        reservationStations[ExecutionTypes.ComplexArithmetic] = new ReservationStation(ExecutionTypes.ComplexArithmetic, 16, this);
+        reservationStations[ExecutionTypes.Branch] = new ReservationStation(ExecutionTypes.Branch, 1, this);
+        reservationStations[ExecutionTypes.LoadStore] = new ReservationStation(ExecutionTypes.LoadStore, 16, this);
         instructionsWaitingMemory = new List<Instruction>();
         forwardedResults = new Dictionary<Register, int?>();
         memoryUnit = new MemoryUnit();
         writebackUnit = new WritebackUnit();
-        for (int i = 0; i < physicalRegisters.Length; i++)
-        {
-            registerInstructionsInFlight[physicalRegisters[i]] = 0;
-            forwardedResults[physicalRegisters[i]] = null;
-        }
 
         instructionsWaitingWriteback = new List<Instruction>();
     }

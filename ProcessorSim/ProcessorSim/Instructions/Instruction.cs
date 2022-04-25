@@ -8,7 +8,9 @@ public interface Instruction
     Register targetRegister { get; set; }
     int result { get; set; }
     int registerFile { get; set; }
-    public bool execute(Resources resources)
+    List<Register> inputRegisters { get; set; }
+    (ExecutionTypes, int) reservationStation { get; set; }
+    public bool execute(Resources resources, List<int> vals)
     {
         return true;
     }

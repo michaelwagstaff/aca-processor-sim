@@ -12,9 +12,8 @@ public class FetchUnit
                 Console.WriteLine("  PC Value: {0}", resources.pc.getValue());
             }
             string instruction = resources.instructionMemory[resources.pc.getValue()].getInstruction();
-            resources.registerFile.getPhysicalRegisters()[count]
-                .setInstruction(instruction);
-            resources.registerFile.getPhysicalRegisters()[count].available = false;
+            resources.registers[count].setInstruction(instruction);
+            resources.registers[count].available = false;
             resources.pc.setValue(resources.pc.getValue() + 1);
             string instructionType = instruction.Split(" ")[0];
             string[] stringMatches = new[] {"Load", "Compare", "Copy", "Add", "Subtract", "Divide", "Multiply", "Not"};

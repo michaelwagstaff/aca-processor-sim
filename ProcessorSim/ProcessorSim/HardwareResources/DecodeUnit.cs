@@ -10,15 +10,14 @@ public class DecodeUnit
     public DecodeUnit()
     {
     }
-    public (Instruction, Dictionary<Register, int>) decode(Resources resources, int? instructionRegister, bool newRegisterNeeded)
+    public Instruction decode(Resources resources, int? instructionRegister)
     {
         if (instructionRegister == null || instructionRegister == -1)
-            return (null, null);
-        string rawInstruction = resources.registerFile.getPhysicalRegisters()[(int) instructionRegister].getInstruction();
-        resources.registerFile.getPhysicalRegisters()[(int) instructionRegister].available = true;
+            return new Blank();
+        string rawInstruction = resources.registers[(int) instructionRegister].getInstruction();
         if (rawInstruction == null)
         {
-            return (new Blank(), new Dictionary<Register, int>());
+            return new Blank();
         }
         string opCode = rawInstruction.Split(" ")[0];
         string op1 = null;
@@ -28,7 +27,6 @@ public class DecodeUnit
         Register reg2 = null;
         Register reg3 = null;
         Register oldReg1 = null;
-        Dictionary<Register, int> unclearedDependencies = new Dictionary<Register, int>();
         try
         {
             op1 = rawInstruction.Split(" ")[1];
@@ -37,10 +35,6 @@ public class DecodeUnit
                 if (op1[0] == 'r')
                 {
                     reg1 = resources.registers[Int32.Parse(op1.Substring(1))];
-                    oldReg1 = resources.registerFile.getPhysicalRegister(resources.registerFile.getCurrentFile(), reg1);
-                    if(newRegisterNeeded)
-                        resources.registerFile.addFile(reg1);
-                    reg1 = resources.registerFile.getPhysicalRegister(resources.registerFile.getCurrentFile(), reg1);
                 }
             }
             catch { }
@@ -54,7 +48,6 @@ public class DecodeUnit
                 if (op2[0] == 'r')
                 {
                     reg2 = resources.registers[Int32.Parse(op2.Substring(1))];
-                    reg2 = resources.registerFile.getPhysicalRegister(resources.registerFile.getCurrentFile(), reg2);
                 }
             }
             catch { }
@@ -69,7 +62,6 @@ public class DecodeUnit
                 if (op3[0] == 'r')
                 {
                     reg3 = resources.registers[Int32.Parse(op3.Substring(1))];
-                    reg3 = resources.registerFile.getPhysicalRegister(resources.registerFile.getCurrentFile(), reg3);
                 }
             }
             catch
@@ -79,41 +71,12 @@ public class DecodeUnit
         catch
         { }
         Instruction instruction = findInstruction(opCode, op1, op2, op3, reg1, reg2, reg3, oldReg1);
-        instruction.registerFile = resources.registerFile.getCurrentFile();
         if (resources.verbose)
         {
             Console.WriteLine("  {0}", rawInstruction);
         }
-        // Add to the uncleared dependencies if *we* depend on the register
-        // Add to the instructions in flight if *we* may be the dependency
-        try
-        {
-            if (!newRegisterNeeded)
-            {
-                unclearedDependencies[reg1] = resources.registerInstructionsInFlight[reg1];
-            }
-            //Console.WriteLine("Uncleared Dependencies: {0} count {1}", reg1.index, resources.registerInstructionsInFlight[reg1]);
-            if (newRegisterNeeded)
-            {
-                resources.registerInstructionsInFlight[reg1]++;
-                //Console.WriteLine("Instruction {0} blocking register {1}", instruction, reg1.index);
-            }
-        } catch {}
-        try
-        {
-            if(oldReg1 != reg1)
-                unclearedDependencies[oldReg1] = resources.registerInstructionsInFlight[oldReg1];
-        } catch {}
-        try
-        {
-            unclearedDependencies[reg2] = resources.registerInstructionsInFlight[reg2];
-        } catch {}
-        try
-        {
-            unclearedDependencies[reg3] = resources.registerInstructionsInFlight[reg3];
-        } catch {}
 
-        return (instruction, unclearedDependencies);
+        return instruction;
     }
 
     private Instruction findInstruction(string opCode, string op1, string op2, string op3, Register reg1, Register reg2, Register reg3, Register oldReg1)

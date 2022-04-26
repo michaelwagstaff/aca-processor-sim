@@ -19,7 +19,7 @@ public class MarkAvailable : Instruction
         this.executionType = ExecutionTypes.General;
     }
 
-    public bool execute(Resources resources)
+    public bool execute(Resources resources, List<int> args)
     {
         this.reg.available = true;
         return true;

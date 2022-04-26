@@ -17,7 +17,7 @@ public class End : Instruction
         this.executionType = ExecutionTypes.General;
     }
 
-    public bool execute(Resources resources)
+    public bool execute(Resources resources, List<int> args)
     {
         Console.WriteLine();
         Console.WriteLine("-- Fin --");

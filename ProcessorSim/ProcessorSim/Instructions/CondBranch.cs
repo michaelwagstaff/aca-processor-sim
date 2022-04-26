@@ -21,7 +21,7 @@ public class CondBranch : Instruction
         this.executionType = ExecutionTypes.Branch;
     }
 
-    public bool execute(Resources resources)
+    public bool execute(Resources resources, List<int> args)
     {
         Instruction instruction = (Instruction) this;
         int flagVal = instruction.getVal(resources, flag);

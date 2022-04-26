@@ -19,7 +19,7 @@ public class Branch : Instruction
         this.executionType = ExecutionTypes.Branch;
     }
 
-    public bool execute(Resources resources)
+    public bool execute(Resources resources, List<int> args)
     {
         resources.pc.setValue(newAddress.getValue() - 1);
         return true;

@@ -19,11 +19,11 @@ public class StoreR : StoreInstruction, RegisterLoadStore
         this.memoryIndexRegister = memoryIndex;
         this.executionType = ExecutionTypes.LoadStore;
     }
-    public bool execute(Resources resources)
+    public bool execute(Resources resources, List<int> args)
     {
         Instruction instruction = (Instruction) this;
-        result = instruction.getVal(resources, reg);
-        memoryIndex = instruction.getVal(resources, memoryIndexRegister);
+        result = args[1];
+        memoryIndex = args[0];
         return true;
     }
 }

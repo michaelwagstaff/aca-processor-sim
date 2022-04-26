@@ -21,7 +21,7 @@ public class Load : ImmediateMemoryLoadStore
         this.reg.available = false;
         // Rather important, once decoded, we can't change register, so need to make sure nothing else uses it!
     }
-    public bool execute(Resources resources)
+    public bool execute(Resources resources, List<int> args)
     {
         result = resources.dataMemory[memoryIndex].getValue();
         return true;

@@ -15,16 +15,19 @@ public class Multiply : Instruction
     private Register reg1, reg2;
     public Multiply(Register target, Register register1, Register register2)
     {
+        inputRegisters = new List<Register>();
+        inputRegisters.Add(register1);
+        inputRegisters.Add(register2);
         reg1 = register1;
         reg2 = register2;
         this.targetRegister = target;
         this.executionType = ExecutionTypes.ComplexArithmetic;
     }
-    public bool execute(Resources resources)
+    public bool execute(Resources resources, List<int> args)
     {
         Instruction instruction = (Instruction) this;
-        int val1 = instruction.getVal(resources, reg1);
-        int val2 = instruction.getVal(resources, reg2);
+        int val1 = args[0];
+        int val2 = args[1];
         targetRegister.setValue(val1 * val2);
         return true;
     }

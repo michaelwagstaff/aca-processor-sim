@@ -20,7 +20,7 @@ public class LoadI : Instruction
         this.executionType = ExecutionTypes.SimpleArithmetic;
         this.reg.available = false;
     }
-    public bool execute(Resources resources)
+    public bool execute(Resources resources, List<int> args)
     {
         result = value;
         return true;

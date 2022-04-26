@@ -14,15 +14,17 @@ public class Not : Instruction
     private Register reg;
     public Not(Register target, Register reg)
     {
+        inputRegisters = new List<Register>();
+        inputRegisters.Add(reg);
         this.reg = reg;
         this.targetRegister = target;
         this.executionType = ExecutionTypes.SimpleArithmetic;
     }
 
-    public bool execute(Resources resources)
+    public bool execute(Resources resources, List<int> args)
     {
         Instruction instruction = (Instruction) this;
-        int val = instruction.getVal(resources, reg);
+        int val = args[0];
 
         this.result = val == 1 ? 0 : 1;
         return true;

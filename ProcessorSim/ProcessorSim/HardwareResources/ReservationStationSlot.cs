@@ -36,6 +36,7 @@ public class ReservationStationSlot
         }
         Busy = true;
         resources.registerFile.setDependantStation(instruction.targetRegister, number);
+        instruction.reservationStation = this.number;
         return true;
     }
 

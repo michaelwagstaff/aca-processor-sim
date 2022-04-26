@@ -22,10 +22,10 @@ public class LoadR : RegisterLoadStore
         this.reg.available = false;
         // Rather important, once decoded, we can't change register, so need to make sure nothing else uses it!
     }
-    public bool execute(Resources resources)
+    public bool execute(Resources resources, List<int> args)
     {
         Instruction instruction = (Instruction) this;
-        result = resources.dataMemory[instruction.getVal(resources, memoryIndexRegister)].getValue();
+        result = resources.dataMemory[args[0]].getValue();
         return true;
     }
 }

@@ -18,10 +18,10 @@ public class Store : StoreInstruction, ImmediateMemoryLoadStore
         this.memoryIndex = memoryIndex;
         this.executionType = ExecutionTypes.LoadStore;
     }
-    public bool execute(Resources resources)
+    public bool execute(Resources resources, List<int> args)
     {
         Instruction instruction = (Instruction) this;
-        result = instruction.getVal(resources, reg);
+        result = args[1];
         return true;
     }
 }

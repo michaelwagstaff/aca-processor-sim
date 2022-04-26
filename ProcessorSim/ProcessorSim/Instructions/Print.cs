@@ -15,11 +15,13 @@ public class Print : Instruction
 
     public Print(Register register)
     {
+        inputRegisters = new List<Register>();
+        inputRegisters.Add(register);
         this.reg = register;
         this.executionType = ExecutionTypes.General;
     }
 
-    public bool execute(Resources resources)
+    public bool execute(Resources resources, List<int> args)
     {
         if (reg.isInstruction)
         {
@@ -28,9 +30,10 @@ public class Print : Instruction
         else
         {
             Instruction instruction = (Instruction) this;
-            int val = instruction.getVal(resources, reg);
+            int val = args[0];
             Console.WriteLine(val);
         }
+
         return true;
     }
 }

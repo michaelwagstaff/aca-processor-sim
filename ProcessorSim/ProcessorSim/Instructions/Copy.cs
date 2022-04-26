@@ -14,16 +14,18 @@ public class Copy : Instruction
     private Register dest;
     public Copy(Register destination, Register register)
     {
+        inputRegisters = new List<Register>();
+        inputRegisters.Add(register);
         this.reg = register;
         this.targetRegister = destination;
         this.executionType = ExecutionTypes.SimpleArithmetic;
         this.targetRegister.available = false;
         // Rather important, once decoded, we can't change register, so need to make sure nothing else uses it!
     }
-    public bool execute(Resources resources)
+    public bool execute(Resources resources, List<int> args)
     {
         Instruction instruction = (Instruction) this;
-        result = instruction.getVal(resources, reg);
+        result = args[0];
         return true;
     }
 }

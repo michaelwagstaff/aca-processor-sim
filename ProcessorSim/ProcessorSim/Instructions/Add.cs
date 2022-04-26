@@ -16,6 +16,9 @@ public class Add : Instruction
     
     public Add(Register target, Register register1, Register register2)
     {
+        inputRegisters = new List<Register>();
+        inputRegisters.Add(register1);
+        inputRegisters.Add(register2);
         reg1 = register1;
         reg2 = register2;
         this.targetRegister = target;

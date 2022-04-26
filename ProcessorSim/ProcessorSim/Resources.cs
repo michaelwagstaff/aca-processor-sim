@@ -67,7 +67,7 @@ public class Resources
         reservationStations[ExecutionTypes.SimpleArithmetic] = new ReservationStation(ExecutionTypes.SimpleArithmetic, 16, this);
         reservationStations[ExecutionTypes.ComplexArithmetic] = new ReservationStation(ExecutionTypes.ComplexArithmetic, 16, this);
         reservationStations[ExecutionTypes.Branch] = new ReservationStation(ExecutionTypes.Branch, 1, this);
-        reservationStations[ExecutionTypes.LoadStore] = new ReservationStation(ExecutionTypes.LoadStore, 16, this);
+        reservationStations[ExecutionTypes.LoadStore] = new ReservationStation(ExecutionTypes.LoadStore, 0, this);
         instructionsWaitingMemory = new List<Instruction>();
         forwardedResults = new Dictionary<Register, int?>();
         memoryUnit = new MemoryUnit();
@@ -103,6 +103,14 @@ public class Resources
         for (int i = 0; i < branchUnits; i++)
         {
             executionUnits[ExecutionTypes.Branch].Add(new ExecutionUnit(ExecutionTypes.Branch));
+        }
+    }
+
+    public void CDBBroadcast((ExecutionTypes, int) sourceReservationStation, int value)
+    {
+        foreach (ReservationStation reservationStation in reservationStations.Values)
+        {
+            reservationStation.CDBUpdate(sourceReservationStation, value);
         }
     }
 }

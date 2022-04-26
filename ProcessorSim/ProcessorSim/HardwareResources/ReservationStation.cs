@@ -86,6 +86,27 @@ public class ReservationStation
 
         return (new Blank(), new List<int>());
     }
+
+    public void CDBUpdate((ExecutionTypes, int) station, int value)
+    {
+        if (executionType != ExecutionTypes.LoadStore)
+        {
+            for (int i = 0; i < size; i++)
+            {
+                if (this.internalArray[i].Busy)
+                {
+                    this.internalArray[i].CDBupdate(station, value);
+                }
+            }
+        }
+        else
+        {
+            foreach (ReservationQueueSlot queuedItem in ReservationQueue)
+            {
+                queuedItem.CDBupdate(station, value);
+            }
+        }
+    }
     public void printContents()
     {
         for (int i = 0; i < internalArray.Length; i++)

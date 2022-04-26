@@ -15,6 +15,7 @@ public class LoadR : RegisterLoadStore
 
     public LoadR(Register register, Register memoryIndexRegister)
     {
+        inputRegisters = new List<Register>();
         this.reg = register;
         targetRegister = reg;
         this.memoryIndexRegister = memoryIndexRegister;

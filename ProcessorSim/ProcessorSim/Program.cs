@@ -15,9 +15,9 @@ class ProcessorSim
     static int superscalarCount;
     public static void Main(string[] args)
     {
-        verbose = false;
+        verbose = true;
         nextInstructionNeedsNewRegister = false;
-        superscalarCount = 3;
+        superscalarCount = 1;
         Resources resources = new Resources(32, 512, 1024, verbose, superscalarCount);
         resources.setExecutionUnits(1,superscalarCount,superscalarCount,1);
         loadProgram(resources);
@@ -54,7 +54,7 @@ class ProcessorSim
     {
         writeback(resources);
         memory(resources);
-        if (execute(resources) != 1 && !resources.reservationStations[ExecutionTypes.Branch].hasSpace()) // If pipeline flush isn't occuring
+        if (execute(resources) != 1 && resources.reservationStations[ExecutionTypes.Branch].hasSpace()) // If pipeline flush isn't occuring
         {
             bool haltPipeline = decode(resources); // TODO: Improve this
             foreach ((int, (bool, bool)) instruction in resources.instructionsWaitingDecode)
@@ -78,7 +78,7 @@ class ProcessorSim
         if (verbose)
         {
             Console.WriteLine("Tick Ended: Press enter to continue...");
-            Console.ReadLine();
+            //Console.ReadLine();
         }
 
         return true;

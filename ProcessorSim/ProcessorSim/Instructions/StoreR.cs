@@ -15,6 +15,8 @@ public class StoreR : StoreInstruction, RegisterLoadStore
     public int memoryIndex { get; set; }
     public StoreR(Register register, Register memoryIndex)
     {
+        inputRegisters = new List<Register>();
+        inputRegisters.Add(register);
         this.reg = register;
         this.memoryIndexRegister = memoryIndex;
         this.executionType = ExecutionTypes.LoadStore;

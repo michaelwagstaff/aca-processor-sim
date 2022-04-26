@@ -14,6 +14,7 @@ public class LoadI : Instruction
     private int value;
     public LoadI(Register register, int value)
     {
+        inputRegisters = new List<Register>();
         this.reg = register;
         targetRegister = reg;
         this.value = value;

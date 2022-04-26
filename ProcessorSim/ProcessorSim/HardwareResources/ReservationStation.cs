@@ -80,6 +80,8 @@ public class ReservationStation
         }
         else
         {
+            if(ReservationQueue.Count == 0 || ReservationQueue.Peek().ready != true)
+                return (new Blank(), new List<int>());
             ReservationQueueSlot slotToReturn = ReservationQueue.Dequeue();
             return slotToReturn.getInstructionForExecution();
         }

@@ -14,6 +14,7 @@ public class Load : ImmediateMemoryLoadStore
     public int memoryIndex { get; set; }
     public Load(Register register, int memoryIndex)
     {
+        inputRegisters = new List<Register>();
         this.reg = register;
         targetRegister = reg;
         this.memoryIndex = memoryIndex;

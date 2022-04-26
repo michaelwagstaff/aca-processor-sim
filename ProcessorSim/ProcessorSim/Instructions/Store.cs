@@ -14,7 +14,8 @@ public class Store : StoreInstruction, ImmediateMemoryLoadStore
     public int memoryIndex { get; set; }
     public Store(Register register, int memoryIndex)
     {
-        this.reg = register;
+        inputRegisters = new List<Register>();
+        this.inputRegisters.Add(register);
         this.memoryIndex = memoryIndex;
         this.executionType = ExecutionTypes.LoadStore;
     }

@@ -10,6 +10,8 @@ public class Add : Instruction
     public Register targetRegister { get; set; }
     public int result { get; set; }
     public int registerFile { get; set; }
+    public List<Register> inputRegisters { get; set; }
+    public (ExecutionTypes, int) reservationStation { get; set; }
     private Register reg1, reg2;
     
     public Add(Register target, Register register1, Register register2)
@@ -19,11 +21,11 @@ public class Add : Instruction
         this.targetRegister = target;
         this.executionType = ExecutionTypes.SimpleArithmetic;
     }
-    public bool execute(Resources resources)
+    public bool execute(Resources resources, List<int> args)
     {
         Instruction instruction = (Instruction) this;
-        int val1 = instruction.getVal(resources, reg1);
-        int val2 = instruction.getVal(resources, reg2);
+        int val1 = args[0];
+        int val2 = args[1];
         
         this.result = val1 + val2;
         return true;

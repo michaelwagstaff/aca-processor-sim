@@ -2,14 +2,17 @@ using ProcessorSim.Enums;
 using ProcessorSim.HardwareResources;
 namespace ProcessorSim.Instructions;
 
-public class LoadR : Instruction
+public class LoadR : RegisterLoadStore
 {
     public ExecutionTypes executionType { get; set; }
     public Register targetRegister { get; set; }
     public int result { get; set; }
     private Register reg;
-    private Register memoryIndexRegister;
+    public Register memoryIndexRegister { get; set; }
     public int registerFile { get; set; }
+    public List<Register> inputRegisters { get; set; }
+    public (ExecutionTypes, int) reservationStation { get; set; }
+
     public LoadR(Register register, Register memoryIndexRegister)
     {
         this.reg = register;

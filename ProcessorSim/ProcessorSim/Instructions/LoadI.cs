@@ -8,6 +8,8 @@ public class LoadI : Instruction
     public Register targetRegister { get; set; }
     public int result { get; set; }
     public int registerFile { get; set; }
+    public List<Register> inputRegisters { get; set; }
+    public (ExecutionTypes, int) reservationStation { get; set; }
     private Register reg;
     private int value;
     public LoadI(Register register, int value)

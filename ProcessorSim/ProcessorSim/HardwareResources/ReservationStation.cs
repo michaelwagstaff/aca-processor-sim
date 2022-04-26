@@ -7,6 +7,7 @@ public class ReservationStation
 {
     private ExecutionTypes executionType;
     private ReservationStationSlot[] internalArray;
+    private Queue<ReservationQueueSlot> ReservationQueue;
     private int emptySlots;
     private int size;
     private Resources resources;
@@ -17,20 +18,31 @@ public class ReservationStation
         emptySlots = items;
         size = items;
         this.resources = resources;
-        for (int i = 0; i < items; i++)
+        if (executionType != ExecutionTypes.LoadStore)
         {
-            internalArray[i] = new ReservationStationSlot((executionType, i), resources);
+            for (int i = 0; i < items; i++)
+            {
+                internalArray[i] = new ReservationStationSlot((executionType, i), resources);
+            }
+        }
+        else
+        {
+            ReservationQueue = new Queue<ReservationQueueSlot>();
         }
     }
 
     public bool hasSpace()
     {
-        return this.emptySlots != 0;
+        if (executionType != ExecutionTypes.LoadStore)
+        {
+            return this.emptySlots != 0;
+        }
+        return true;
     }
 
     public bool addItem(Instruction instruction)
     {
-        if (hasSpace())
+        if (hasSpace() && executionType != ExecutionTypes.LoadStore)
         {
             for (int i = 0; i < size; i++)
             {
@@ -42,19 +54,36 @@ public class ReservationStation
                 }
             }
         }
+        else if (executionType == ExecutionTypes.LoadStore)
+        {
+            ReservationQueueSlot newSlot =
+                new ReservationQueueSlot((ExecutionTypes.LoadStore, size), instruction, resources);
+            size++;
+            this.ReservationQueue.Enqueue(newSlot);
+            return true;
+        }
         return false;
     }
 
     public (Instruction, List<int>) getItem()
     {
-        for (int i = 0; i < size; i++)
+        if (executionType != ExecutionTypes.LoadStore)
         {
-            if (this.internalArray[i].ready)
+            for (int i = 0; i < size; i++)
             {
-                this.emptySlots++;
-                return this.internalArray[i].getInstructionForExecution();
+                if (this.internalArray[i].ready)
+                {
+                    this.emptySlots++;
+                    return this.internalArray[i].getInstructionForExecution();
+                }
             }
         }
+        else
+        {
+            ReservationQueueSlot slotToReturn = ReservationQueue.Dequeue();
+            return slotToReturn.getInstructionForExecution();
+        }
+
         return (new Blank(), new List<int>());
     }
     public void printContents()

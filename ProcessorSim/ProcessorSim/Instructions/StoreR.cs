@@ -2,26 +2,28 @@ using ProcessorSim.Enums;
 using ProcessorSim.HardwareResources;
 namespace ProcessorSim.Instructions;
 
-public class StoreR : StoreInstruction
+public class StoreR : StoreInstruction, RegisterLoadStore
 {
     public ExecutionTypes executionType { get; set; }
     public Register targetRegister { get; set; }
     public int result { get; set; }
     public int registerFile { get; set; }
+    public List<Register> inputRegisters { get; set; }
+    public (ExecutionTypes, int) reservationStation { get; set; }
     private Register reg;
-    private Register memoryIndexReg;
+    public Register memoryIndexRegister { get; set; }
     public int memoryIndex { get; set; }
     public StoreR(Register register, Register memoryIndex)
     {
         this.reg = register;
-        this.memoryIndexReg = memoryIndex;
+        this.memoryIndexRegister = memoryIndex;
         this.executionType = ExecutionTypes.LoadStore;
     }
     public bool execute(Resources resources)
     {
         Instruction instruction = (Instruction) this;
         result = instruction.getVal(resources, reg);
-        memoryIndex = instruction.getVal(resources, memoryIndexReg);
+        memoryIndex = instruction.getVal(resources, memoryIndexRegister);
         return true;
     }
 }

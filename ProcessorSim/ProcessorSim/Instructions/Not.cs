@@ -9,6 +9,8 @@ public class Not : Instruction
     public Register targetRegister { get; set; }
     public int result { get; set; }
     public int registerFile { get; set; }
+    public List<Register> inputRegisters { get; set; }
+    public (ExecutionTypes, int) reservationStation { get; set; }
     private Register reg;
     public Not(Register target, Register reg)
     {

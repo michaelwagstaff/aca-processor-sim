@@ -10,6 +10,8 @@ public class Divide : Instruction
     public Register targetRegister { get; set; }
     public int result { get; set; }
     public int registerFile { get; set; }
+    public List<Register> inputRegisters { get; set; }
+    public (ExecutionTypes, int) reservationStation { get; set; }
     private Register reg1, reg2;
     public Divide(Register target, Register register1, Register register2)
     {

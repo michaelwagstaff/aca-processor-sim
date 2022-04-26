@@ -112,5 +112,6 @@ public class Resources
         {
             reservationStation.CDBUpdate(sourceReservationStation, value);
         }
+        registerFile.CDBUpdate(sourceReservationStation, value);
     }
 }

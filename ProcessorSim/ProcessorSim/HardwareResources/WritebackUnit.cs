@@ -21,20 +21,14 @@ public class WritebackUnit
         }
         else if (instruction.executionType == ExecutionTypes.LoadStore)
         {
+            resources.CDBBroadcast(instruction.reservationStation, instruction.result);
             if (instruction.targetRegister != null)
             {
                 // Load operation
                 instruction.targetRegister.setValue(instruction.result);
                 // Depending on when we get result from memory unit may need to remove data hazard marker here
             }
-            else
-            {
-                StoreInstruction tempInstruction = (StoreInstruction) instruction;
-                // Need to do this to be able to access memory index
-                resources.dataMemory[tempInstruction.memoryIndex].setValue(instruction.result);
-            }
         }
-
         resources.instructionsWaitingWriteback.Remove(instruction);
         return true;
     }

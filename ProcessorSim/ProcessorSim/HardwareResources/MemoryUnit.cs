@@ -13,34 +13,19 @@ public class MemoryUnit
             if (resources.verbose)
             {
                 Console.WriteLine("  Instruction {0}", instruction);
-                Console.WriteLine("  Register File {0}", instruction.registerFile);
                 Console.WriteLine("  Actual Output Register: {0}", instruction.targetRegister);
-                //Console.WriteLine("Actual Output Register: {0}",
-                //    resources.registerFile.getPhysicalRegister(instruction.registerFile, instruction.targetRegister));
             }
-            //Register actualTargetRegister =
-            //    resources.registerFile.getPhysicalRegister(instruction.registerFile, instruction.targetRegister);
+
             if (instruction.executionType == ExecutionTypes.SimpleArithmetic)
             {
-                /*
-                if (resources.verbose)
-                {
-                    Console.WriteLine("Memory stage for arithmetic instruction {0}: saving result {1} to register file",
-                        instruction, instruction.result);
-                }
-                */
-
                 if (instruction.targetRegister != null)
                 {
-                    resources.forwardedResults[instruction.targetRegister] = instruction.result;
-                    resources.registerInstructionsInFlight[instruction.targetRegister]--;
-                    resources.reservationStation.markRegisterUnblocked(instruction.targetRegister);
+                    resources.CDBBroadcast(instruction.reservationStation, instruction.result);
                 }
             }
             else if (instruction.executionType == ExecutionTypes.ComplexArithmetic)
             {
-                resources.registerInstructionsInFlight[instruction.targetRegister]--;
-                resources.reservationStation.markRegisterUnblocked(instruction.targetRegister);
+                
             }
             else if (instruction.executionType == ExecutionTypes.LoadStore)
             {
@@ -56,11 +41,14 @@ public class MemoryUnit
                 {
                     // i.e. we're doing a load
                     // Do loads get forwarded here or do we have to wait until writeback??
-                    resources.forwardedResults[instruction.targetRegister] = instruction.result;
-                    resources.registerInstructionsInFlight[instruction.targetRegister] --;
-                    resources.reservationStation.markRegisterUnblocked(instruction.targetRegister);
+                    resources.CDBBroadcast(instruction.reservationStation, instruction.result);
                 }
-                // Else do nothing until writeback?
+                else
+                {
+                    StoreInstruction tempInstruction = (StoreInstruction) instruction;
+                    // Need to do this to be able to access memory index
+                    resources.dataMemory[tempInstruction.memoryIndex].setValue(instruction.result);
+                }
             }
             resources.instructionsWaitingWriteback.Add(instruction);
             resources.instructionsWaitingMemory.Remove(instruction);

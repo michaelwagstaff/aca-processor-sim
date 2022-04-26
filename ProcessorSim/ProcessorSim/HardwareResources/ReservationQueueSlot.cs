@@ -13,6 +13,7 @@ public class ReservationQueueSlot
     public (ExecutionTypes, int) number;
     public Resources resources;
     public bool ready;
+    private bool dispatched;
 
     public ReservationQueueSlot((ExecutionTypes, int) number, Instruction instruction, Resources resources)
     {
@@ -57,6 +58,7 @@ public class ReservationQueueSlot
             AV = temp.memoryIndex;
         }
         Busy = true;
+        dispatched = false;
     }
 
     public void CDBupdate((ExecutionTypes, int) station, int value)
@@ -66,13 +68,17 @@ public class ReservationQueueSlot
             Q = null;
             V = value;
         }
-
         if (station == AQ)
         {
             AQ = null;
             AV = value;
         }
 
+        if (station == number && dispatched)
+        {
+            Busy = false;
+            dispatched = false;
+        }
         if (AQ == null && Q == null)
             ready = true;
     }
@@ -87,6 +93,7 @@ public class ReservationQueueSlot
         this.AQ = null;
         this.V = -1;
         this.AV = -1;
+        dispatched = true;
         return (Op, returnV);
     }
 }

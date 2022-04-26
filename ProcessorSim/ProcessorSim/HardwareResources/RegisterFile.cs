@@ -33,4 +33,16 @@ public class RegisterFile
             Console.WriteLine("    {0} Waiting On: {1}", registerMapping.Key.index, registerMapping.Value.ToString());
         }
     }
+
+    public void CDBUpdate((ExecutionTypes, int) station, int value)
+    {
+        foreach (KeyValuePair<Register, (ExecutionTypes, int)> fileEntry in internalFile)
+        {
+            if (station == fileEntry.Value)
+            {
+                fileEntry.Key.setValue(value);
+                internalFile[fileEntry.Key] = (ExecutionTypes.SimpleArithmetic, -1);
+            }
+        }
+    }
 }

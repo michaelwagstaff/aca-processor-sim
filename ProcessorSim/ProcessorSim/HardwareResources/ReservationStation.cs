@@ -46,7 +46,7 @@ public class ReservationStation
         {
             for (int i = 0; i < size; i++)
             {
-                if (this.internalArray[i].Op == null)
+                if (this.internalArray[i].Busy == false)
                 {
                     this.internalArray[i].addItem(instruction);
                     this.emptySlots --;

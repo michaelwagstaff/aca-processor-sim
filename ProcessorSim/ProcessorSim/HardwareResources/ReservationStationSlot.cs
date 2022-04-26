@@ -13,6 +13,7 @@ public class ReservationStationSlot
     public (ExecutionTypes, int) number;
     public Resources resources;
     public bool ready;
+    private bool dispatched;
 
     public ReservationStationSlot((ExecutionTypes, int) number, Resources resources)
     {
@@ -50,7 +51,11 @@ public class ReservationStationSlot
                 V[i] = value;
             }
         }
-
+        if (station == number && dispatched)
+        {
+            Busy = false;
+            dispatched = false;
+        }
         ready = true;
         for (int i = 0; i < Q.Count; i++)
         {
@@ -67,6 +72,7 @@ public class ReservationStationSlot
         Op = null;
         this.Q = new List<(ExecutionTypes, int)?>();
         this.V = new List<int>();
+        dispatched = true;
         return (Op, returnV);
     }
 }

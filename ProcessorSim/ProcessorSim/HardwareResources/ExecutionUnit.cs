@@ -21,23 +21,30 @@ public class ExecutionUnit
     {
         Instruction instruction;
         List<int> args;
-        if (instructionObject == null && blocked)
+        if (instructionObject.Value.Item1 == null)
         {
-            instruction = currentInstruction;
-            args = currentArgs;
+            if (blocked)
+            {
+                instruction = currentInstruction;
+                args = currentArgs;
+            }
+            else
+            {
+                instruction = new Blank();
+                args = new List<int>();
+            }
         }
         else
         {
             instruction = instructionObject.Value.Item1;
             args = instructionObject.Value.Item2;
         }
-
+        if (resources.verbose)
+            Console.WriteLine("  Executing Instruction: {0}", instruction);
         bool? result = null;
         if (instruction.GetType().Name != "Blank")
         {
             resources.monitor.incrementInsructionsExecuted();
-            if (resources.verbose)
-                Console.WriteLine("  Executing Instruction: {0}", instruction);
         }
 
         if (instruction.executionType == ExecutionTypes.Branch)

@@ -71,7 +71,7 @@ public class ReservationStation
         {
             for (int i = 0; i < size; i++)
             {
-                if (this.internalArray[i].ready)
+                if (internalArray[i].ready && internalArray[i].Busy && !internalArray[i].dispatched)
                 {
                     this.emptySlots++;
                     return this.internalArray[i].getInstructionForExecution();

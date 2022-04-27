@@ -15,7 +15,7 @@ class ProcessorSim
     static int superscalarCount;
     public static void Main(string[] args)
     {
-        verbose = true;
+        verbose = false;
         nextInstructionNeedsNewRegister = false;
         superscalarCount = 1;
         Resources resources = new Resources(32, 512, 1024, verbose, superscalarCount);
@@ -142,7 +142,8 @@ class ProcessorSim
                     {
                         if (resources.executionUnits[executionType][i].blocked)
                         {
-                            resources.executionUnits[executionType][i].execute(resources, null);
+                            Console.WriteLine(  "Unit Blocked!");
+                            resources.executionUnits[executionType][i].execute(resources, (new Blank(), new List<int>()));
                         }
                         else
                         {

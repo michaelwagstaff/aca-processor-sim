@@ -23,16 +23,17 @@ public class Print : Instruction
 
     public bool execute(Resources resources, List<int> args)
     {
+        /*
         if (reg.isInstruction)
         {
             Console.WriteLine(reg.getInstruction());
         }
         else
-        {
+        {*/
             Instruction instruction = (Instruction) this;
             int val = args[0];
             Console.WriteLine(val);
-        }
+        //}
 
         return true;
     }

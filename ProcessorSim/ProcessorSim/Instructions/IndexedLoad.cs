@@ -16,6 +16,9 @@ public class IndexedLoad : Instruction
 
     public IndexedLoad(Register register, Register memoryIndexRegister, Register offset)
     {
+        inputRegisters = new List<Register>();
+        inputRegisters.Add(memoryIndexRegister);
+        inputRegisters.Add(offset);
         this.reg = register;
         this.memoryIndexRegister = memoryIndexRegister;
         this.offset = offset;
@@ -26,7 +29,7 @@ public class IndexedLoad : Instruction
     public bool execute(Resources resources, List<int> args)
     {
         Instruction instruction = (Instruction) this;
-        result = resources.dataMemory[instruction.getVal(resources, memoryIndexRegister) + instruction.getVal(resources, offset)].getValue();
+        result = resources.dataMemory[args[0] + args[1]].getValue();
         targetRegister = reg;
         return true;
     }

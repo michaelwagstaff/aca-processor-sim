@@ -18,6 +18,7 @@ public class ReservationQueueSlot
     public ReservationQueueSlot((ExecutionTypes, int) number, Instruction instruction, Resources resources)
     {
         this.number = number;
+        Op = instruction;
         this.resources = resources;
         // Modify to account for Aq and Av
         if (instruction.GetType() == typeof(StoreR))
@@ -76,8 +77,7 @@ public class ReservationQueueSlot
 
         if (station == number && dispatched)
         {
-            Busy = false;
-            dispatched = false;
+            resetStation();
         }
         if (AQ == null && Q == null)
             ready = true;
@@ -88,12 +88,19 @@ public class ReservationQueueSlot
         List<int> returnV = new List<int>();
         returnV.Add(AV);
         returnV.Add(V);
+        dispatched = true;
+        return (Op, returnV);
+    }
+    private void resetStation()
+    {
+        Op = null;
+        Busy = false;
+        dispatched = false;
+        ready = false;
         Op = null;
         this.Q = null;
         this.AQ = null;
         this.V = -1;
         this.AV = -1;
-        dispatched = true;
-        return (Op, returnV);
     }
 }

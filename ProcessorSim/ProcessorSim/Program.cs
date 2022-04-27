@@ -24,7 +24,7 @@ class ProcessorSim
         instructionRegister = null;
         bool fetchSuccessful = true;
         int fetchFailedCount = 0;
-        while (fetchFailedCount < 2)
+        while (fetchFailedCount < 1)
         {
             fetchSuccessful = tick(resources);
             if (!fetchSuccessful)
@@ -37,10 +37,10 @@ class ProcessorSim
     {
         // StreamReader reader = new StreamReader(@"Programs/bubblesort.mpl");
         // StreamReader reader = new StreamReader(@"Programs/fact.mpl");
-        // StreamReader reader = new StreamReader(@"Programs/fact-safe.mpl");
+        StreamReader reader = new StreamReader(@"Programs/fact-safe.mpl");
         // StreamReader reader = new StreamReader(@"Programs/gcd-original.mpl");
         // StreamReader reader = new StreamReader(@"Programs/vectoradd.mpl");
-        StreamReader reader = new StreamReader(@"Programs/vectormult-safe.mpl");
+        // StreamReader reader = new StreamReader(@"Programs/vectormult-safe.mpl");
         int i = 0;
         string line;
         while ((line = reader.ReadLine()) != null)
@@ -78,7 +78,7 @@ class ProcessorSim
         if (verbose)
         {
             Console.WriteLine("Tick Ended: Press enter to continue...");
-            //Console.ReadLine();
+            Console.ReadLine();
         }
 
         return true;

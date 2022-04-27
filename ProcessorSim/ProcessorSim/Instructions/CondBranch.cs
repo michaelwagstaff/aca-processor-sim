@@ -17,6 +17,7 @@ public class CondBranch : Instruction
     public CondBranch(Register flag, Register newAddress)
     {
         inputRegisters = new List<Register>();
+        inputRegisters.Add(flag);
         this.flag = flag;
         this.newAddress = newAddress;
         this.executionType = ExecutionTypes.Branch;
@@ -25,7 +26,7 @@ public class CondBranch : Instruction
     public bool execute(Resources resources, List<int> args)
     {
         Instruction instruction = (Instruction) this;
-        int flagVal = instruction.getVal(resources, flag);
+        int flagVal = args[0];
         if (flagVal == 1)
         {
             resources.pc.setValue(newAddress.getValue() - 1);

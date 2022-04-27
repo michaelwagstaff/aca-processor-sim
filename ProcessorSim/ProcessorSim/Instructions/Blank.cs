@@ -15,9 +15,10 @@ public class Blank : Instruction
     public Blank()
     {
         this.executionType = ExecutionTypes.General;
+        this.inputRegisters = new List<Register>();
     }
 
-    public bool execute(Resources resources)
+    public bool execute(Resources resources, List<int> args)
     {
         return true;
     }

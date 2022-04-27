@@ -26,7 +26,6 @@ public class DecodeUnit
         Register reg1 = null;
         Register reg2 = null;
         Register reg3 = null;
-        Register oldReg1 = null;
         try
         {
             op1 = rawInstruction.Split(" ")[1];
@@ -70,7 +69,7 @@ public class DecodeUnit
         }
         catch
         { }
-        Instruction instruction = findInstruction(opCode, op1, op2, op3, reg1, reg2, reg3, oldReg1);
+        Instruction instruction = findInstruction(opCode, op1, op2, op3, reg1, reg2, reg3);
         if (resources.verbose)
         {
             Console.WriteLine("  {0}", rawInstruction);
@@ -79,12 +78,12 @@ public class DecodeUnit
         return instruction;
     }
 
-    private Instruction findInstruction(string opCode, string op1, string op2, string op3, Register reg1, Register reg2, Register reg3, Register oldReg1)
+    private Instruction findInstruction(string opCode, string op1, string op2, string op3, Register reg1, Register reg2, Register reg3)
     {
         switch(opCode)
         {
             case "Add":
-                return new Add(reg1, oldReg1, reg2);
+                return new Add(reg1, reg1, reg2);
             case "Blank":
                 return new Blank();
             case "Branch":
@@ -100,7 +99,7 @@ public class DecodeUnit
             case "Copy":
                 return new Copy(reg1, reg2);
             case "Divide":
-                return new Divide(reg1, oldReg1, reg2);
+                return new Divide(reg1, reg1, reg2);
             case "End":
                 return new End();
             case "Load":
@@ -114,9 +113,9 @@ public class DecodeUnit
             case "MarkAvailable":
                 return new MarkAvailable(reg1);
             case "Multiply":
-                return new Multiply(reg1, oldReg1, reg2);
+                return new Multiply(reg1, reg1, reg2);
             case "Not":
-                return new Not(reg1, oldReg1);
+                return new Not(reg1, reg1);
             case "Print":
                 return new Print(reg1);
             case "Store":
@@ -124,7 +123,7 @@ public class DecodeUnit
             case "StoreR":
                 return new StoreR(reg1, reg2);
             case "Subtract":
-                return new Subtract(reg1, oldReg1, reg2);
+                return new Subtract(reg1, reg1, reg2);
         }
         return new Blank();
     }

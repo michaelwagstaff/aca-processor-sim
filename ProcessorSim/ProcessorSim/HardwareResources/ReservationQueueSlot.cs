@@ -22,9 +22,9 @@ public class ReservationQueueSlot
         // Modify to account for Aq and Av
         if (instruction.GetType() == typeof(StoreR))
         {
-            if (resources.registerFile.getDependantStation(instruction.inputRegisters[0]).Item2 != -1)
+            if (resources.registerFile.getDependantStation(instruction.inputRegisters[0]) != null)
             {
-                Q = resources.registerFile.getDependantStation(instruction.inputRegisters[0]);
+                Q = ((ExecutionTypes, int))resources.registerFile.getDependantStation(instruction.inputRegisters[0]);
                 ready = false;
             }
             else
@@ -43,9 +43,9 @@ public class ReservationQueueSlot
         if (instruction.GetType() == typeof(LoadR) || instruction.GetType() == typeof(StoreR))
         {
             RegisterLoadStore temp = (RegisterLoadStore) instruction;
-            if (resources.registerFile.getDependantStation(temp.memoryIndexRegister).Item2 != -1)
+            if (resources.registerFile.getDependantStation(temp.memoryIndexRegister) != null)
             {
-                AQ = resources.registerFile.getDependantStation(temp.memoryIndexRegister);
+                AQ = ((ExecutionTypes, int))resources.registerFile.getDependantStation(temp.memoryIndexRegister);
             }
             else
             {

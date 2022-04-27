@@ -24,6 +24,7 @@ public class Compare : Instruction
 
     public bool execute(Resources resources, List<int> args)
     {
+        inputRegisters = new List<Register>();
         Instruction instruction = (Instruction) this;
         int val1 = args[0];
         int val2 = args[1];

@@ -15,14 +15,17 @@ public class RegisterFile
         this.resources = resources;
     }
 
-    public (ExecutionTypes, int) getDependantStation(Register register)
+    public (ExecutionTypes, int)? getDependantStation(Register register)
     {
-        return internalFile[register];
+        if(register != null)
+            return internalFile[register];
+        return null;
     }
 
     public void setDependantStation(Register dest, (ExecutionTypes, int) station)
     {
-        this.internalFile[dest] = station;
+        if(dest != null)
+            this.internalFile[dest] = station;
     }
 
     public void printMapping()

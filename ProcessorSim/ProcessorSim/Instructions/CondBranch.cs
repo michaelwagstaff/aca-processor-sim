@@ -16,6 +16,7 @@ public class CondBranch : Instruction
 
     public CondBranch(Register flag, Register newAddress)
     {
+        inputRegisters = new List<Register>();
         this.flag = flag;
         this.newAddress = newAddress;
         this.executionType = ExecutionTypes.Branch;

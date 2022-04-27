@@ -14,6 +14,7 @@ public class End : Instruction
 
     public End()
     {
+        inputRegisters = new List<Register>();
         this.executionType = ExecutionTypes.General;
     }
 

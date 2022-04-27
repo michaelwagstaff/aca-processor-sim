@@ -15,6 +15,7 @@ public class Branch : Instruction
 
     public Branch(Register newAddress)
     {
+        inputRegisters = new List<Register>();
         this.newAddress = newAddress;
         this.executionType = ExecutionTypes.Branch;
     }

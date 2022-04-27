@@ -8,7 +8,7 @@ public class ReservationStationSlot
 {
     public Instruction Op;
     public List<(ExecutionTypes, int)?> Q;
-    public List<int> V;
+    public List<int?> V;
     public bool Busy;
     public (ExecutionTypes, int) number;
     public Resources resources;
@@ -20,7 +20,7 @@ public class ReservationStationSlot
         this.number = number;
         this.resources = resources;
         this.Q = new List<(ExecutionTypes, int)?>();
-        this.V = new List<int>();
+        this.V = new List<int?>();
     }
     public bool addItem(Instruction instruction)
     {
@@ -30,10 +30,16 @@ public class ReservationStationSlot
         for (int i = 0; i < instruction.inputRegisters.Count; i++)
         {
             Register inputRegister = instruction.inputRegisters[i];
-            if (resources.registerFile.getDependantStation(inputRegister).Item1 != null)
-                Q[i] = resources.registerFile.getDependantStation(inputRegister);
+            if (resources.registerFile.getDependantStation(inputRegister) != null)
+            {
+                Q.Add(((ExecutionTypes, int)) resources.registerFile.getDependantStation(inputRegister));
+                V.Add(null);
+            }
             else
-                V[i] = instruction.inputRegisters[i].getValue();
+            {
+                Q.Add(null);
+                V.Add(instruction.inputRegisters[i].getValue());
+            }
         }
         Busy = true;
         resources.registerFile.setDependantStation(instruction.targetRegister, number);
@@ -68,10 +74,10 @@ public class ReservationStationSlot
 
     public (Instruction, List<int>) getInstructionForExecution()
     {
-        List<int> returnV = new List<int>(V);
+        List<int> returnV = new List<int>(V.Where(x => x != null).Cast<int>().ToList());
         Op = null;
         this.Q = new List<(ExecutionTypes, int)?>();
-        this.V = new List<int>();
+        this.V = new List<int?>();
         dispatched = true;
         return (Op, returnV);
     }

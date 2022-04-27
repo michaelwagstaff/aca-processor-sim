@@ -29,6 +29,7 @@ public class ReservationStationSlot
     {
         if (instruction == null)
             return false;
+        Op = instruction;
         Register source1, source2;
         // Assume complex arithmetic
         // Should be source 1

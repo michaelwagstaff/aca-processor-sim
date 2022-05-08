@@ -12,6 +12,7 @@ public class ReservationStationSlot
     public bool Busy;
     public (ExecutionTypes, int) number;
     public Resources resources;
+    public int destination;
     public bool ready;
     public bool dispatched;
 

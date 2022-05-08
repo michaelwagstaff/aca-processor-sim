@@ -89,7 +89,7 @@ public class ReservationStation
         return (new Blank(), new List<int>());
     }
 
-    public void CDBUpdate((ExecutionTypes, int) station, int value)
+    public void CDBUpdate(int bufferSlot, int value)
     {
         if (executionType != ExecutionTypes.LoadStore)
         {
@@ -97,7 +97,7 @@ public class ReservationStation
             {
                 if (this.internalArray[i].Busy)
                 {
-                    this.internalArray[i].CDBupdate(station, value);
+                    this.internalArray[i].CDBupdate(bufferSlot, value);
                 }
             }
         }
@@ -105,7 +105,7 @@ public class ReservationStation
         {
             foreach (ReservationQueueSlot queuedItem in ReservationQueue)
             {
-                queuedItem.CDBupdate(station, value);
+                queuedItem.CDBupdate(bufferSlot, value);
             }
         }
     }

@@ -9,7 +9,7 @@ public class StoreR : StoreInstruction, RegisterLoadStore
     public int result { get; set; }
     public int registerFile { get; set; }
     public List<Register> inputRegisters { get; set; }
-    public (ExecutionTypes, int) reservationStation { get; set; }
+    public int reorderBuffer { get; set; }
     private Register reg;
     public Register memoryIndexRegister { get; set; }
     public int memoryIndex { get; set; }

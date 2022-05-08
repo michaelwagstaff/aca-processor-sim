@@ -20,7 +20,7 @@ public class MemoryUnit
             {
                 if (instruction.targetRegister != null)
                 {
-                    resources.CDBBroadcast(instruction.reservationStation, instruction.result);
+                    resources.CDBBroadcast(instruction.reorderBuffer, instruction.result);
                 }
             }
             else if (instruction.executionType == ExecutionTypes.ComplexArithmetic)
@@ -41,7 +41,7 @@ public class MemoryUnit
                 {
                     // i.e. we're doing a load
                     // Do loads get forwarded here or do we have to wait until writeback??
-                    resources.CDBBroadcast(instruction.reservationStation, instruction.result);
+                    resources.CDBBroadcast(instruction.reorderBuffer, instruction.result);
                 }
                 else
                 {

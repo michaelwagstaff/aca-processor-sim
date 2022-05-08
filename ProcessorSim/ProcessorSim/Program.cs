@@ -72,7 +72,7 @@ class ProcessorSim
         else if(verbose)
         {
             Console.WriteLine("Current Register Mapping:");
-            resources.registerFile.printMapping();
+            //resources.registerFile.printMapping();
         }
         resources.monitor.incrementCyclesTaken();
         if (verbose)
@@ -115,8 +115,8 @@ class ProcessorSim
 
         try
         {
-            if (verbose)
-                resources.registerFile.printMapping();
+            //if (verbose)
+                //resources.registerFile.printMapping();
         } catch {}
 
         return false;

@@ -7,9 +7,9 @@ public class ReOrderBufferSlot
 {
     public bool busy;
     private Instruction instruction;
-    private ReOrderBufferState state;
-    private Register destination;
-    private int value;
+    public ReOrderBufferState state;
+    public Register destination;
+    public int value;
 
     public void addItem(Instruction instruction)
     {

@@ -12,7 +12,7 @@ public class IndexedLoad : Instruction
     private Register offset;
     public int registerFile { get; set; }
     public List<Register> inputRegisters { get; set; }
-    public (ExecutionTypes, int) reservationStation { get; set; }
+    public int reorderBuffer { get; set; }
 
     public IndexedLoad(Register register, Register memoryIndexRegister, Register offset)
     {

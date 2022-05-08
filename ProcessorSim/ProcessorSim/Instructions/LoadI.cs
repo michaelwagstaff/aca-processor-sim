@@ -9,7 +9,7 @@ public class LoadI : Instruction
     public int result { get; set; }
     public int registerFile { get; set; }
     public List<Register> inputRegisters { get; set; }
-    public (ExecutionTypes, int) reservationStation { get; set; }
+    public int reorderBuffer { get; set; }
     private Register reg;
     private int value;
     public LoadI(Register register, int value)

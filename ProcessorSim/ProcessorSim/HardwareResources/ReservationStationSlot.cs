@@ -7,7 +7,7 @@ namespace ProcessorSim.HardwareResources;
 public class ReservationStationSlot
 {
     public Instruction Op;
-    public List<(ExecutionTypes, int)?> Q;
+    public List<int?> Q;
     public List<int?> V;
     public bool Busy;
     public (ExecutionTypes, int) number;
@@ -23,7 +23,7 @@ public class ReservationStationSlot
         Busy = false;
         ready = false;
         dispatched = false;
-        this.Q = new List<(ExecutionTypes, int)?>();
+        this.Q = new List<int?>();
         this.V = new List<int?>();
     }
     public bool addItem(Instruction instruction)
@@ -38,11 +38,20 @@ public class ReservationStationSlot
         for (int i = 0; i < instruction.inputRegisters.Count; i++)
         {
             Register inputRegister = instruction.inputRegisters[i];
-            if (resources.registerFile.getDependantStation(inputRegister) != null)
+            if (resources.reorderBuffer.getROBDependency(inputRegister) != null)
             {
-                Q.Add(((ExecutionTypes, int)) resources.registerFile.getDependantStation(inputRegister));
-                V.Add(null);
-                ready = false;
+                int possibleDependency = resources.reorderBuffer.getROBDependency(inputRegister);
+                if (resources.reorderBuffer.getValue(possibleDependency) == null)
+                {
+                    Q.Add(possibleDependency);
+                    V.Add(null);
+                    ready = false;
+                }
+                else
+                {
+                    Q.Add(null);
+                    V.Add(resources.reorderBuffer.getValue(possibleDependency));
+                }
             }
             else
             {
@@ -51,26 +60,20 @@ public class ReservationStationSlot
             }
         }
         Busy = true;
-        resources.registerFile.setDependantStation(instruction.targetRegister, number);
-        instruction.reservationStation = this.number;
         return true;
     }
 
-    public void CDBupdate((ExecutionTypes, int) station, int value)
+    public void CDBupdate(int bufferSlot, int value)
     {
         for (int i = 0; i < Q.Count; i++)
         {
-            if (station == Q[i])
+            if (bufferSlot == Q[i])
             {
                 Q[i] = null;
                 V[i] = value;
             }
         }
-        if (station == number && dispatched)
-        {
-            resetStation();
-        }
-        if(Op != null)
+        if(Busy && Op != null)
             ready = true;
         for (int i = 0; i < Q.Count; i++)
         {
@@ -84,17 +87,7 @@ public class ReservationStationSlot
     public (Instruction, List<int>) getInstructionForExecution()
     {
         List<int> returnV = new List<int>(V.Where(x => x != null).Cast<int>().ToList());
-        dispatched = true;
-        return (Op, returnV);
-    }
-
-    private void resetStation()
-    {
-        Op = null;
-        this.Q = new List<(ExecutionTypes, int)?>();
-        this.V = new List<int?>();
         Busy = false;
-        dispatched = false;
-        ready = false;
+        return (Op, returnV);
     }
 }

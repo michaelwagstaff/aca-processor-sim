@@ -75,6 +75,7 @@ public class DecodeUnit
             Console.WriteLine("  {0}", rawInstruction);
         }
 
+        instruction.reorderBuffer = resources.reorderBuffer.addItemToBuffer(instruction);
         return instruction;
     }
 

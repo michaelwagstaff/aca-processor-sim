@@ -9,7 +9,7 @@ public interface Instruction
     int result { get; set; }
     int registerFile { get; set; }
     List<Register> inputRegisters { get; set; }
-    (ExecutionTypes, int) reservationStation { get; set; }
+    int reorderBuffer { get; set; }
     public bool execute(Resources resources, List<int> vals)
     {
         return true;

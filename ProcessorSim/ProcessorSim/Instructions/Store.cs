@@ -9,7 +9,7 @@ public class Store : StoreInstruction, ImmediateMemoryLoadStore
     public int result { get; set; }
     public int registerFile { get; set; }
     public List<Register> inputRegisters { get; set; }
-    public (ExecutionTypes, int) reservationStation { get; set; }
+    public int reorderBuffer { get; set; }
     private Register reg;
     public int memoryIndex { get; set; }
     public Store(Register register, int memoryIndex)

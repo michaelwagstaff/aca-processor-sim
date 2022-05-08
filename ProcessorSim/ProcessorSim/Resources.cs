@@ -20,8 +20,7 @@ public class Resources
     public List<DecodeUnit> decodeUnits;
     public Dictionary<ExecutionTypes, ReservationStation> reservationStations;
     public Dictionary<ExecutionTypes, List<ExecutionUnit>> executionUnits;
-    public Dictionary<Register, int> registerInstructionsInFlight;
-    public RegisterFile registerFile;
+    public ReOrderBuffer reorderBuffer;
     public List<Instruction> instructionsWaitingMemory;
     public MemoryUnit memoryUnit;
     public Dictionary<Register, int?> forwardedResults;
@@ -61,7 +60,7 @@ public class Resources
             fetchUnits.Add(new FetchUnit());
             decodeUnits.Add(new DecodeUnit());
         }
-        registerFile = new RegisterFile(this);
+        reorderBuffer = new ReOrderBuffer();
         reservationStations = new Dictionary<ExecutionTypes, ReservationStation>();
         reservationStations[ExecutionTypes.General] = new ReservationStation(ExecutionTypes.General, 16, this);
         reservationStations[ExecutionTypes.SimpleArithmetic] = new ReservationStation(ExecutionTypes.SimpleArithmetic, 16, this);
@@ -69,7 +68,6 @@ public class Resources
         reservationStations[ExecutionTypes.Branch] = new ReservationStation(ExecutionTypes.Branch, 1, this);
         reservationStations[ExecutionTypes.LoadStore] = new ReservationStation(ExecutionTypes.LoadStore, 0, this);
         instructionsWaitingMemory = new List<Instruction>();
-        forwardedResults = new Dictionary<Register, int?>();
         memoryUnit = new MemoryUnit();
         writebackUnit = new WritebackUnit();
 
@@ -106,12 +104,11 @@ public class Resources
         }
     }
 
-    public void CDBBroadcast((ExecutionTypes, int) sourceReservationStation, int value)
+    public void CDBBroadcast(int reorderBuffer, int value)
     {
         foreach (ReservationStation reservationStation in reservationStations.Values)
         {
-            reservationStation.CDBUpdate(sourceReservationStation, value);
+            reservationStation.CDBUpdate(reorderBuffer, value);
         }
-        registerFile.CDBUpdate(sourceReservationStation, value);
     }
 }

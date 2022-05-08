@@ -11,7 +11,7 @@ public class Multiply : Instruction
     public int result { get; set; }
     public int registerFile { get; set; }
     public List<Register> inputRegisters { get; set; }
-    public (ExecutionTypes, int) reservationStation { get; set; }
+    public int reorderBuffer { get; set; }
     private Register reg1, reg2;
     public Multiply(Register target, Register register1, Register register2)
     {

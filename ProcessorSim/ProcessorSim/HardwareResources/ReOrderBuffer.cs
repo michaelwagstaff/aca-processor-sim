@@ -53,4 +53,19 @@ public class ReOrderBuffer
             return null;
         return internalQueue[slot].value;
     }
+
+    public void notifyBranchAddress(int slot, int pcValue)
+    {
+        
+    }
+    public void setMemoryAddress(int slot, int memoryAddress)
+    {
+        internalQueue[slot].memoryIndex = memoryAddress;
+    }
+
+    public void CDBUpdate(int slot, int value)
+    {
+        internalQueue[slot].value = value;
+        internalQueue[slot].state = ReOrderBufferState.WriteResult;
+    }
 }

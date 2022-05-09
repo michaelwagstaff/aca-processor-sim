@@ -25,7 +25,7 @@ public class Resources
     public MemoryUnit memoryUnit;
     public Dictionary<Register, int?> forwardedResults;
     public List<Instruction> instructionsWaitingWriteback;
-    public WritebackUnit writebackUnit;
+    public CommitUnit commitUnit;
     
     public HardwareResources.Monitor monitor;
     public Resources(int regCount, int instCount, int dataCount, bool verbose = false, int superscalarCount=1)
@@ -69,9 +69,7 @@ public class Resources
         reservationStations[ExecutionTypes.LoadStore] = new ReservationStation(ExecutionTypes.LoadStore, 0, this);
         instructionsWaitingMemory = new List<Instruction>();
         memoryUnit = new MemoryUnit();
-        writebackUnit = new WritebackUnit();
-
-        instructionsWaitingWriteback = new List<Instruction>();
+        commitUnit = new CommitUnit();
     }
 
     public void setExecutionUnits(int generalExecutionUnits, int arithmeticUnits, int loadStoreUnits, int branchUnits)
@@ -104,11 +102,18 @@ public class Resources
         }
     }
 
-    public void CDBBroadcast(int reorderBuffer, int value)
+    public void CDBBroadcast(int reorderBufferSlot, int value)
     {
         foreach (ReservationStation reservationStation in reservationStations.Values)
         {
-            reservationStation.CDBUpdate(reorderBuffer, value);
+            reservationStation.CDBUpdate(reorderBufferSlot, value);
         }
+
+        reorderBuffer.CDBUpdate(reorderBufferSlot, value);
+    }
+
+    public void CDBBroadcastMemoryAddress(int reorderBufferSlot, int memoryAddress)
+    {
+        reorderBuffer.setMemoryAddress(reorderBufferSlot, memoryAddress);
     }
 }

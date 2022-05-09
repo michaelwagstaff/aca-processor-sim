@@ -9,6 +9,7 @@ public class ReOrderBufferSlot
     private Instruction instruction;
     public ReOrderBufferState state;
     public Register destination;
+    public int memoryIndex;
     public int value;
 
     public void addItem(Instruction instruction)

@@ -16,16 +16,12 @@ public class MemoryUnit
                 Console.WriteLine("  Actual Output Register: {0}", instruction.targetRegister);
             }
 
-            if (instruction.executionType == ExecutionTypes.SimpleArithmetic)
+            if (instruction.executionType == ExecutionTypes.SimpleArithmetic || instruction.executionType == ExecutionTypes.ComplexArithmetic)
             {
                 if (instruction.targetRegister != null)
                 {
                     resources.CDBBroadcast(instruction.reorderBuffer, instruction.result);
                 }
-            }
-            else if (instruction.executionType == ExecutionTypes.ComplexArithmetic)
-            {
-                
             }
             else if (instruction.executionType == ExecutionTypes.LoadStore)
             {
@@ -47,10 +43,11 @@ public class MemoryUnit
                 {
                     StoreInstruction tempInstruction = (StoreInstruction) instruction;
                     // Need to do this to be able to access memory index
-                    resources.dataMemory[tempInstruction.memoryIndex].setValue(instruction.result);
+                    // resources.dataMemory[tempInstruction.memoryIndex].setValue(instruction.result);
+                    resources.CDBBroadcast(instruction.reorderBuffer, instruction.result);
+                    resources.CDBBroadcastMemoryAddress(instruction.reorderBuffer, ((StoreInstruction)instruction).memoryIndex);
                 }
             }
-            resources.instructionsWaitingWriteback.Add(instruction);
             resources.instructionsWaitingMemory.Remove(instruction);
         }
 

@@ -30,6 +30,7 @@ public class CondBranch : Instruction
         if (flagVal == 1)
         {
             resources.pc.setValue(newAddress.getValue() - 1);
+            resources.reorderBuffer.notifyBranchAddress(reorderBuffer, newAddress.getValue());
             return true;
         }
 

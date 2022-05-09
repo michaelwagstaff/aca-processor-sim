@@ -72,7 +72,7 @@ public class ExecutionUnit
         if (instruction.GetType().Name != "Blank")
         {
             if (instruction.GetType().Name == "ComplexArithmetic")
-                resources.instructionsWaitingWriteback.Add(instruction);
+                resources.CDBBroadcast(instruction.reorderBuffer, instruction.result);
             else
                 resources.instructionsWaitingMemory.Add(instruction);
         }

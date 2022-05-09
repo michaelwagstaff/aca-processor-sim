@@ -10,16 +10,13 @@ public class LoadI : Instruction
     public int registerFile { get; set; }
     public List<Register> inputRegisters { get; set; }
     public int reorderBuffer { get; set; }
-    private Register reg;
     private int value;
     public LoadI(Register register, int value)
     {
         inputRegisters = new List<Register>();
-        this.reg = register;
-        targetRegister = reg;
+        targetRegister = register;
         this.value = value;
         this.executionType = ExecutionTypes.SimpleArithmetic;
-        this.reg.available = false;
     }
     public bool execute(Resources resources, List<int> args)
     {

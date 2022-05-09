@@ -11,14 +11,12 @@ public class CondBranch : Instruction
     public int registerFile { get; set; }
     public List<Register> inputRegisters { get; set; }
     public int reorderBuffer { get; set; }
-    private Register flag;
     private Register newAddress;
 
     public CondBranch(Register flag, Register newAddress)
     {
         inputRegisters = new List<Register>();
         inputRegisters.Add(flag);
-        this.flag = flag;
         this.newAddress = newAddress;
         this.executionType = ExecutionTypes.Branch;
     }

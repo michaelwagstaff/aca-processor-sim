@@ -15,12 +15,9 @@ public class Load : ImmediateMemoryLoadStore
     public Load(Register register, int memoryIndex)
     {
         inputRegisters = new List<Register>();
-        this.reg = register;
-        targetRegister = reg;
+        targetRegister = register;
         this.memoryIndex = memoryIndex;
         this.executionType = ExecutionTypes.LoadStore;
-        this.reg.available = false;
-        // Rather important, once decoded, we can't change register, so need to make sure nothing else uses it!
     }
     public bool execute(Resources resources, List<int> args)
     {

@@ -10,7 +10,6 @@ public class CompareLT : Instruction
     public int registerFile { get; set; }
     public List<Register> inputRegisters { get; set; }
     public int reorderBuffer { get; set; }
-    private Register reg1, reg2;
     public CompareLT(Register flag, Register register1, Register register2)
     {
         inputRegisters = new List<Register>();
@@ -22,7 +21,6 @@ public class CompareLT : Instruction
 
     public bool execute(Resources resources, List<int> args)
     {
-        Instruction instruction = (Instruction) this;
         int val1 = args[0];
         int val2 = args[1];
 

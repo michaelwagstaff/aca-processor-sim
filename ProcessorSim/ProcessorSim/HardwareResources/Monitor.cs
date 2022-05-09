@@ -23,6 +23,13 @@ public class Monitor
         return cyclesTaken;
     }
 
+    public void reset()
+    {
+        // Enables benchmarking of core kernels
+        instructionsExecuted = 0;
+        cyclesTaken = 0;
+    }
+
     public float getIPC()
     {
         return (float) instructionsExecuted / (float) cyclesTaken;

@@ -11,13 +11,11 @@ public class VStoreR : VInstruction
     public List<VRegister> inputRegisters { get; set; }
     public Register memoryIndexRegister { get; set; }
     public int reorderBuffer { get; set; }
-    private VRegister reg;
     public int memoryIndex { get; set; }
     public VStoreR(VRegister register, Register memoryIndex)
     {
         inputRegisters = new List<VRegister>();
         inputRegisters.Add(register);
-        this.reg = register;
         this.memoryIndexRegister = memoryIndex;
         this.executionType = ExecutionTypes.LoadStore;
     }

@@ -21,7 +21,6 @@ public class Store : StoreInstruction, ImmediateMemoryLoadStore
     }
     public bool execute(Resources resources, List<int> args)
     {
-        Instruction instruction = (Instruction) this;
         result = args[1];
         return true;
     }

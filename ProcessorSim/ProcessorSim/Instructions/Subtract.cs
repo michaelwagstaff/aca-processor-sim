@@ -25,7 +25,6 @@ public class Subtract : Instruction
     }
     public bool execute(Resources resources, List<int> args)
     {
-        Instruction instruction = (Instruction) this;
         int val1 = args[0];
         int val2 = args[1];
 

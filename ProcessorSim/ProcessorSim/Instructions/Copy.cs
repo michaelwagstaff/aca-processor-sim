@@ -19,12 +19,9 @@ public class Copy : Instruction
         this.reg = register;
         this.targetRegister = destination;
         this.executionType = ExecutionTypes.SimpleArithmetic;
-        this.targetRegister.available = false;
-        // Rather important, once decoded, we can't change register, so need to make sure nothing else uses it!
     }
     public bool execute(Resources resources, List<int> args)
     {
-        Instruction instruction = (Instruction) this;
         result = args[0];
         return true;
     }

@@ -17,7 +17,7 @@ class ProcessorSim
     {
         verbose = false;
         nextInstructionNeedsNewRegister = false;
-        superscalarCount = 1;
+        superscalarCount = 3;
         Resources resources = new Resources(32, 512, 1024, verbose, superscalarCount);
         resources.setExecutionUnits(1,superscalarCount,superscalarCount,1);
         loadProgram(resources);
@@ -56,17 +56,21 @@ class ProcessorSim
         memory(resources);
         if (execute(resources) != 1 && resources.reservationStations[ExecutionTypes.Branch].hasSpace()) // If pipeline flush isn't occuring
         {
-            bool haltPipeline = decode(resources); // TODO: Improve this
-            foreach ((int, (bool, bool)) instruction in resources.instructionsWaitingDecode)
+            if (!resources.reorderBuffer.containsBranch())
             {
-                if (instruction.Item2.Item2)
-                    haltPipeline = true;
-            }
-            if(!haltPipeline)
-                fetch(resources);
-            if (instructionRegister == -1)
-            {
-                return false;
+                bool haltPipeline = decode(resources); // TODO: Improve this
+                foreach ((int, (bool, bool)) instruction in resources.instructionsWaitingDecode)
+                {
+                    if (instruction.Item2.Item2)
+                        haltPipeline = true;
+                }
+
+                if (!haltPipeline)
+                    fetch(resources);
+                if (instructionRegister == -1)
+                {
+                    return false;
+                }
             }
         }
         else if(verbose)
@@ -177,15 +181,6 @@ class ProcessorSim
                     }
                 }
             }
-        /*}
-        
-        catch (NullReferenceException)
-        {
-            if (verbose)
-                Console.WriteLine("Null Instruction in Pipeline");
-            return -1;
-        }*/
-
         return returnVal;
     }
 
@@ -203,17 +198,6 @@ class ProcessorSim
     }
     public static void writeback(Resources resources)
     {
-        /*
-        if(verbose)
-            Console.WriteLine("Writeback Debug:");
-        int count = resources.instructionsWaitingWriteback.Count > superscalarCount ? superscalarCount : resources.instructionsWaitingWriteback.Count;
-        Instruction[] instructionsWaitingWritebackArray = resources.instructionsWaitingWriteback.ToArray();
-        for (int i = 0; i < count; i++)
-        {
-            if (instructionsWaitingWritebackArray[i] != null)
-                resources.writebackUnit.writeback(resources, instructionsWaitingWritebackArray[i]);
-        }
-        */
         resources.reorderBuffer.commit(superscalarCount);
     }
 }

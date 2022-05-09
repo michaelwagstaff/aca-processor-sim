@@ -23,8 +23,6 @@ public class Resources
     public ReOrderBuffer reorderBuffer;
     public List<Instruction> instructionsWaitingMemory;
     public MemoryUnit memoryUnit;
-    public Dictionary<Register, int?> forwardedResults;
-    public List<Instruction> instructionsWaitingWriteback;
     public CommitUnit commitUnit;
     
     public HardwareResources.Monitor monitor;

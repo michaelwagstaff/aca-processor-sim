@@ -63,6 +63,8 @@ public class ReservationStation
         {
             for (int i = 0; i < size; i++)
             {
+                if(internalArray[i] != null)
+                    internalArray[i].CDBupdate(-1,-1);
                 if (internalArray[i] != null && internalArray[i].ready && !internalArray[i].dispatched)
                 {
                     this.emptySlots++;

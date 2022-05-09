@@ -74,7 +74,7 @@ public class ExecutionUnit
             /*
             if (instruction.executionType != ExecutionTypes.ComplexArithmetic)
                 resources.CDBBroadcast(instruction.reorderBuffer, instruction.result);
-                */
+            */
             if (instruction.executionType == ExecutionTypes.LoadStore && instruction.targetRegister == null)
             {
                 resources.CDBBroadcastMemoryAddress(instruction.reorderBuffer,
@@ -83,6 +83,7 @@ public class ExecutionUnit
             }
             else
                 resources.instructionsWaitingMemory.Add(instruction);
+            Console.WriteLine(instruction.ToString());
         }
         else
         {

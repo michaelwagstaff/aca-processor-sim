@@ -1,3 +1,4 @@
+using System.Linq;
 using ProcessorSim.Enums;
 using ProcessorSim.Instructions;
 
@@ -29,6 +30,10 @@ public class ReOrderBuffer
     }
     public int addItemToBuffer(Instruction instruction)
     {
+        if (frontOfQueue + currentSize > 8)
+        {
+            Console.Write("");
+        }
         ReOrderBufferSlot slot = new ReOrderBufferSlot();
         slot.addItem(instruction);
         internalQueue[frontOfQueue + currentSize] = slot;
@@ -76,7 +81,7 @@ public class ReOrderBuffer
 
     public bool containsBranch()
     {
-        for (int i = 0; i < frontOfQueue + currentSize; i++)
+        for (int i = frontOfQueue; i < frontOfQueue + currentSize; i++)
         {
             if (internalQueue[i].instruction.executionType == ExecutionTypes.Branch)
             {
@@ -84,6 +89,19 @@ public class ReOrderBuffer
             }
         }
         return false;
+    }
+
+    public bool onlyBranchesToExecute(int slot = 600)
+    {
+        for (int i = frontOfQueue; i < Math.Min(slot, frontOfQueue + currentSize); i++)
+        {
+            if (internalQueue[i].instruction.executionType != ExecutionTypes.Branch &&
+                internalQueue[i].state == ReOrderBufferState.Execute)
+            {
+                return false;
+            }
+        }
+        return true;
     }
 
     public void commit(int superscalarCount)
@@ -103,6 +121,8 @@ public class ReOrderBuffer
 
         for (int i = 0; i < superscalarCount; i++)
         {
+            if (internalQueue[firstIndexReady + i] == null)
+                return;
             if (internalQueue[firstIndexReady + i].state == ReOrderBufferState.WriteResult)
             {
                 //Commit

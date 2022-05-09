@@ -91,12 +91,18 @@ public class ReservationStationSlot
         {
             Console.Write("");
         }
+
+        if (Op.GetType() == typeof(Branch) || Op.GetType() == typeof(CondBranch))
+        {
+            if (!resources.reorderBuffer.onlyBranchesToExecute(Op.reorderBuffer))
+                ready = false;
+        }
     }
 
     public (Instruction, List<int>) getInstructionForExecution()
     {
         List<int> returnV = new List<int>(V.Where(x => x != null).Cast<int>().ToList());
-        if (Op.GetType() == typeof(Add))
+        if (Op.GetType() == typeof(Copy))
         {
             Console.Write("");
         }

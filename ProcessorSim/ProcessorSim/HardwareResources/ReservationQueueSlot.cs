@@ -39,29 +39,28 @@ public class ReservationQueueSlot
             {
                 AddressV = temp.memoryIndexRegister.getValue();
             }
-            if (instruction.GetType() == typeof(StoreR))
+        }
+        if (instruction.GetType() == typeof(StoreR) || instruction.GetType() == typeof(Store))
+        {
+            if (resources.reorderBuffer.getROBDependency(instruction.inputRegisters[0]) != -1)
             {
-                if (resources.reorderBuffer.getROBDependency(instruction.inputRegisters[0]) != -1)
+                int possibleDependency = resources.reorderBuffer.getROBDependency(instruction.inputRegisters[0]);
+                if (resources.reorderBuffer.getValue(possibleDependency) == null)
                 {
-                    int possibleDependency = resources.reorderBuffer.getROBDependency(instruction.inputRegisters[0]);
-                    if (resources.reorderBuffer.getValue(possibleDependency) == null)
-                    {
-                        Q = possibleDependency;
-                        ready = false;
-                    }
-                    else
-                    {
-                        V = resources.reorderBuffer.getValue(possibleDependency);
-                    }
+                    Q = possibleDependency;
+                    ready = false;
                 }
                 else
                 {
-                    V = instruction.inputRegisters[0].getValue();
-                    ready = true;
+                    V = resources.reorderBuffer.getValue(possibleDependency);
                 }
             }
+            else
+            {
+                V = instruction.inputRegisters[0].getValue();
+            }
         }
-        else if(instruction.GetType() == typeof(Store))
+        if(instruction.GetType() == typeof(Store))
         {
             ImmediateMemoryLoadStore temp = (ImmediateMemoryLoadStore) instruction;
             AddressV = temp.memoryIndex;
@@ -88,8 +87,14 @@ public class ReservationQueueSlot
     public (Instruction, List<int>) getInstructionForExecution()
     {
         List<int> returnV = new List<int>();
-        returnV.Add((int)AddressV);
-        returnV.Add((int)V);
+        if(AddressV != null)
+            returnV.Add((int)AddressV);
+        else
+            returnV.Add(-1);
+        if(V != null)
+            returnV.Add((int)V);
+        else
+            returnV.Add(-1);
         return (Op, returnV);
     }
 }

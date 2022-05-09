@@ -79,6 +79,7 @@ public class ExecutionUnit
             {
                 resources.CDBBroadcastMemoryAddress(instruction.reorderBuffer,
                         ((StoreInstruction) instruction).memoryIndex);
+                resources.CDBBroadcast(instruction.reorderBuffer, instruction.result);
             }
             else
                 resources.instructionsWaitingMemory.Add(instruction);

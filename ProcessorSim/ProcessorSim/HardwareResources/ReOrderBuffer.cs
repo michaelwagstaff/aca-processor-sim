@@ -13,7 +13,7 @@ public class ReOrderBuffer
 
     public ReOrderBuffer(Resources resources)
     {
-        maxQueueSize = 64;
+        maxQueueSize = 600;
         internalQueue = new ReOrderBufferSlot[maxQueueSize];
         frontOfQueue = 0;
         currentSize = 0;

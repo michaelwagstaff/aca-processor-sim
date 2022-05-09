@@ -41,11 +41,7 @@ public class MemoryUnit
                 }
                 else
                 {
-                    StoreInstruction tempInstruction = (StoreInstruction) instruction;
-                    // Need to do this to be able to access memory index
-                    // resources.dataMemory[tempInstruction.memoryIndex].setValue(instruction.result);
-                    resources.CDBBroadcast(instruction.reorderBuffer, instruction.result);
-                    resources.CDBBroadcastMemoryAddress(instruction.reorderBuffer, ((StoreInstruction)instruction).memoryIndex);
+                    resources.dataMemory[((StoreInstruction) instruction).memoryIndex].setValue(instruction.result);
                 }
             }
             resources.instructionsWaitingMemory.Remove(instruction);

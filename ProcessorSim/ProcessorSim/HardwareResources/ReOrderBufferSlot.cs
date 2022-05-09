@@ -6,7 +6,7 @@ namespace ProcessorSim.HardwareResources;
 public class ReOrderBufferSlot
 {
     public bool busy;
-    private Instruction instruction;
+    public Instruction instruction;
     public ReOrderBufferState state;
     public Register destination;
     public int memoryIndex;

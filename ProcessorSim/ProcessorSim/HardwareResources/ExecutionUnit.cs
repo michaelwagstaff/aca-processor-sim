@@ -71,8 +71,13 @@ public class ExecutionUnit
             instruction.execute(resources, args);
         if (instruction.GetType().Name != "Blank")
         {
-            if (instruction.GetType().Name == "ComplexArithmetic")
+            if (instruction.executionType != ExecutionTypes.ComplexArithmetic)
                 resources.CDBBroadcast(instruction.reorderBuffer, instruction.result);
+            if (instruction.executionType == ExecutionTypes.LoadStore && instruction.targetRegister == null)
+            {
+                resources.CDBBroadcastMemoryAddress(instruction.reorderBuffer,
+                        ((StoreInstruction) instruction).memoryIndex);
+            }
             else
                 resources.instructionsWaitingMemory.Add(instruction);
         }

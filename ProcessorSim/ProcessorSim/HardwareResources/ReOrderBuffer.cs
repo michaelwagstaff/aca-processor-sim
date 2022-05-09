@@ -68,4 +68,21 @@ public class ReOrderBuffer
         internalQueue[slot].value = value;
         internalQueue[slot].state = ReOrderBufferState.WriteResult;
     }
+
+    public bool containsBranch()
+    {
+        for (int i = 0; i < frontOfQueue + currentSize; i++)
+        {
+            if (internalQueue[i].instruction.executionType == ExecutionTypes.Branch)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void commit()
+    {
+        
+    }
 }

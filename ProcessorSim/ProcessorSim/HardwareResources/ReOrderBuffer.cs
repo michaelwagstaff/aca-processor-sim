@@ -128,4 +128,16 @@ public class ReOrderBuffer
         frontOfQueue++;
         currentSize--;
     }
+
+    public Instruction getInstructionForSlot(int slot)
+    {
+        try
+        {
+            return internalQueue[slot].instruction;
+        }
+        catch
+        {
+            return null;
+        }
+    }
 }

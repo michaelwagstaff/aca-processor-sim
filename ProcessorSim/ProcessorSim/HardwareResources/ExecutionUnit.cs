@@ -83,6 +83,15 @@ public class ExecutionUnit
             else
                 resources.instructionsWaitingMemory.Add(instruction);
         }
+        else
+        {
+            if(resources.reorderBuffer.getInstructionForSlot(instruction.reorderBuffer) != null && 
+               resources.reorderBuffer.getInstructionForSlot(instruction.reorderBuffer).GetType() == typeof(Blank))
+            {
+                // Depending on where the nop is generated, there may be an entry for it in the reorder buffer
+                resources.CDBBroadcast(instruction.reorderBuffer, instruction.result);
+            }
+        }
 
         return result;
     }

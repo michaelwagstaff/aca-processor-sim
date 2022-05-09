@@ -22,7 +22,8 @@ public class ReservationQueueSlot
         if (instruction.GetType() == typeof(LoadR) || instruction.GetType() == typeof(StoreR))
         {
             RegisterLoadStore temp = (RegisterLoadStore) instruction;
-            if (resources.reorderBuffer.getROBDependency(temp.memoryIndexRegister) != -1)
+            if (resources.reorderBuffer.getROBDependency(temp.memoryIndexRegister) != -1 && 
+                resources.reorderBuffer.getROBDependency(temp.memoryIndexRegister) != instruction.reorderBuffer)
             {
                 int possibleDependency = resources.reorderBuffer.getROBDependency(temp.memoryIndexRegister);
                 if (resources.reorderBuffer.getValue(possibleDependency) == null)
@@ -41,7 +42,8 @@ public class ReservationQueueSlot
             }
             if (instruction.GetType() == typeof(StoreR))
             {
-                if (resources.reorderBuffer.getROBDependency(instruction.inputRegisters[0]) != -1)
+                if (resources.reorderBuffer.getROBDependency(instruction.inputRegisters[0]) != -1 && 
+                    resources.reorderBuffer.getROBDependency(instruction.inputRegisters[0]) != instruction.reorderBuffer)
                 {
                     int possibleDependency = resources.reorderBuffer.getROBDependency(instruction.inputRegisters[0]);
                     if (resources.reorderBuffer.getValue(possibleDependency) == null)

@@ -57,7 +57,7 @@ public class ReservationStation
         else if (executionType == ExecutionTypes.LoadStore)
         {
             ReservationQueueSlot newSlot =
-                new ReservationQueueSlot((ExecutionTypes.LoadStore, size), instruction, resources);
+                new ReservationQueueSlot(instruction, resources);
             size++;
             this.ReservationQueue.Enqueue(newSlot);
             return true;

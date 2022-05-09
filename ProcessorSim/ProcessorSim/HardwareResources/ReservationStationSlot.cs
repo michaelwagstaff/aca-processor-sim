@@ -38,7 +38,7 @@ public class ReservationStationSlot
         for (int i = 0; i < instruction.inputRegisters.Count; i++)
         {
             Register inputRegister = instruction.inputRegisters[i];
-            if (resources.reorderBuffer.getROBDependency(inputRegister) != null)
+            if (resources.reorderBuffer.getROBDependency(inputRegister) != -1)
             {
                 int possibleDependency = resources.reorderBuffer.getROBDependency(inputRegister);
                 if (resources.reorderBuffer.getValue(possibleDependency) == null)

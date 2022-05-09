@@ -203,6 +203,7 @@ class ProcessorSim
     }
     public static void writeback(Resources resources)
     {
+        /*
         if(verbose)
             Console.WriteLine("Writeback Debug:");
         int count = resources.instructionsWaitingWriteback.Count > superscalarCount ? superscalarCount : resources.instructionsWaitingWriteback.Count;
@@ -212,5 +213,7 @@ class ProcessorSim
             if (instructionsWaitingWritebackArray[i] != null)
                 resources.writebackUnit.writeback(resources, instructionsWaitingWritebackArray[i]);
         }
+        */
+        resources.reorderBuffer.commit(superscalarCount);
     }
 }

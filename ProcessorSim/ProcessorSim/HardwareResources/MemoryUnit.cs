@@ -45,6 +45,10 @@ public class MemoryUnit
                     resources.reorderBuffer.notifyCommitted(instruction.reorderBuffer);
                 }
             }
+            else if (instruction.executionType == ExecutionTypes.General || instruction.executionType == ExecutionTypes.Branch)
+            {
+                resources.CDBBroadcast(instruction.reorderBuffer, instruction.result);
+            }
             resources.instructionsWaitingMemory.Remove(instruction);
         }
 

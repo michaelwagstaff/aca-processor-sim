@@ -39,11 +39,13 @@ public class ReOrderBuffer
     public int getROBDependency(Register register)
     {
         int dependency = -1;
+        if (register == null)
+            return -1;
         for (int i = 0; i < currentSize; i++)
         {
             if (internalQueue[frontOfQueue + i].destination == register)
             {
-                dependency = i;
+                dependency = frontOfQueue + i;
             }
         }
         return dependency;
@@ -86,10 +88,18 @@ public class ReOrderBuffer
     public void commit(int superscalarCount)
     {
         int firstIndexReady = frontOfQueue;
-        while (internalQueue[firstIndexReady].state != ReOrderBufferState.WriteResult)
+        try
         {
-            firstIndexReady++;
+            while (internalQueue[firstIndexReady].state == ReOrderBufferState.Commit)
+            {
+                firstIndexReady++;
+            }
         }
+        catch
+        {
+            return;
+        }
+
         for (int i = 0; i < superscalarCount; i++)
         {
             if (internalQueue[firstIndexReady + i].state == ReOrderBufferState.WriteResult)

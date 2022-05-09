@@ -18,6 +18,7 @@ public class CommitUnit
                     instruction.targetRegister);
             }
             instruction.targetRegister.setValue(instruction.result);
+            resources.reorderBuffer.notifyCommitted(instruction.reorderBuffer);
         }
         else if (instruction.executionType == ExecutionTypes.LoadStore)
         {
@@ -25,16 +26,18 @@ public class CommitUnit
             {
                 // Load operation
                 instruction.targetRegister.setValue(instruction.result);
+                resources.reorderBuffer.notifyCommitted(instruction.reorderBuffer);
                 // Depending on when we get result from memory unit may need to remove data hazard marker here
-            }
-            else
-            {
-                // Add store logic
             }
         }
         else if (instruction.executionType == ExecutionTypes.Branch)
         {
             // Add branch logic
+            resources.reorderBuffer.notifyCommitted(instruction.reorderBuffer);
+        }
+        else if(instruction.executionType == ExecutionTypes.General)
+        {
+            resources.reorderBuffer.notifyCommitted(instruction.reorderBuffer);
         }
         
         return true;

@@ -5,102 +5,91 @@ namespace ProcessorSim.HardwareResources;
 public class ReservationQueueSlot
 {
     public Instruction Op;
-    public (ExecutionTypes, int)? Q;
-    public int V;
-    public (ExecutionTypes, int)? AQ;
-    public int AV;
+    public int? Q;
+    public int? V;
+    public int? AddressQ;
+    public int? AddressV;
     public bool Busy;
-    public (ExecutionTypes, int) number;
     public Resources resources;
     public bool ready;
-    private bool dispatched;
 
-    public ReservationQueueSlot((ExecutionTypes, int) number, Instruction instruction, Resources resources)
+    public ReservationQueueSlot(Instruction instruction, Resources resources)
     {
-        this.number = number;
+        ready = true;
         Op = instruction;
         this.resources = resources;
         // Modify to account for Aq and Av
-        if (instruction.GetType() == typeof(StoreR))
-        {
-            if (resources.registerFile.getDependantStation(instruction.inputRegisters[0]) != null)
-            {
-                Q = ((ExecutionTypes, int))resources.registerFile.getDependantStation(instruction.inputRegisters[0]);
-                ready = false;
-            }
-            else
-            {
-                V = instruction.inputRegisters[0].getValue();
-                ready = true;
-            }
-        }
-
-        if (instruction.GetType() == typeof(Load) || instruction.GetType() == typeof(LoadI) ||
-            instruction.GetType() == typeof(LoadR))
-        {
-            resources.registerFile.setDependantStation(instruction.targetRegister, number);
-        }
-
         if (instruction.GetType() == typeof(LoadR) || instruction.GetType() == typeof(StoreR))
         {
             RegisterLoadStore temp = (RegisterLoadStore) instruction;
-            if (resources.registerFile.getDependantStation(temp.memoryIndexRegister) != null)
+            if (resources.reorderBuffer.getROBDependency(temp.memoryIndexRegister) != -1)
             {
-                AQ = ((ExecutionTypes, int))resources.registerFile.getDependantStation(temp.memoryIndexRegister);
+                int possibleDependency = resources.reorderBuffer.getROBDependency(temp.memoryIndexRegister);
+                if (resources.reorderBuffer.getValue(possibleDependency) == null)
+                {
+                    AddressQ = possibleDependency;
+                    ready = false;
+                }
+                else
+                {
+                    AddressV = resources.reorderBuffer.getValue(possibleDependency);
+                }
             }
             else
             {
-                AV = temp.memoryIndexRegister.getValue();
+                AddressV = temp.memoryIndexRegister.getValue();
+            }
+            if (instruction.GetType() == typeof(StoreR))
+            {
+                if (resources.reorderBuffer.getROBDependency(instruction.inputRegisters[0]) != -1)
+                {
+                    int possibleDependency = resources.reorderBuffer.getROBDependency(instruction.inputRegisters[0]);
+                    if (resources.reorderBuffer.getValue(possibleDependency) == null)
+                    {
+                        Q = possibleDependency;
+                        ready = false;
+                    }
+                    else
+                    {
+                        V = resources.reorderBuffer.getValue(possibleDependency);
+                    }
+                }
+                else
+                {
+                    V = instruction.inputRegisters[0].getValue();
+                    ready = true;
+                }
             }
         }
-        else if(instruction.GetType() == typeof(Load) || instruction.GetType() == typeof(Store))
+        else if(instruction.GetType() == typeof(Store))
         {
             ImmediateMemoryLoadStore temp = (ImmediateMemoryLoadStore) instruction;
-            AV = temp.memoryIndex;
+            AddressV = temp.memoryIndex;
         }
         Busy = true;
-        dispatched = false;
     }
 
-    public void CDBupdate((ExecutionTypes, int) station, int value)
+    public void CDBupdate(int slot, int value)
     {
-        if (station == Q)
+        if (slot == Q)
         {
             Q = null;
             V = value;
         }
-        if (station == AQ)
+        if (slot == AddressQ)
         {
-            AQ = null;
-            AV = value;
+            AddressQ = null;
+            AddressV = value;
         }
-
-        if (station == number && dispatched)
-        {
-            resetStation();
-        }
-        if (AQ == null && Q == null)
+        if (AddressQ == null && Q == null)
             ready = true;
     }
 
     public (Instruction, List<int>) getInstructionForExecution()
     {
         List<int> returnV = new List<int>();
-        returnV.Add(AV);
-        returnV.Add(V);
-        dispatched = true;
+        returnV.Add((int)AddressV);
+        returnV.Add((int)V);
         return (Op, returnV);
-    }
-    private void resetStation()
-    {
-        Op = null;
-        Busy = false;
-        dispatched = false;
-        ready = false;
-        Op = null;
-        this.Q = null;
-        this.AQ = null;
-        this.V = -1;
-        this.AV = -1;
     }
 }

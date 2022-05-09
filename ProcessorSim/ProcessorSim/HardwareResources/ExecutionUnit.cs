@@ -71,8 +71,10 @@ public class ExecutionUnit
             instruction.execute(resources, args);
         if (instruction.GetType().Name != "Blank")
         {
+            /*
             if (instruction.executionType != ExecutionTypes.ComplexArithmetic)
                 resources.CDBBroadcast(instruction.reorderBuffer, instruction.result);
+                */
             if (instruction.executionType == ExecutionTypes.LoadStore && instruction.targetRegister == null)
             {
                 resources.CDBBroadcastMemoryAddress(instruction.reorderBuffer,

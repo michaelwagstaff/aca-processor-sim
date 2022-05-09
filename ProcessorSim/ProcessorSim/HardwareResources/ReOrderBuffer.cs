@@ -9,13 +9,15 @@ public class ReOrderBuffer
     private int frontOfQueue;
     private int maxQueueSize;
     private int currentSize;
+    private Resources resources;
 
-    public ReOrderBuffer()
+    public ReOrderBuffer(Resources resources)
     {
         maxQueueSize = 64;
         internalQueue = new ReOrderBufferSlot[maxQueueSize];
         frontOfQueue = 0;
         currentSize = 0;
+        this.resources = resources;
     }
 
     public bool hasFreeSlot()
@@ -81,8 +83,39 @@ public class ReOrderBuffer
         return false;
     }
 
-    public void commit()
+    public void commit(int superscalarCount)
     {
-        
+        int firstIndexReady = frontOfQueue;
+        while (internalQueue[firstIndexReady].state != ReOrderBufferState.WriteResult)
+        {
+            firstIndexReady++;
+        }
+        for (int i = 0; i < superscalarCount; i++)
+        {
+            if (internalQueue[firstIndexReady + i].state == ReOrderBufferState.WriteResult)
+            {
+                //Commit
+                Instruction instruction = internalQueue[firstIndexReady + i].instruction;
+                if (instruction.executionType == ExecutionTypes.LoadStore && instruction.targetRegister == null)
+                {
+                    resources.memoryUnit.memory(resources, instruction);
+                }
+                else
+                {
+                    resources.commitUnit.commit(resources, instruction);
+                }
+            }
+            else
+            {
+                return;
+            }
+        }
+    }
+
+    public void notifyCommitted(int slot)
+    {
+        internalQueue[slot] = null;
+        frontOfQueue++;
+        currentSize--;
     }
 }

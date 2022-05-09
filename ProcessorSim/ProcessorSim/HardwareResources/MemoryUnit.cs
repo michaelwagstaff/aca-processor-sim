@@ -42,6 +42,7 @@ public class MemoryUnit
                 else
                 {
                     resources.dataMemory[((StoreInstruction) instruction).memoryIndex].setValue(instruction.result);
+                    resources.reorderBuffer.notifyCommitted(instruction.reorderBuffer);
                 }
             }
             resources.instructionsWaitingMemory.Remove(instruction);

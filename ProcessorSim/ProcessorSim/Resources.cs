@@ -60,7 +60,6 @@ public class Resources
             fetchUnits.Add(new FetchUnit());
             decodeUnits.Add(new DecodeUnit());
         }
-        reorderBuffer = new ReOrderBuffer();
         reservationStations = new Dictionary<ExecutionTypes, ReservationStation>();
         reservationStations[ExecutionTypes.General] = new ReservationStation(ExecutionTypes.General, 16, this);
         reservationStations[ExecutionTypes.SimpleArithmetic] = new ReservationStation(ExecutionTypes.SimpleArithmetic, 16, this);
@@ -70,6 +69,7 @@ public class Resources
         instructionsWaitingMemory = new List<Instruction>();
         memoryUnit = new MemoryUnit();
         commitUnit = new CommitUnit();
+        reorderBuffer = new ReOrderBuffer(this);
     }
 
     public void setExecutionUnits(int generalExecutionUnits, int arithmeticUnits, int loadStoreUnits, int branchUnits)

@@ -18,6 +18,10 @@ public class CommitUnit
                     instruction.targetRegister);
             }
             instruction.targetRegister.setValue(instruction.result);
+            if (instruction.GetType() == typeof(Add))
+            {
+                Console.Write("");
+            }
             resources.reorderBuffer.notifyCommitted(instruction.reorderBuffer);
         }
         else if (instruction.executionType == ExecutionTypes.LoadStore)

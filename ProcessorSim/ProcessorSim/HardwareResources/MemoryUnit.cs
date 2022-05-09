@@ -21,6 +21,10 @@ public class MemoryUnit
                 if (instruction.targetRegister != null)
                 {
                     resources.CDBBroadcast(instruction.reorderBuffer, instruction.result);
+                    if (instruction.GetType() == typeof(Add))
+                    {
+                        Console.Write("");
+                    }
                 }
             }
             else if (instruction.executionType == ExecutionTypes.LoadStore)

@@ -41,8 +41,9 @@ public class ReOrderBuffer
         int dependency = -1;
         if (register == null)
             return -1;
-        for (int i = 0; i < currentSize; i++)
+        for (int i = 0; i < currentSize - 1; i++)
         {
+            // Excludes newly added row
             if (internalQueue[frontOfQueue + i].destination == register)
             {
                 dependency = frontOfQueue + i;

@@ -16,7 +16,7 @@ public class ReservationStationSlot
     public bool ready;
     public bool dispatched;
 
-    public ReservationStationSlot((ExecutionTypes, int) number, Resources resources)
+    public ReservationStationSlot(Resources resources)
     {
         this.number = number;
         this.resources = resources;
@@ -38,8 +38,7 @@ public class ReservationStationSlot
         for (int i = 0; i < instruction.inputRegisters.Count; i++)
         {
             Register inputRegister = instruction.inputRegisters[i];
-            if (resources.reorderBuffer.getROBDependency(inputRegister) != -1 && 
-                resources.reorderBuffer.getROBDependency(inputRegister) != instruction.reorderBuffer)
+            if (resources.reorderBuffer.getROBDependency(inputRegister) != -1)
             {
                 int possibleDependency = resources.reorderBuffer.getROBDependency(inputRegister);
                 if (resources.reorderBuffer.getValue(possibleDependency) == null)
@@ -59,6 +58,10 @@ public class ReservationStationSlot
                 Q.Add(null);
                 V.Add(instruction.inputRegisters[i].getValue());
             }
+        }
+        if (Op.GetType() == typeof(Print))
+        {
+            Console.Write("");
         }
         Busy = true;
         return true;
@@ -83,11 +86,20 @@ public class ReservationStationSlot
                 ready = false;
             }
         }
+
+        if (Op.GetType() == typeof(Print))
+        {
+            Console.Write("");
+        }
     }
 
     public (Instruction, List<int>) getInstructionForExecution()
     {
         List<int> returnV = new List<int>(V.Where(x => x != null).Cast<int>().ToList());
+        if (Op.GetType() == typeof(Add))
+        {
+            Console.Write("");
+        }
         Busy = false;
         return (Op, returnV);
     }

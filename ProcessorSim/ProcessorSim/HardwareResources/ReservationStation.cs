@@ -18,17 +18,8 @@ public class ReservationStation
         emptySlots = items;
         size = items;
         this.resources = resources;
-        if (executionType != ExecutionTypes.LoadStore)
-        {
-            for (int i = 0; i < items; i++)
-            {
-                internalArray[i] = new ReservationStationSlot((executionType, i), resources);
-            }
-        }
-        else
-        {
+        if (executionType == ExecutionTypes.LoadStore)
             ReservationQueue = new Queue<ReservationQueueSlot>();
-        }
     }
 
     public bool hasSpace()
@@ -46,8 +37,9 @@ public class ReservationStation
         {
             for (int i = 0; i < size; i++)
             {
-                if (this.internalArray[i].Busy == false)
+                if (this.internalArray[i] == null)
                 {
+                    this.internalArray[i] = new ReservationStationSlot(resources);
                     this.internalArray[i].addItem(instruction);
                     this.emptySlots --;
                     return true;
@@ -71,10 +63,12 @@ public class ReservationStation
         {
             for (int i = 0; i < size; i++)
             {
-                if (internalArray[i].ready && internalArray[i].Busy && !internalArray[i].dispatched)
+                if (internalArray[i] != null && internalArray[i].ready && !internalArray[i].dispatched)
                 {
                     this.emptySlots++;
-                    return this.internalArray[i].getInstructionForExecution();
+                    (Instruction, List<int>) returnVal = this.internalArray[i].getInstructionForExecution();
+                    internalArray[i] = null;
+                    return returnVal;
                 }
             }
         }
@@ -95,7 +89,7 @@ public class ReservationStation
         {
             for (int i = 0; i < size; i++)
             {
-                if (this.internalArray[i].Busy)
+                if (internalArray[i] != null && this.internalArray[i].Busy)
                 {
                     this.internalArray[i].CDBupdate(bufferSlot, value);
                 }

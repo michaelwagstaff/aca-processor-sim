@@ -10,6 +10,7 @@ public class Resources
     public bool verbose;
     
     public Register[] registers;
+    public VRegister[] vregisters;
     public Register pc;
 
     public MemorySlot[] instructionMemory;

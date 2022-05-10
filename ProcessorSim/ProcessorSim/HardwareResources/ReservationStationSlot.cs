@@ -86,6 +86,10 @@ public class ReservationStationSlot
                 ready = false;
             }
         }
+        if (Op.GetType() == typeof(Copy))
+        {
+            Console.Write("");
+        }
 
         if (Op.GetType() == typeof(Print))
         {

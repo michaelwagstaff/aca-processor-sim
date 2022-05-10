@@ -15,6 +15,7 @@ public class DecodeUnit
         if (instructionRegister == null || instructionRegister == -1)
             return new Blank();
         string rawInstruction = resources.registers[(int) instructionRegister].getInstruction();
+        resources.registers[(int) instructionRegister].available = true;
         if (rawInstruction == null)
         {
             return new Blank();

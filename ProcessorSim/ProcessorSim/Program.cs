@@ -35,11 +35,11 @@ class ProcessorSim
 
     public static void loadProgram(Resources resources)
     {
-        // StreamReader reader = new StreamReader(@"Programs/bubblesort.mpl");
+        StreamReader reader = new StreamReader(@"Programs/bubblesort.mpl");
         // StreamReader reader = new StreamReader(@"Programs/fact.mpl");
         // StreamReader reader = new StreamReader(@"Programs/fact-safe.mpl");
         // StreamReader reader = new StreamReader(@"Programs/gcd-original.mpl");
-        StreamReader reader = new StreamReader(@"Programs/vectoradd.mpl");
+        // StreamReader reader = new StreamReader(@"Programs/vectoradd.mpl");
         // StreamReader reader = new StreamReader(@"Programs/vectormult-safe.mpl");
         int i = 0;
         string line;
@@ -84,17 +84,16 @@ class ProcessorSim
             Console.WriteLine("Tick Ended: Press enter to continue...");
             Console.ReadLine();
         }
+        Console.WriteLine("TICK!");
 
         return true;
     }
 
     public static void fetch(Resources resources)
     {
-        int i = 1;
         while (resources.instructionsWaitingDecode.Count < superscalarCount)
         {
-            resources.instructionsWaitingDecode.Add(resources.fetchUnits[0].fetch(resources, i));
-            i++;
+            resources.instructionsWaitingDecode.Add(resources.fetchUnits[0].fetch(resources, superscalarCount));
         }
     }
 

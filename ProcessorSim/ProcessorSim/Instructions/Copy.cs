@@ -10,7 +10,6 @@ public class Copy : Instruction
     public int registerFile { get; set; }
     public List<Register> inputRegisters { get; set; }
     public int reorderBuffer { get; set; }
-    private Register dest;
     public Copy(Register destination, Register register)
     {
         inputRegisters = new List<Register>();

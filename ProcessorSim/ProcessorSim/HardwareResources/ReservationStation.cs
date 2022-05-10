@@ -6,7 +6,7 @@ namespace ProcessorSim.HardwareResources;
 public class ReservationStation
 {
     private ExecutionTypes executionType;
-    private ReservationStationSlot[] internalArray;
+    private List<ReservationStationSlot> internalArray;
     private Queue<ReservationQueueSlot> ReservationQueue;
     private int emptySlots;
     private int size;
@@ -14,7 +14,7 @@ public class ReservationStation
     public ReservationStation(ExecutionTypes executionType, int items, Resources resources)
     {
         this.executionType = executionType;
-        internalArray = new ReservationStationSlot[items];
+        internalArray = new List<ReservationStationSlot>();
         emptySlots = items;
         size = items;
         this.resources = resources;
@@ -35,16 +35,11 @@ public class ReservationStation
     {
         if (hasSpace() && executionType != ExecutionTypes.LoadStore)
         {
-            for (int i = 0; i < size; i++)
-            {
-                if (this.internalArray[i] == null)
-                {
-                    this.internalArray[i] = new ReservationStationSlot(resources);
-                    this.internalArray[i].addItem(instruction);
-                    this.emptySlots --;
-                    return true;
-                }
-            }
+            ReservationStationSlot newSlot = new ReservationStationSlot(resources);
+            newSlot.addItem(instruction);
+            internalArray.Add(newSlot);
+            this.emptySlots --;
+            return true;
         }
         else if (executionType == ExecutionTypes.LoadStore)
         {
@@ -61,15 +56,14 @@ public class ReservationStation
     {
         if (executionType != ExecutionTypes.LoadStore)
         {
-            for (int i = 0; i < size; i++)
+            for (int i = 0; i < size-emptySlots; i++)
             {
-                if(internalArray[i] != null)
-                    internalArray[i].CDBupdate(-1,-1);
-                if (internalArray[i] != null && internalArray[i].ready && !internalArray[i].dispatched)
+                internalArray[i].CDBupdate(-1,-1);
+                if (internalArray[i].ready && !internalArray[i].dispatched)
                 {
                     this.emptySlots++;
                     (Instruction, List<int>) returnVal = this.internalArray[i].getInstructionForExecution();
-                    internalArray[i] = null;
+                    internalArray.RemoveAt(i);
                     return returnVal;
                 }
             }
@@ -89,7 +83,7 @@ public class ReservationStation
     {
         if (executionType != ExecutionTypes.LoadStore)
         {
-            for (int i = 0; i < size; i++)
+            for (int i = 0; i < size - emptySlots; i++)
             {
                 if (internalArray[i] != null && this.internalArray[i].Busy)
                 {
@@ -107,7 +101,7 @@ public class ReservationStation
     }
     public void printContents()
     {
-        for (int i = 0; i < internalArray.Length; i++)
+        for (int i = 0; i < internalArray.Count; i++)
         {
             ReservationStationSlot slot = internalArray[i];
             if (slot.Busy)

@@ -39,6 +39,11 @@ public class ExecutionUnit
             instruction = instructionObject.Value.Item1;
             args = instructionObject.Value.Item2;
         }
+
+        if (instruction.GetType() == typeof(Copy))
+        {
+            Console.Write("");
+        }
         if (resources.verbose)
             Console.WriteLine("  Executing Instruction: {0}", instruction);
         bool? result = null;

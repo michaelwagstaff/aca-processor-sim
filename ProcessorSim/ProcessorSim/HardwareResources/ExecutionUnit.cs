@@ -47,10 +47,6 @@ public class ExecutionUnit
         if (resources.verbose)
             Console.WriteLine("  Executing Instruction: {0}", instruction);
         bool? result = null;
-        if (instruction.GetType().Name != "Blank")
-        {
-            resources.monitor.incrementInsructionsExecuted();
-        }
 
         if (instruction.executionType == ExecutionTypes.Branch)
             result = instruction.execute(resources, args);

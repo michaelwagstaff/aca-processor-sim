@@ -35,11 +35,11 @@ class ProcessorSim
 
     public static void loadProgram(Resources resources)
     {
-        StreamReader reader = new StreamReader(@"Programs/bubblesort.mpl");
+        // StreamReader reader = new StreamReader(@"Programs/bubblesort.mpl");
         // StreamReader reader = new StreamReader(@"Programs/fact.mpl");
         // StreamReader reader = new StreamReader(@"Programs/fact-safe.mpl");
         // StreamReader reader = new StreamReader(@"Programs/gcd-original.mpl");
-        // StreamReader reader = new StreamReader(@"Programs/add.mpl");
+        StreamReader reader = new StreamReader(@"Programs/add.mpl");
         // StreamReader reader = new StreamReader(@"Programs/vectoradd.mpl");
         // StreamReader reader = new StreamReader(@"Programs/vectormult-safe.mpl");
         int i = 0;
@@ -55,24 +55,17 @@ class ProcessorSim
     {
         writeback(resources);
         memory(resources);
-        if (execute(resources) != 1 && resources.reservationStations[ExecutionTypes.Branch].hasSpace()) // If pipeline flush isn't occuring
+        execute(resources);
+        bool haltPipeline = decode(resources); // TODO: Improve this
+        foreach ((int, (bool, bool)) instruction in resources.instructionsWaitingDecode)
         {
-            if (!resources.reorderBuffer.containsBranch())
-            {
-                bool haltPipeline = decode(resources); // TODO: Improve this
-                foreach ((int, (bool, bool)) instruction in resources.instructionsWaitingDecode)
-                {
-                    if (instruction.Item2.Item2)
-                        haltPipeline = true;
-                }
-
-                if (!haltPipeline)
-                    fetch(resources);
-                if (instructionRegister == -1)
-                {
-                    return false;
-                }
-            }
+            if (instruction.Item2.Item2)
+                haltPipeline = true;
+        }
+        fetch(resources);
+        if (instructionRegister == -1)
+        {
+            return false;
         }
         else if(verbose)
         {
@@ -157,19 +150,6 @@ class ProcessorSim
                                     .execute(resources, resources.reservationStations[ExecutionTypes.Branch].getItem());
                                 bool pipelineFlush =
                                     nullablePipelineFlush == null ? false : (bool) nullablePipelineFlush;
-                                // If null, then there is no pipeline flush
-                                if (pipelineFlush)
-                                {
-                                    instructionRegister = null;
-                                    if (instructionRegister != null)
-                                    {
-                                        resources.registers[(int) instructionRegister].available = true;
-                                        instructionRegister = null;
-                                    }
-                                    if (verbose)
-                                        Console.WriteLine("Branch -- Pipeline Flush");
-                                    returnVal = 1;
-                                }
                             }
                             else
                             {

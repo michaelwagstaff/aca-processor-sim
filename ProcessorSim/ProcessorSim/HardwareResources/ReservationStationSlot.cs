@@ -95,9 +95,11 @@ public class ReservationStationSlot
 
         if (Op.GetType() == typeof(Branch) || Op.GetType() == typeof(CondBranch))
         {
-            if (!resources.reorderBuffer.onlyBranchesToExecute(Op.reorderBuffer))
+            if (!resources.reorderBuffer.allPreviousSlotsExecuted(Op.reorderBuffer))
                 ready = false;
         }
+        else if (!resources.reorderBuffer.allPreviousBranchesExecuted(Op.reorderBuffer))
+                ready = false;
     }
 
     public (Instruction, List<int>) getInstructionForExecution()

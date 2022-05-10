@@ -66,21 +66,23 @@ public class ReOrderBuffer
 
     public void notifyBranchAddress(int slot, int pcValue)
     {
-        for (int i = 0; i < resources.instructionsWaitingDecode.Count; i++)
+        for (int i = 0; i < resources.decodeUnits.Count; i++)
         {
-            if(resources.instructionsWaitingDecode[i].Item1 >= 0)
-                resources.registers[resources.instructionsWaitingDecode[i].Item1].available = true;
+            resources.registers[31 - i].available = true;
+            resources.registers[31 - i].setInstruction("");
         }
-        resources.instructionsWaitingDecode.RemoveAll(iwd => iwd.Item1 >= -1);
+        resources.instructionsWaitingDecode = new List<(int, (bool, bool))>();
         foreach (ReservationStation reservationStation in resources.reservationStations.Values)
         {
             reservationStation.flush();
         }
 
-        for (int i = slot + 1; i < currentSize - slot - 1; i++)
+        for (int i = slot + 1; i < frontOfQueue + currentSize; i++)
         {
             internalQueue[i] = null;
+            
         }
+        currentSize = slot - frontOfQueue + 1;
     }
     public void setMemoryAddress(int slot, int memoryAddress)
     {
@@ -105,12 +107,24 @@ public class ReOrderBuffer
         return false;
     }
 
-    public bool onlyBranchesToExecute(int slot = 600)
+    public bool allPreviousBranchesExecuted(int slot)
     {
-        for (int i = frontOfQueue; i < Math.Min(slot, frontOfQueue + currentSize); i++)
+        for(int i = frontOfQueue; i < slot; i++)
         {
-            if (internalQueue[i].instruction.executionType != ExecutionTypes.Branch &&
-                internalQueue[i].state == ReOrderBufferState.Execute)
+            if ((internalQueue[i].instruction.GetType() == typeof(Branch)
+                || internalQueue[i].instruction.GetType() == typeof(CondBranch))
+                && internalQueue[i].state == ReOrderBufferState.Execute)
+            {
+                return false;
+            }
+        }
+        return true;
+    }
+    public bool allPreviousSlotsExecuted(int slot)
+    {
+        for(int i = frontOfQueue; i < slot; i++)
+        {
+            if (internalQueue[i].state == ReOrderBufferState.Execute)
             {
                 return false;
             }
@@ -159,9 +173,16 @@ public class ReOrderBuffer
 
     public void notifyCommitted(int slot)
     {
-        internalQueue[slot] = null;
-        frontOfQueue++;
-        currentSize--;
+        if (internalQueue[slot].instruction.GetType().Name != "Blank")
+        {
+            resources.monitor.incrementInsructionsExecuted();
+        }
+        if (internalQueue[slot] != null)
+        {
+            internalQueue[slot] = null;
+            frontOfQueue++;
+            currentSize--;
+        }
     }
 
     public Instruction getInstructionForSlot(int slot)

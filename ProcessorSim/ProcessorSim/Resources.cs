@@ -63,7 +63,7 @@ public class Resources
         reservationStations[ExecutionTypes.General] = new ReservationStation(ExecutionTypes.General, 16, this);
         reservationStations[ExecutionTypes.SimpleArithmetic] = new ReservationStation(ExecutionTypes.SimpleArithmetic, 16, this);
         reservationStations[ExecutionTypes.ComplexArithmetic] = new ReservationStation(ExecutionTypes.ComplexArithmetic, 16, this);
-        reservationStations[ExecutionTypes.Branch] = new ReservationStation(ExecutionTypes.Branch, 1, this);
+        reservationStations[ExecutionTypes.Branch] = new ReservationStation(ExecutionTypes.Branch, 8, this);
         reservationStations[ExecutionTypes.LoadStore] = new ReservationStation(ExecutionTypes.LoadStore, 0, this);
         instructionsWaitingMemory = new List<Instruction>();
         memoryUnit = new MemoryUnit();

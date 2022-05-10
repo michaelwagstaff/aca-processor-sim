@@ -16,7 +16,9 @@ public class ReOrderBufferSlot
     {
         busy = true;
         this.instruction = instruction;
-        this.state = ReOrderBufferState.Execute;
-        this.destination = instruction.targetRegister;
+        state = ReOrderBufferState.Execute;
+        destination = instruction.targetRegister;
+        value = -1;
+
     }
 }

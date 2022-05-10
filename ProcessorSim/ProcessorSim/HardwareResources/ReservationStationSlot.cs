@@ -31,9 +31,6 @@ public class ReservationStationSlot
         if (instruction == null)
             return false;
         Op = instruction;
-        Register source1, source2;
-        // Assume complex arithmetic
-        // Should be source 1
         ready = true;
         for (int i = 0; i < instruction.inputRegisters.Count; i++)
         {
@@ -41,7 +38,7 @@ public class ReservationStationSlot
             if (resources.reorderBuffer.getROBDependency(inputRegister) != -1)
             {
                 int possibleDependency = resources.reorderBuffer.getROBDependency(inputRegister);
-                if (resources.reorderBuffer.getValue(possibleDependency) == null)
+                if (resources.reorderBuffer.getValue(possibleDependency) == null || resources.reorderBuffer.getValue(possibleDependency) == -1)
                 {
                     Q.Add(possibleDependency);
                     V.Add(null);

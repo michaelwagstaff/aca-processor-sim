@@ -88,7 +88,7 @@ public class ExecutionUnit
             }
             else
                 resources.instructionsWaitingMemory.Add(instruction);
-            Console.WriteLine(instruction.ToString());
+            // Console.WriteLine(instruction.ToString());
         }
         else
         {

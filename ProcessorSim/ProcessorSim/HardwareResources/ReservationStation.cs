@@ -99,6 +99,21 @@ public class ReservationStation
             }
         }
     }
+
+    public void flush()
+    {
+        if (executionType != ExecutionTypes.LoadStore)
+        {
+            internalArray = new List<ReservationStationSlot>();
+            emptySlots = size;
+        }
+        else
+        {
+            ReservationQueue = new Queue<ReservationQueueSlot>();
+            emptySlots = size;
+        }
+    }
+    
     public void printContents()
     {
         for (int i = 0; i < internalArray.Count; i++)

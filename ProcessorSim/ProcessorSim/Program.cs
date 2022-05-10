@@ -17,7 +17,7 @@ class ProcessorSim
     {
         verbose = false;
         nextInstructionNeedsNewRegister = false;
-        superscalarCount = 3;
+        superscalarCount = 4;
         Resources resources = new Resources(32, 512, 1024, verbose, superscalarCount);
         resources.setExecutionUnits(1,superscalarCount,superscalarCount,1);
         loadProgram(resources);
@@ -39,6 +39,7 @@ class ProcessorSim
         // StreamReader reader = new StreamReader(@"Programs/fact.mpl");
         // StreamReader reader = new StreamReader(@"Programs/fact-safe.mpl");
         // StreamReader reader = new StreamReader(@"Programs/gcd-original.mpl");
+        // StreamReader reader = new StreamReader(@"Programs/add.mpl");
         // StreamReader reader = new StreamReader(@"Programs/vectoradd.mpl");
         // StreamReader reader = new StreamReader(@"Programs/vectormult-safe.mpl");
         int i = 0;
@@ -84,7 +85,7 @@ class ProcessorSim
             Console.WriteLine("Tick Ended: Press enter to continue...");
             Console.ReadLine();
         }
-        Console.WriteLine("TICK!");
+        //Console.WriteLine("TICK!");
 
         return true;
     }

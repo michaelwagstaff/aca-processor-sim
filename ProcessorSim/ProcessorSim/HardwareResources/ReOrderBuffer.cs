@@ -66,7 +66,21 @@ public class ReOrderBuffer
 
     public void notifyBranchAddress(int slot, int pcValue)
     {
-        
+        for (int i = 0; i < resources.instructionsWaitingDecode.Count; i++)
+        {
+            if(resources.instructionsWaitingDecode[i].Item1 >= 0)
+                resources.registers[resources.instructionsWaitingDecode[i].Item1].available = true;
+        }
+        resources.instructionsWaitingDecode.RemoveAll(iwd => iwd.Item1 >= -1);
+        foreach (ReservationStation reservationStation in resources.reservationStations.Values)
+        {
+            reservationStation.flush();
+        }
+
+        for (int i = slot + 1; i < currentSize - slot - 1; i++)
+        {
+            internalQueue[i] = null;
+        }
     }
     public void setMemoryAddress(int slot, int memoryAddress)
     {

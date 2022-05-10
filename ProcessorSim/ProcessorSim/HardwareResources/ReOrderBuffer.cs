@@ -63,6 +63,12 @@ public class ReOrderBuffer
             return null;
         return internalQueue[slot].value;
     }
+    public int[]? getVectorValues(int slot)
+    {
+        if (this.internalQueue[slot].state == ReOrderBufferState.Execute)
+            return null;
+        return internalQueue[slot].vectorValues;
+    }
 
     public void notifyBranchAddress(int slot, int pcValue)
     {
@@ -92,6 +98,11 @@ public class ReOrderBuffer
     public void CDBUpdate(int slot, int value)
     {
         internalQueue[slot].value = value;
+        internalQueue[slot].state = ReOrderBufferState.WriteResult;
+    }
+    public void CDBUpdate(int slot, int[] values)
+    {
+        internalQueue[slot].vectorValues = values;
         internalQueue[slot].state = ReOrderBufferState.WriteResult;
     }
 

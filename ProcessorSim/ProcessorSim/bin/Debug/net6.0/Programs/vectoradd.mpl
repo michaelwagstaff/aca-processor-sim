@@ -45,12 +45,12 @@ LoadI r1 0 -- Use r1 as loop counter
 LoadI r2 1
 LoadI r3 21
 LoadI r4 41 -- memory addresses for each array respectively
-VLoadR r5 r2 -- Implement
-VLoadR r6 r3
+VLoadR v5 r2
+VLoadR v6 r3
 LoadI r7 4 -- Increment
 LoadI r8 48 -- Address to jump to
-VAdd r5 r6
-VStoreR r5 r4 -- Store r5 in address in r4
+VAdd v5 v6
+VStoreR v5 r4 -- Store r5 in address in r4
 Add r1 r7
 Add r2 r7
 Add r3 r7

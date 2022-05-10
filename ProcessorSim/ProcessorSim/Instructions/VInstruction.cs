@@ -2,13 +2,13 @@ using ProcessorSim.Enums;
 using ProcessorSim.HardwareResources;
 namespace ProcessorSim.Instructions;
 
-public interface VInstruction
+public interface VInstruction : Instruction
 {
     ExecutionTypes executionType { get; set; }
-    VRegister targetRegister { get; set; }
-    int[] result { get; set; }
+    Register targetRegister { get; set; }
+    int[] vectorResult { get; set; }
     int registerFile { get; set; }
-    List<VRegister> inputRegisters { get; set; }
+    List<Register> inputRegisters { get; set; }
     int reorderBuffer { get; set; }
     public bool execute(Resources resources, List<int> vals)
     {

@@ -1,9 +1,9 @@
 using ProcessorSim;
 using ProcessorSim.Enums;
 using ProcessorSim.HardwareResources;
-using ProcessorSim.Instructions;
+namespace ProcessorSim.Instructions;
 
-public class VLoadI : VInstruction
+public class VLoadR : VInstruction, RegisterLoadStore
 {
     public ExecutionTypes executionType { get; set; }
     public Register targetRegister { get; set; }
@@ -13,17 +13,22 @@ public class VLoadI : VInstruction
     public List<Register> inputRegisters { get; set; }
     public int reorderBuffer { get; set; }
     private Register reg;
-    private int[] value;
-    public VLoadI(Register register, int[] value)
+    public Register memoryIndexRegister { get; set; }
+    public VLoadR(Register register, Register memoryIndexRegister)
     {
         inputRegisters = new List<Register>();
         targetRegister = register;
-        this.value = new int[4];
+        this.memoryIndexRegister = memoryIndexRegister;
         this.executionType = ExecutionTypes.Vector;
     }
     public bool execute(Resources resources, List<int> args)
     {
-        vectorResult = value;
+        int memoryIndex = args[0];
+        vectorResult = new int[4];
+        for (int i = 0; i < 4; i++)
+        {
+            vectorResult[i] = resources.dataMemory[args[0]+i].getValue();
+        }
         return true;
     }
 }

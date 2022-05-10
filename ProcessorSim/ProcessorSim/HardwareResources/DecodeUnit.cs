@@ -36,6 +36,10 @@ public class DecodeUnit
                 {
                     reg1 = resources.registers[Int32.Parse(op1.Substring(1))];
                 }
+                else if (op1[0] == 'v')
+                {
+                    reg1 = resources.vregisters[Int32.Parse(op1.Substring(1))];
+                }
             }
             catch { }
         }
@@ -48,6 +52,10 @@ public class DecodeUnit
                 if (op2[0] == 'r')
                 {
                     reg2 = resources.registers[Int32.Parse(op2.Substring(1))];
+                }
+                else if (op2[0] == 'v')
+                {
+                    reg2 = resources.vregisters[Int32.Parse(op2.Substring(1))];
                 }
             }
             catch { }
@@ -126,6 +134,23 @@ public class DecodeUnit
                 return new StoreR(reg1, reg2);
             case "Subtract":
                 return new Subtract(reg1, reg1, reg2);
+            case "VAdd":
+                return new VAdd(reg1, reg1, reg2);
+            case "VLoad":
+                return new VLoad(reg1, Int32.Parse(op2));
+            case "VLoadI":
+                int[] values = new int[4];
+                for (int i = 0; i < 4; i++)
+                {
+                    values[i] = Int32.Parse(op2.Split(",")[i]);
+                }
+                return new VLoadI(reg1, values);
+            case "VLoadR":
+                return new VLoadR(reg1, reg2);
+            case "VStore":
+                return new VStore(reg1, Int32.Parse(op2));
+            case "VStoreR":
+                return new VStoreR(reg1, reg2);
         }
         return new Blank();
     }

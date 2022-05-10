@@ -18,13 +18,13 @@ public class ReservationStation
         emptySlots = items;
         size = items;
         this.resources = resources;
-        if (executionType == ExecutionTypes.LoadStore)
+        if (executionType == ExecutionTypes.LoadStore || executionType == ExecutionTypes.Vector)
             ReservationQueue = new Queue<ReservationQueueSlot>();
     }
 
     public bool hasSpace()
     {
-        if (executionType != ExecutionTypes.LoadStore)
+        if (executionType != ExecutionTypes.LoadStore && executionType != ExecutionTypes.Vector)
         {
             return this.emptySlots != 0;
         }
@@ -33,28 +33,32 @@ public class ReservationStation
 
     public bool addItem(Instruction instruction)
     {
-        if (hasSpace() && executionType != ExecutionTypes.LoadStore)
+        if (hasSpace())
         {
-            ReservationStationSlot newSlot = new ReservationStationSlot(resources);
-            newSlot.addItem(instruction);
-            internalArray.Add(newSlot);
-            this.emptySlots --;
-            return true;
+            if (executionType != ExecutionTypes.LoadStore && executionType != ExecutionTypes.Vector)
+            {
+                ReservationStationSlot newSlot = new ReservationStationSlot(resources);
+                newSlot.addItem(instruction);
+                internalArray.Add(newSlot);
+                this.emptySlots--;
+                return true;
+            }
+            else
+            {
+                ReservationQueueSlot newSlot =
+                    new ReservationQueueSlot(instruction, resources);
+                size++;
+                this.ReservationQueue.Enqueue(newSlot);
+                return true;
+            }
         }
-        else if (executionType == ExecutionTypes.LoadStore)
-        {
-            ReservationQueueSlot newSlot =
-                new ReservationQueueSlot(instruction, resources);
-            size++;
-            this.ReservationQueue.Enqueue(newSlot);
-            return true;
-        }
+
         return false;
     }
 
     public (Instruction, List<int>) getItem()
     {
-        if (executionType != ExecutionTypes.LoadStore)
+        if (executionType != ExecutionTypes.LoadStore && executionType != ExecutionTypes.Vector)
         {
             for (int i = 0; i < size-emptySlots; i++)
             {
@@ -73,6 +77,7 @@ public class ReservationStation
             if(ReservationQueue.Count == 0 || ReservationQueue.Peek().ready != true)
                 return (new Blank(), new List<int>());
             ReservationQueueSlot slotToReturn = ReservationQueue.Dequeue();
+            Console.WriteLine(slotToReturn.getInstructionForExecution().ToString());
             return slotToReturn.getInstructionForExecution();
         }
 
@@ -81,7 +86,7 @@ public class ReservationStation
 
     public void CDBUpdate(int bufferSlot, int value)
     {
-        if (executionType != ExecutionTypes.LoadStore)
+        if (executionType != ExecutionTypes.LoadStore && executionType != ExecutionTypes.Vector)
         {
             for (int i = 0; i < size - emptySlots; i++)
             {
@@ -97,6 +102,13 @@ public class ReservationStation
             {
                 queuedItem.CDBupdate(bufferSlot, value);
             }
+        }
+    }
+    public void CDBUpdate(int bufferSlot, int[] value)
+    {
+        foreach (ReservationQueueSlot queuedItem in ReservationQueue)
+        {
+            queuedItem.CDBupdate(bufferSlot, value);
         }
     }
 

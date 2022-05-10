@@ -11,6 +11,7 @@ public class ReOrderBufferSlot
     public Register destination;
     public int memoryIndex;
     public int value;
+    public int[] vectorValues;
 
     public void addItem(Instruction instruction)
     {

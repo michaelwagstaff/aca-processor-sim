@@ -6,28 +6,27 @@ namespace ProcessorSim.Instructions;
 public class VAdd : VInstruction
 {
     public ExecutionTypes executionType { get; set; }
-    public VRegister targetRegister { get; set; }
-    public int[] result { get; set; }
+    public Register targetRegister { get; set; }
+    public int result { get; set; }
+    public int[] vectorResult { get; set; }
     public int registerFile { get; set; }
-    public List<VRegister> inputRegisters { get; set; }
+    public List<Register> inputRegisters { get; set; }
     public int reorderBuffer { get; set; }
     
-    public VAdd(VRegister target, VRegister register1, VRegister register2)
+    public VAdd(Register target, Register register1, Register register2)
     {
-        inputRegisters = new List<VRegister>();
+        inputRegisters = new List<Register>();
         inputRegisters.Add(register1);
         inputRegisters.Add(register2);
         this.targetRegister = target;
-        this.executionType = ExecutionTypes.SimpleArithmetic;
+        this.executionType = ExecutionTypes.Vector;
     }
-    public bool execute(Resources resources, List<int[]> args)
+    public bool execute(Resources resources, List<int> args)
     {
-        int[] vals1 = args[0];
-        int[] vals2 = args[1];
-        result = new int[4];
+        vectorResult = new int[4];
         for (int i = 0; i < 4; i++)
         {
-            this.result[i] = vals1[i] + vals2[i];
+            vectorResult[i] = args[i] + args[i+4];
         }
         return true;
     }

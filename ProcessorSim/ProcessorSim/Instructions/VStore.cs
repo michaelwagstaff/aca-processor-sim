@@ -2,26 +2,27 @@ using ProcessorSim.Enums;
 using ProcessorSim.HardwareResources;
 namespace ProcessorSim.Instructions;
 
-public class VStore : VInstruction
+public class VStore : VInstruction, StoreInstruction
 {
     public ExecutionTypes executionType { get; set; }
-    public VRegister targetRegister { get; set; }
-    public int[] result { get; set; }
+    public Register targetRegister { get; set; }
+    public int result { get; set; }
+    public int[] vectorResult { get; set; }
     public int registerFile { get; set; }
-    public List<VRegister> inputRegisters { get; set; }
+    public List<Register> inputRegisters { get; set; }
     public int reorderBuffer { get; set; }
-    private VRegister reg;
+    private Register reg;
     public int memoryIndex { get; set; }
-    public VStore(VRegister register, int memoryIndex)
+    public VStore(Register register, int memoryIndex)
     {
-        inputRegisters = new List<VRegister>();
+        inputRegisters = new List<Register>();
         this.inputRegisters.Add(register);
         this.memoryIndex = memoryIndex;
-        this.executionType = ExecutionTypes.LoadStore;
+        this.executionType = ExecutionTypes.Vector;
     }
-    public bool execute(Resources resources, List<int[]> args)
+    public bool execute(Resources resources, List<int> args)
     {
-        result = args[1];
+        vectorResult = args.ToArray();
         return true;
     }
 }

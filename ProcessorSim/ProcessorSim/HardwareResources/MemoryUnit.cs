@@ -53,6 +53,27 @@ public class MemoryUnit
             {
                 resources.CDBBroadcast(instruction.reorderBuffer, instruction.result);
             }
+            else if (instruction.executionType == ExecutionTypes.Vector)
+            {
+                if (instruction.GetType() == typeof(VLoad) || instruction.GetType() == typeof(VLoadI)
+                    || instruction.GetType() == typeof(VAdd) || instruction.GetType() == typeof(VLoadR))
+                {
+                    resources.CDBVectorBroadcast(instruction.reorderBuffer, ((VInstruction)instruction).vectorResult);
+                }
+                else
+                {
+                    for (int i = 0; i < 4; i++)
+                    {
+                        resources.dataMemory[((StoreInstruction) instruction).memoryIndex+i].setValue(
+                            ((VInstruction)instruction).vectorResult[i]);
+                    }
+                    resources.reorderBuffer.notifyCommitted(instruction.reorderBuffer);
+                }
+            }
+            else if (instruction.executionType == ExecutionTypes.General)
+            {
+                resources.CDBBroadcast(instruction.reorderBuffer, -1);
+            }
             resources.instructionsWaitingMemory.Remove(instruction);
         }
 

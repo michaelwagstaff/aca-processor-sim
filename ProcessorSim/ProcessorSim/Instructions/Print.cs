@@ -30,9 +30,10 @@ public class Print : Instruction
         }
         else
         {*/
-            Instruction instruction = (Instruction) this;
-            int val = args[0];
-            Console.WriteLine(val);
+        for (int i = 0; i < args.Count; i++)
+        {
+            Console.WriteLine(args[i]);
+        }
         //}
 
         return true;

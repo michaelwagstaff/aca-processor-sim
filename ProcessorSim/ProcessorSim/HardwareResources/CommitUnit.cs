@@ -43,7 +43,14 @@ public class CommitUnit
         {
             resources.reorderBuffer.notifyCommitted(instruction.reorderBuffer);
         }
-        
+        else if (instruction.executionType == ExecutionTypes.Vector)
+        {
+            if (instruction.targetRegister != null || instruction.executionType == ExecutionTypes.SimpleArithmetic)
+            {
+                instruction.targetRegister.setValue(instruction.result);
+                resources.reorderBuffer.notifyCommitted(instruction.reorderBuffer);
+            }
+        }
         return true;
     }
 }

@@ -41,12 +41,12 @@ public class ReOrderBuffer
         return frontOfQueue + currentSize - 1;
     }
 
-    public int getROBDependency(Register register)
+    public int getROBDependency(Register register, int slot)
     {
         int dependency = -1;
         if (register == null)
             return -1;
-        for (int i = 0; i < currentSize - 1; i++)
+        for (int i = 0; i < Math.Min(currentSize - 1, slot - frontOfQueue); i++)
         {
             // Excludes newly added row
             if (internalQueue[frontOfQueue + i].destination == register)
@@ -77,18 +77,23 @@ public class ReOrderBuffer
             resources.registers[31 - i].available = true;
             resources.registers[31 - i].setInstruction("");
         }
-        resources.instructionsWaitingDecode = new List<(int, (bool, bool))>();
+        resources.instructionsWaitingDecode = new List<(int, (bool, (bool, int)))>();
         foreach (ReservationStation reservationStation in resources.reservationStations.Values)
         {
             reservationStation.flush(slot);
         }
 
+        int newCurrentSize = currentSize;
         for (int i = slot + 1; i < frontOfQueue + currentSize; i++)
         {
-            internalQueue[i] = null;
-            
+            if (internalQueue[i] != null)
+            {
+                internalQueue[i] = null;
+                newCurrentSize--;
+            }
         }
-        currentSize = slot - frontOfQueue + 1;
+
+        currentSize = newCurrentSize;
     }
     public void setMemoryAddress(int slot, int memoryAddress)
     {
@@ -97,13 +102,20 @@ public class ReOrderBuffer
 
     public void CDBUpdate(int slot, int value)
     {
-        internalQueue[slot].value = value;
-        internalQueue[slot].state = ReOrderBufferState.WriteResult;
+        if (internalQueue[slot] != null)
+        {
+            // Check added for short circuiting changes to program flow
+            internalQueue[slot].value = value;
+            internalQueue[slot].state = ReOrderBufferState.WriteResult;
+        }
     }
     public void CDBUpdate(int slot, int[] values)
     {
-        internalQueue[slot].vectorValues = values;
-        internalQueue[slot].state = ReOrderBufferState.WriteResult;
+        if (internalQueue[slot] != null)
+        {
+            internalQueue[slot].vectorValues = values;
+            internalQueue[slot].state = ReOrderBufferState.WriteResult;
+        }
     }
 
     public bool containsBranch()

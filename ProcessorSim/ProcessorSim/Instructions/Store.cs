@@ -10,7 +10,6 @@ public class Store : StoreInstruction, ImmediateMemoryLoadStore
     public int registerFile { get; set; }
     public List<Register> inputRegisters { get; set; }
     public int reorderBuffer { get; set; }
-    private Register reg;
     public int memoryIndex { get; set; }
     public Store(Register register, int memoryIndex)
     {

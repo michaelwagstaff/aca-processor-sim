@@ -29,9 +29,9 @@ public class ReservationQueueSlot
                 for (int i = 0; i < instruction.inputRegisters.Count; i++)
                 {
                     Register inputRegister = instruction.inputRegisters[i];
-                    if (resources.reorderBuffer.getROBDependency(inputRegister) != -1)
+                    if (resources.reorderBuffer.getROBDependency(inputRegister, instruction.reorderBuffer) != -1)
                     {
-                        int possibleDependency = resources.reorderBuffer.getROBDependency(inputRegister);
+                        int possibleDependency = resources.reorderBuffer.getROBDependency(inputRegister, instruction.reorderBuffer);
                         if (resources.reorderBuffer.getVectorValues(possibleDependency) == null || resources.reorderBuffer.getValue(possibleDependency) == -1)
                         {
                             Qs.Add(possibleDependency);
@@ -64,9 +64,9 @@ public class ReservationQueueSlot
             else if (instruction.GetType() == typeof(VStoreR) || instruction.GetType() == typeof(VLoadR))
             {
                 RegisterLoadStore temp = (RegisterLoadStore) instruction;
-                if (resources.reorderBuffer.getROBDependency(temp.memoryIndexRegister) != -1)
+                if (resources.reorderBuffer.getROBDependency(temp.memoryIndexRegister, instruction.reorderBuffer) != -1)
                 {
-                    int possibleDependency = resources.reorderBuffer.getROBDependency(temp.memoryIndexRegister);
+                    int possibleDependency = resources.reorderBuffer.getROBDependency(temp.memoryIndexRegister, instruction.reorderBuffer);
                     if (resources.reorderBuffer.getValue(possibleDependency) == null)
                     {
                         AddressQ = possibleDependency;
@@ -84,9 +84,9 @@ public class ReservationQueueSlot
             }
             if (instruction.GetType() == typeof(VStoreR) || instruction.GetType() == typeof(VStore))
             {
-                if (resources.reorderBuffer.getROBDependency(instruction.inputRegisters[0]) != -1)
+                if (resources.reorderBuffer.getROBDependency(instruction.inputRegisters[0], instruction.reorderBuffer) != -1)
                 {
-                    int possibleDependency = resources.reorderBuffer.getROBDependency(instruction.inputRegisters[0]);
+                    int possibleDependency = resources.reorderBuffer.getROBDependency(instruction.inputRegisters[0], instruction.reorderBuffer);
                     if (resources.reorderBuffer.getVectorValues(possibleDependency) == null)
                     {
                         Qs.Add(possibleDependency);
@@ -126,9 +126,9 @@ public class ReservationQueueSlot
             if (instruction.GetType() == typeof(LoadR) || instruction.GetType() == typeof(StoreR))
             {
                 RegisterLoadStore temp = (RegisterLoadStore) instruction;
-                if (resources.reorderBuffer.getROBDependency(temp.memoryIndexRegister) != -1)
+                if (resources.reorderBuffer.getROBDependency(temp.memoryIndexRegister, instruction.reorderBuffer) != -1)
                 {
-                    int possibleDependency = resources.reorderBuffer.getROBDependency(temp.memoryIndexRegister);
+                    int possibleDependency = resources.reorderBuffer.getROBDependency(temp.memoryIndexRegister, instruction.reorderBuffer);
                     if (resources.reorderBuffer.getValue(possibleDependency) == null)
                     {
                         AddressQ = possibleDependency;
@@ -147,9 +147,9 @@ public class ReservationQueueSlot
 
             if (instruction.GetType() == typeof(StoreR) || instruction.GetType() == typeof(Store))
             {
-                if (resources.reorderBuffer.getROBDependency(instruction.inputRegisters[0]) != -1)
+                if (resources.reorderBuffer.getROBDependency(instruction.inputRegisters[0], instruction.reorderBuffer) != -1)
                 {
-                    int possibleDependency = resources.reorderBuffer.getROBDependency(instruction.inputRegisters[0]);
+                    int possibleDependency = resources.reorderBuffer.getROBDependency(instruction.inputRegisters[0], instruction.reorderBuffer);
                     if (resources.reorderBuffer.getValue(possibleDependency) == null)
                     {
                         Q = possibleDependency;

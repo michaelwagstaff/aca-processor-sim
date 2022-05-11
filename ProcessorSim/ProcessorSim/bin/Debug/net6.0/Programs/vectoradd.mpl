@@ -58,6 +58,6 @@ Add r4 r7
 VPrint v5
 CompareI r9 r1 20
 Not r9
-CondBranch r9 r8
+CondBranch r9 48
 
 End

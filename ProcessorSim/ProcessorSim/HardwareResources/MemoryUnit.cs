@@ -63,12 +63,15 @@ public class MemoryUnit
                 }
                 else
                 {
+                    /*
                     for (int i = 0; i < 4; i++)
                     {
                         resources.dataMemory[((StoreInstruction) instruction).memoryIndex+i].setValue(
                             ((VInstruction)instruction).vectorResult[i]);
                     }
                     resources.reorderBuffer.notifyCommitted(instruction.reorderBuffer);
+                    */
+                    resources.CDBVectorBroadcast(instruction.reorderBuffer, ((VInstruction)instruction).vectorResult);
                 }
             }
             else if (instruction.executionType == ExecutionTypes.General)

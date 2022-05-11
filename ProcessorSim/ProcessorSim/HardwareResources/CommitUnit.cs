@@ -33,6 +33,10 @@ public class CommitUnit
                 resources.reorderBuffer.notifyCommitted(instruction.reorderBuffer);
                 // Depending on when we get result from memory unit may need to remove data hazard marker here
             }
+            else
+            {
+                
+            }
         }
         else if (instruction.executionType == ExecutionTypes.Branch)
         {
@@ -54,13 +58,19 @@ public class CommitUnit
         }
         else if (instruction.executionType == ExecutionTypes.Vector)
         {
+            resources.reorderBuffer.notifyCommitted(instruction.reorderBuffer);
             if (instruction.targetRegister != null || instruction.executionType == ExecutionTypes.SimpleArithmetic)
             {
                 instruction.targetRegister.setValue(((VInstruction)instruction).vectorResult);
-                resources.reorderBuffer.notifyCommitted(instruction.reorderBuffer);
             }
-            else if(instruction.GetType() == typeof(VPrint))
-                resources.reorderBuffer.notifyCommitted(instruction.reorderBuffer);
+            if (instruction.GetType() == typeof(VStore) || instruction.GetType() == typeof(VStoreR))
+            {
+                for (int i = 0; i < 4; i++)
+                {
+                    resources.dataMemory[((StoreInstruction) instruction).memoryIndex + i].setValue(
+                        ((VInstruction) instruction).vectorResult[i]);
+                }
+            }
         }
         return true;
     }

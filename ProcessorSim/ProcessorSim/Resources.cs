@@ -17,7 +17,7 @@ public class Resources
     public MemorySlot[] dataMemory;
     
     public List<FetchUnit> fetchUnits;
-    public List<(int, (bool, bool))> instructionsWaitingDecode;
+    public List<(int, (bool, (bool, int)))> instructionsWaitingDecode;
     public List<DecodeUnit> decodeUnits;
     public Dictionary<ExecutionTypes, ReservationStation> reservationStations;
     public Dictionary<ExecutionTypes, List<ExecutionUnit>> executionUnits;
@@ -58,7 +58,7 @@ public class Resources
 
         monitor = new HardwareResources.Monitor();
         fetchUnits = new List<FetchUnit>();
-        instructionsWaitingDecode = new List<(int, (bool, bool))>();
+        instructionsWaitingDecode = new List<(int, (bool, (bool, int)))>();
         decodeUnits = new List<DecodeUnit>();
         for (int i = 0; i < superscalarCount; i++)
         {

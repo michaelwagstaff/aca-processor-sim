@@ -116,29 +116,29 @@ public class ReservationStation
     {
         if (executionType != ExecutionTypes.LoadStore)
         {
-            List<ReservationStationSlot> tempNewArray = new List<ReservationStationSlot>();
-            foreach (ReservationStationSlot slot in internalArray)
+            foreach (ReservationStationSlot slot in internalArray.ToArray())
             {
-                emptySlots = size;
                 if (slot.Op.reorderBuffer < branchSlot)
                 {
                     // It stays!
-                    tempNewArray.Add(slot);
-                    emptySlots--;
+                    
+                    
                 }
                 else
                 {
                     // It's culled :(
+                    internalArray.Remove(slot);
+                    emptySlots++;
+                    resources.instructionsWaitingMemory.Remove(slot.Op);
                 }
             }
-            internalArray = tempNewArray;
         }
         else
         {
             Queue<ReservationQueueSlot> tempReservationQueue = new Queue<ReservationQueueSlot>();
+            emptySlots = size;
             foreach (ReservationQueueSlot slot in ReservationQueue.ToList())
             {
-                emptySlots = size;
                 if (slot.Op.reorderBuffer < branchSlot)
                 {
                     // It stays!
@@ -148,6 +148,7 @@ public class ReservationStation
                 else
                 {
                     // It's culled :(
+                    resources.instructionsWaitingMemory.Remove(slot.Op);
                 }
             }
             ReservationQueue = tempReservationQueue;

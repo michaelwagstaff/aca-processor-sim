@@ -11,14 +11,18 @@ public class CondBranch : Instruction
     public int registerFile { get; set; }
     public List<Register> inputRegisters { get; set; }
     public int reorderBuffer { get; set; }
-    private Register newAddress;
+    private int newAddress;
+    public bool predictedTaken;
+    public int backupAddress;
 
-    public CondBranch(Register flag, Register newAddress)
+    public CondBranch(Register flag, int newAddress, (bool, int) branchDetails)
     {
         inputRegisters = new List<Register>();
         inputRegisters.Add(flag);
         this.newAddress = newAddress;
         this.executionType = ExecutionTypes.Branch;
+        predictedTaken = branchDetails.Item1;
+        backupAddress = branchDetails.Item2;
     }
 
     public bool execute(Resources resources, List<int> args)
@@ -27,11 +31,26 @@ public class CondBranch : Instruction
         int flagVal = args[0];
         if (flagVal == 1)
         {
-            resources.pc.setValue(newAddress.getValue() - 1);
-            resources.reorderBuffer.notifyBranchAddress(reorderBuffer, newAddress.getValue());
-            return true;
+            if (predictedTaken)
+            {
+                return false;
+            }
+            else
+            {
+                resources.pc.setValue(newAddress - 1);
+                resources.reorderBuffer.notifyBranchAddress(reorderBuffer, newAddress);
+                return true;
+            }
         }
-
+        else
+        {
+            if (predictedTaken)
+            {
+                resources.pc.setValue(backupAddress);
+                resources.reorderBuffer.notifyBranchAddress(reorderBuffer, backupAddress + 1);
+                return true;
+            }
+        }
         return false; // Return true only if pipeline needs flushing
     }
 }

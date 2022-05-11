@@ -10,7 +10,7 @@ public class DecodeUnit
     public DecodeUnit()
     {
     }
-    public Instruction decode(Resources resources, int? instructionRegister)
+    public Instruction decode(Resources resources, int? instructionRegister, (bool, int) branchDetails)
     {
         if (instructionRegister == null || instructionRegister == -1)
             return new Blank();
@@ -78,7 +78,7 @@ public class DecodeUnit
         }
         catch
         { }
-        Instruction instruction = findInstruction(opCode, op1, op2, op3, reg1, reg2, reg3);
+        Instruction instruction = findInstruction(opCode, op1, op2, op3, reg1, reg2, reg3, branchDetails);
         if (resources.verbose)
         {
             Console.WriteLine("  {0}", rawInstruction);
@@ -88,7 +88,7 @@ public class DecodeUnit
         return instruction;
     }
 
-    private Instruction findInstruction(string opCode, string op1, string op2, string op3, Register reg1, Register reg2, Register reg3)
+    private Instruction findInstruction(string opCode, string op1, string op2, string op3, Register reg1, Register reg2, Register reg3, (bool, int) branchDetails)
     {
         switch(opCode)
         {
@@ -97,9 +97,9 @@ public class DecodeUnit
             case "Blank":
                 return new Blank();
             case "Branch":
-                return new Branch(reg1);
+                return new Branch(Int32.Parse(op1));
             case "CondBranch":
-                return new CondBranch(reg1, reg2);
+                return new CondBranch(reg1, Int32.Parse(op2), branchDetails);
             case "Compare":
                 return new Compare(reg1, reg2, reg3);
             case "CompareI":

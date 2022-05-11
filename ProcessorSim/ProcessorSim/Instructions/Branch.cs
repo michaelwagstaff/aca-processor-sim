@@ -11,9 +11,9 @@ public class Branch : Instruction
     public int registerFile { get; set; }
     public List<Register> inputRegisters { get; set; }
     public int reorderBuffer { get; set; }
-    private Register newAddress;
+    private int newAddress;
 
-    public Branch(Register newAddress)
+    public Branch(int newAddress)
     {
         inputRegisters = new List<Register>();
         this.newAddress = newAddress;
@@ -22,8 +22,7 @@ public class Branch : Instruction
 
     public bool execute(Resources resources, List<int> args)
     {
-        resources.pc.setValue(newAddress.getValue() - 1);
-        resources.reorderBuffer.notifyBranchAddress(reorderBuffer, newAddress.getValue());
+        result = -1;
         return true;
     }
 }

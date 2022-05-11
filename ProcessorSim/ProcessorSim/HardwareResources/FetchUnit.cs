@@ -2,7 +2,7 @@ namespace ProcessorSim.HardwareResources;
 
 public class FetchUnit
 {
-    public (int, (bool, bool)) fetch(Resources resources, int superscalarCount)
+    public (int, (bool, (bool, int))) fetch(Resources resources, int superscalarCount)
     {
         try
         {
@@ -34,17 +34,41 @@ public class FetchUnit
             }
             resources.registers[regAddress].setInstruction(instruction);
             resources.registers[regAddress].available = false;
-            resources.pc.setValue(resources.pc.getValue() + 1);
+            bool predictedTaken = false;
+            int continuationAddress = -1;
+            if (instruction.Contains("CondBranch"))
+            {
+                int possibleBranchAddress = Int32.Parse(instruction.Split(" ")[2]) - 1;
+                continuationAddress = resources.pc.getValue() + 1;
+                if (possibleBranchAddress < resources.pc.getValue())
+                {
+                    resources.pc.setValue(possibleBranchAddress);
+                    predictedTaken = true;
+                }
+                else
+                {
+                    resources.pc.setValue(resources.pc.getValue() + 1);
+                }
+            }
+            else if (instruction.Contains("Branch"))
+            {
+                resources.pc.setValue(Int32.Parse(instruction.Split(" ")[1]) - 1);
+            }
+            else
+            {
+                resources.pc.setValue(resources.pc.getValue() + 1);
+            }
+
             string instructionType = instruction.Split(" ")[0];
             string[] stringMatches = new[] {"Load", "Compare", "Copy", "Add", "Subtract", "Divide", "Multiply", "Not"};
             bool newArchitecturalRegisterNeeded = stringMatches.Any(s=>instructionType.Contains(s));
             //bool possibleBranch = instructionType.Contains("Branch");
             bool possibleBranch = false;
-            return (regAddress, (newArchitecturalRegisterNeeded, possibleBranch));
+            return (regAddress, (newArchitecturalRegisterNeeded, (predictedTaken, continuationAddress)));
         }
         catch (Exception e)
         {
-            return (-1, (false, false));
+            return (-1, (false, (false, -1)));
         }
     }
 }

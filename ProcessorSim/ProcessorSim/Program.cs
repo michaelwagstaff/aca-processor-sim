@@ -35,12 +35,12 @@ class ProcessorSim
 
     public static void loadProgram(Resources resources)
     {
-        StreamReader reader = new StreamReader(@"Programs/bubblesort.mpl");
+        // StreamReader reader = new StreamReader(@"Programs/bubblesort.mpl");
         // StreamReader reader = new StreamReader(@"Programs/fact.mpl");
         // StreamReader reader = new StreamReader(@"Programs/fact-safe.mpl");
         // StreamReader reader = new StreamReader(@"Programs/gcd-original.mpl");
         // StreamReader reader = new StreamReader(@"Programs/add.mpl");
-        // StreamReader reader = new StreamReader(@"Programs/vectoradd.mpl");
+        StreamReader reader = new StreamReader(@"Programs/vectoradd.mpl");
         // StreamReader reader = new StreamReader(@"Programs/vectormult-safe.mpl");
         int i = 0;
         string line;
@@ -56,22 +56,21 @@ class ProcessorSim
         writeback(resources);
         memory(resources);
         execute(resources);
-        bool haltPipeline = decode(resources); // TODO: Improve this
-        foreach ((int, (bool, bool)) instruction in resources.instructionsWaitingDecode)
+        bool haltPipeline = decode(resources); // This pipeline only stops in an emergency. A potential branch is not an emergency
+        if (!haltPipeline)
         {
-            if (instruction.Item2.Item2)
-                haltPipeline = true;
-        }
-        fetch(resources);
-        if (instructionRegister == -1)
-        {
-            return false;
+            fetch(resources);
+            if (instructionRegister == -1)
+            {
+                return false;
+            }
         }
         else if(verbose)
         {
             Console.WriteLine("Current Register Mapping:");
             //resources.registerFile.printMapping();
         }
+        
         resources.monitor.incrementCyclesTaken();
         if (verbose)
         {
@@ -101,12 +100,11 @@ class ProcessorSim
         {
             int? instructionRegister = instruction.Item1;
             bool newRegisterNeeded = instruction.Item2.Item1;
-            bool branch = instruction.Item2.Item2;
             Instruction instructionObject =
                 resources.decodeUnits[0].decode(resources, instructionRegister);
             bool result = resources.reservationStations[instructionObject.executionType].addItem(instructionObject);
             resources.instructionsWaitingDecode.Remove(instruction);
-            if (branch || !result)
+            if (!result)
                 return true;
         }
 

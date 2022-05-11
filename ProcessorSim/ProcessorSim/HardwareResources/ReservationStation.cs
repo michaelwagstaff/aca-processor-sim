@@ -150,6 +150,7 @@ public class ReservationStation
                     // It's culled :(
                 }
             }
+            ReservationQueue = tempReservationQueue;
         }
     }
     

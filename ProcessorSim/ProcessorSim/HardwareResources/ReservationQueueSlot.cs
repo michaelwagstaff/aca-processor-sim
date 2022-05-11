@@ -24,7 +24,7 @@ public class ReservationQueueSlot
         {
             Qs = new List<int?>();
             Vs = new List<int?>();
-            if (instruction.GetType() == typeof(VAdd))
+            if (instruction.GetType() == typeof(VAdd) || instruction.GetType() == typeof(VPrint))
             {
                 for (int i = 0; i < instruction.inputRegisters.Count; i++)
                 {

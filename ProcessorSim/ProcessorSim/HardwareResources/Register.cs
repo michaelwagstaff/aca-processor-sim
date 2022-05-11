@@ -9,7 +9,7 @@ public class Register
     public bool isInstruction;
     public bool available;
     public int index;
-    private bool vector;
+    public bool vector;
 
     private int[] vectorValue;
     

@@ -186,8 +186,10 @@ public class ReOrderBuffer
     {
         if (internalQueue[slot].instruction.GetType().Name != "Blank")
         {
-            resources.monitor.incrementInsructionsExecuted();
+            resources.monitor.incrementInstructionsExecuted();
         }
+        if(internalQueue[slot].instruction.executionType == ExecutionTypes.Vector)
+            resources.monitor.incrementVectorInstructions();
         if (internalQueue[slot] != null)
         {
             internalQueue[slot] = null;

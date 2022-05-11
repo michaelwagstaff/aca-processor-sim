@@ -55,7 +55,7 @@ Add r1 r7
 Add r2 r7
 Add r3 r7
 Add r4 r7
-Print r5
+VPrint v5
 CompareI r9 r1 20
 Not r9
 CondBranch r9 r8

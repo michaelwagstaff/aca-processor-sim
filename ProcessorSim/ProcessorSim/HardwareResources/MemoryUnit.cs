@@ -56,7 +56,8 @@ public class MemoryUnit
             else if (instruction.executionType == ExecutionTypes.Vector)
             {
                 if (instruction.GetType() == typeof(VLoad) || instruction.GetType() == typeof(VLoadI)
-                    || instruction.GetType() == typeof(VAdd) || instruction.GetType() == typeof(VLoadR))
+                    || instruction.GetType() == typeof(VAdd) || instruction.GetType() == typeof(VLoadR) 
+                    || instruction.GetType() == typeof(VPrint))
                 {
                     resources.CDBVectorBroadcast(instruction.reorderBuffer, ((VInstruction)instruction).vectorResult);
                 }

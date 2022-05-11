@@ -47,9 +47,11 @@ public class CommitUnit
         {
             if (instruction.targetRegister != null || instruction.executionType == ExecutionTypes.SimpleArithmetic)
             {
-                instruction.targetRegister.setValue(instruction.result);
+                instruction.targetRegister.setValue(((VInstruction)instruction).vectorResult);
                 resources.reorderBuffer.notifyCommitted(instruction.reorderBuffer);
             }
+            else if(instruction.GetType() == typeof(VPrint))
+                resources.reorderBuffer.notifyCommitted(instruction.reorderBuffer);
         }
         return true;
     }

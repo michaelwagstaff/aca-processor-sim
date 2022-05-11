@@ -147,6 +147,8 @@ public class DecodeUnit
                 return new VLoadI(reg1, values);
             case "VLoadR":
                 return new VLoadR(reg1, reg2);
+            case "VPrint":
+                return new VPrint(reg1);
             case "VStore":
                 return new VStore(reg1, Int32.Parse(op2));
             case "VStoreR":

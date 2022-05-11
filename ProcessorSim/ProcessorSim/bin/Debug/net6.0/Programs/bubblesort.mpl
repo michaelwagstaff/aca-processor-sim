@@ -3,7 +3,7 @@ LoadI r2 19
 LoadI r3 2
 LoadI r4 1
 LoadI r5 20
-
+MonitorStart
 LoadI r6 1 -- Loop counter
 LoadI r7 0 -- LT flag
 LoadI r8 19

@@ -41,6 +41,15 @@ public class CommitUnit
         }
         else if(instruction.executionType == ExecutionTypes.General)
         {
+            if (instruction.GetType() == typeof(End))
+            {
+                Console.WriteLine();
+                Console.WriteLine("-- Fin --");
+                Console.WriteLine();
+                Console.WriteLine("Program Stats:");
+                resources.monitor.printStats();
+                Environment.Exit(0);
+            }
             resources.reorderBuffer.notifyCommitted(instruction.reorderBuffer);
         }
         else if (instruction.executionType == ExecutionTypes.Vector)

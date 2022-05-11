@@ -88,8 +88,8 @@ public class ReservationStationSlot
             if (!resources.reorderBuffer.allPreviousSlotsExecuted(Op.reorderBuffer))
                 ready = false;
         }
-        else if (!resources.reorderBuffer.allPreviousBranchesExecuted(Op.reorderBuffer))
-                ready = false;
+        //else if (!resources.reorderBuffer.allPreviousBranchesExecuted(Op.reorderBuffer))
+        //        ready = false;
     }
 
     public (Instruction, List<int>) getInstructionForExecution()

@@ -21,6 +21,12 @@ public class FetchUnit
                 Console.WriteLine("  PC Value: {0}", resources.pc.getValue());
             }
             string instruction = resources.instructionMemory[resources.pc.getValue()].getInstruction();
+            Console.WriteLine(instruction);
+            if (instruction.Contains("MonitorStart"))
+            {
+                resources.monitor.start();
+                instruction = "";
+            }
             while (instruction == "")
             {
                 resources.pc.setValue(resources.pc.getValue() + 1);

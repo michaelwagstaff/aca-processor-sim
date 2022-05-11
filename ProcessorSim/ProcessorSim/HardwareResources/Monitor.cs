@@ -5,45 +5,38 @@ public class Monitor
     private int instructionsExecuted;
     private int cyclesTaken;
     private int vectorInstructionsExecuted;
+    private bool enabled;
+
+    public Monitor()
+    {
+        enabled = false;
+    }
 
     public void incrementInstructionsExecuted()
     {
-        instructionsExecuted++;
+        if(enabled)
+            instructionsExecuted++;
     }
     public void incrementCyclesTaken()
     {
-        cyclesTaken++;
+        if(enabled)
+            cyclesTaken++;
     }
 
     public void incrementVectorInstructions()
     {
-        vectorInstructionsExecuted++;
+        if(enabled)
+            vectorInstructionsExecuted++;
     }
-
-    public int getInstructionsExecuted()
-    {
-        return instructionsExecuted;
-    }
-    public int getCyclesTaken()
-    {
-        return cyclesTaken;
-    }
-
-    public int getVectorInstructionsExecuted()
-    {
-        return vectorInstructionsExecuted;
-    }
-
     public bool vectorInstructionsUsed()
     {
         return vectorInstructionsExecuted != 0;
     }
 
-    public void reset()
+    public void start()
     {
         // Enables benchmarking of core kernels
-        instructionsExecuted = 0;
-        cyclesTaken = 0;
+        enabled = true;
     }
 
     public float getIPC()

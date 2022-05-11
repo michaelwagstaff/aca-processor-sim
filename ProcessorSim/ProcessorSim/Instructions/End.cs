@@ -20,12 +20,6 @@ public class End : Instruction
 
     public bool execute(Resources resources, List<int> args)
     {
-        Console.WriteLine();
-        Console.WriteLine("-- Fin --");
-        Console.WriteLine();
-        Console.WriteLine("Program Stats:");
-        resources.monitor.printStats();
-        Environment.Exit(0);
         return true;
     }
 }

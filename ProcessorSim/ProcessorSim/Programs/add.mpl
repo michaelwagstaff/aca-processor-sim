@@ -40,7 +40,7 @@ Store r2 37
 Store r2 38
 Store r2 39
 Store r2 40
-
+MonitorStart
 LoadI r1 0 -- Use r1 as loop counter
 LoadI r2 1
 LoadI r3 21

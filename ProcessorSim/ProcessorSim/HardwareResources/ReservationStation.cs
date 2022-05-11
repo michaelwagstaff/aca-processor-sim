@@ -112,17 +112,44 @@ public class ReservationStation
         }
     }
 
-    public void flush()
+    public void flush(int branchSlot)
     {
         if (executionType != ExecutionTypes.LoadStore)
         {
-            internalArray = new List<ReservationStationSlot>();
-            emptySlots = size;
+            List<ReservationStationSlot> tempNewArray = new List<ReservationStationSlot>();
+            foreach (ReservationStationSlot slot in internalArray)
+            {
+                emptySlots = size;
+                if (slot.Op.reorderBuffer < branchSlot)
+                {
+                    // It stays!
+                    tempNewArray.Add(slot);
+                    emptySlots--;
+                }
+                else
+                {
+                    // It's culled :(
+                }
+            }
+            internalArray = tempNewArray;
         }
         else
         {
-            ReservationQueue = new Queue<ReservationQueueSlot>();
-            emptySlots = size;
+            Queue<ReservationQueueSlot> tempReservationQueue = new Queue<ReservationQueueSlot>();
+            foreach (ReservationQueueSlot slot in ReservationQueue.ToList())
+            {
+                emptySlots = size;
+                if (slot.Op.reorderBuffer < branchSlot)
+                {
+                    // It stays!
+                    tempReservationQueue.Enqueue(slot);
+                    emptySlots--;
+                }
+                else
+                {
+                    // It's culled :(
+                }
+            }
         }
     }
     

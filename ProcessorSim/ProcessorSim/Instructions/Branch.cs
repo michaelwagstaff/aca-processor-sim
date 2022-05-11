@@ -22,8 +22,8 @@ public class Branch : Instruction
 
     public bool execute(Resources resources, List<int> args)
     {
-        resources.pc.setValue(newAddress.getValue() - 1);
-        resources.reorderBuffer.notifyBranchAddress(reorderBuffer, newAddress.getValue());
+        result = newAddress.getValue();
+        //resources.reorderBuffer.notifyBranchAddress(reorderBuffer, newAddress.getValue());
         return true;
     }
 }

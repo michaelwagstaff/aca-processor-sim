@@ -80,7 +80,7 @@ public class ReOrderBuffer
         resources.instructionsWaitingDecode = new List<(int, (bool, bool))>();
         foreach (ReservationStation reservationStation in resources.reservationStations.Values)
         {
-            reservationStation.flush();
+            reservationStation.flush(slot);
         }
 
         for (int i = slot + 1; i < frontOfQueue + currentSize; i++)

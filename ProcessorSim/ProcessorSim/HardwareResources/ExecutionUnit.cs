@@ -77,6 +77,10 @@ public class ExecutionUnit
                         ((StoreInstruction) instruction).memoryIndex);
                 resources.CDBBroadcast(instruction.reorderBuffer, instruction.result);
             }
+            else if (instruction.executionType == ExecutionTypes.Branch)
+            {
+                resources.CDBBroadcast(instruction.reorderBuffer, -1);
+            }
             else
                 resources.instructionsWaitingMemory.Add(instruction);
             // Console.WriteLine(instruction.ToString());

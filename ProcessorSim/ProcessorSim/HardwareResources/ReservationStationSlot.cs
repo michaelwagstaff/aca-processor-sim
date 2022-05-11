@@ -83,11 +83,13 @@ public class ReservationStationSlot
                 ready = false;
             }
         }
+        /*
         if (Op.GetType() == typeof(Branch) || Op.GetType() == typeof(CondBranch))
         {
             if (!resources.reorderBuffer.allPreviousSlotsExecuted(Op.reorderBuffer))
                 ready = false;
         }
+        */
         //else if (!resources.reorderBuffer.allPreviousBranchesExecuted(Op.reorderBuffer))
         //        ready = false;
     }

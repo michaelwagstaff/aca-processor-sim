@@ -23,14 +23,15 @@ public class CondBranch : Instruction
 
     public bool execute(Resources resources, List<int> args)
     {
-        Instruction instruction = (Instruction) this;
         int flagVal = args[0];
         if (flagVal == 1)
         {
-            resources.pc.setValue(newAddress.getValue() - 1);
-            resources.reorderBuffer.notifyBranchAddress(reorderBuffer, newAddress.getValue());
+            result = newAddress.getValue();
+            // resources.reorderBuffer.notifyBranchAddress(reorderBuffer, newAddress.getValue());
             return true;
         }
+
+        result = -1;
 
         return false; // Return true only if pipeline needs flushing
     }

@@ -37,6 +37,11 @@ public class CommitUnit
         else if (instruction.executionType == ExecutionTypes.Branch)
         {
             // Add branch logic
+            if (instruction.result != -1)
+            {
+                resources.pc.setValue(instruction.result - 1);
+                resources.reorderBuffer.notifyBranchAddress(instruction.reorderBuffer, instruction.result);
+            }
             resources.reorderBuffer.notifyCommitted(instruction.reorderBuffer);
         }
         else if(instruction.executionType == ExecutionTypes.General)

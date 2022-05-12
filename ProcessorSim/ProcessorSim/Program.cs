@@ -12,13 +12,15 @@ class ProcessorSim
     static int? instructionRegister;
     static bool nextInstructionNeedsNewRegister;
     static bool verbose;
+    static bool specExEnabled;
     static int superscalarCount;
     public static void Main(string[] args)
     {
         verbose = false;
+        specExEnabled = false;
         nextInstructionNeedsNewRegister = false;
-        superscalarCount = 1;
-        Resources resources = new Resources(32, 512, 1024, verbose, superscalarCount);
+        superscalarCount = 4;
+        Resources resources = new Resources(32, 512, 1024, verbose, superscalarCount, specExEnabled);
         resources.setExecutionUnits(1,(int)Math.Floor(superscalarCount/(double)2) + 1,(int)Math.Floor(superscalarCount/(double)2) + 1,1, Math.Min(2, superscalarCount));
         loadProgram(resources);
         instructionRegister = null;
@@ -44,8 +46,8 @@ class ProcessorSim
         // StreamReader reader = new StreamReader(@"Programs/add.mpl");
         // StreamReader reader = new StreamReader(@"Programs/add-perf.mpl");
         // StreamReader reader = new StreamReader(@"Programs/vectoradd.mpl");
-        // StreamReader reader = new StreamReader(@"Programs/vectoradd-perf.mpl");
-        StreamReader reader = new StreamReader(@"Programs/vectoradd-unrolled-perf.mpl");
+        StreamReader reader = new StreamReader(@"Programs/vectoradd-perf.mpl");
+        // StreamReader reader = new StreamReader(@"Programs/vectoradd-unrolled-perf.mpl");
         // StreamReader reader = new StreamReader(@"Programs/vectormult-safe.mpl");
         int i = 0;
         string line;
@@ -60,17 +62,43 @@ class ProcessorSim
     {
         writeback(resources);
         memory(resources);
-        execute(resources);
-        bool haltPipeline = decode(resources); // This pipeline only stops in an emergency. A potential branch is not an emergency
-        if (!haltPipeline)
+        if (specExEnabled)
         {
-            fetch(resources);
-            if (instructionRegister == -1)
+            execute(resources);
+            bool haltPipeline =
+                decode(resources); // This pipeline only stops in an emergency. A potential branch is not an emergency
+            if (!haltPipeline)
             {
-                return false;
+                fetch(resources);
+                if (instructionRegister == -1)
+                {
+                    return false;
+                }
             }
         }
-        else if(verbose)
+        else
+        {
+            if (execute(resources) != 1 && resources.reservationStations[ExecutionTypes.Branch].hasSpace()) // If pipeline flush isn't occuring
+            {
+                if (!resources.reorderBuffer.containsBranch())
+                {
+                    bool haltPipeline = decode(resources); // TODO: Improve this
+                    foreach ((int, (bool, (bool, int, int))) instruction in resources.instructionsWaitingDecode)
+                    {
+                        if (instruction.Item2.Item2.Item1)
+                            haltPipeline = true;
+                    }
+
+                    if (!haltPipeline)
+                        fetch(resources);
+                    if (instructionRegister == -1)
+                    {
+                        return false;
+                    }
+                }
+            }
+        }
+        if(verbose)
         {
             Console.WriteLine("Current Register Mapping:");
             //resources.registerFile.printMapping();
@@ -105,11 +133,14 @@ class ProcessorSim
         {
             int? instructionRegister = instruction.Item1;
             bool newRegisterNeeded = instruction.Item2.Item1;
+            bool branch = instruction.Item2.Item2.Item1;
             Instruction instructionObject =
                 resources.decodeUnits[0].decode(resources, instructionRegister, instruction.Item2.Item2);
             bool result = resources.reservationStations[instructionObject.executionType].addItem(instructionObject);
             resources.instructionsWaitingDecode.Remove(instruction);
             if (!result)
+                return true;
+            if (!specExEnabled && branch)
                 return true;
         }
 

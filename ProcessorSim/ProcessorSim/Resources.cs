@@ -8,6 +8,7 @@ namespace ProcessorSim;
 public class Resources
 {
     public bool verbose;
+    public bool speculativeExecution;
 
     public Register[] registers;
     public Register[] vregisters;
@@ -28,9 +29,11 @@ public class Resources
     public CommitUnit commitUnit;
     
     public HardwareResources.Monitor monitor;
-    public Resources(int regCount, int instCount, int dataCount, bool verbose = false, int superscalarCount=1)
+    public Resources(int regCount, int instCount, int dataCount, bool verbose = false, int superscalarCount=1, bool specExEnabled = true)
     {
         this.verbose = verbose;
+        speculativeExecution = specExEnabled;
+        
         registers = new Register[regCount];
         for(int i = 0; i < registers.Length; i++)
         {

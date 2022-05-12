@@ -39,37 +39,45 @@ public class FetchUnit
             int oldPC = -1;
             if (instruction.Contains("CondBranch"))
             {
-                int possibleBranchAddress = Int32.Parse(instruction.Split(" ")[2]) - 1;
-                continuationAddress = resources.pc.getValue() + 1;
-                oldPC = resources.pc.getValue();
-                if (resources.branchPredictor.getResults(resources.pc.getValue()) == null)
+                if (resources.speculativeExecution)
                 {
-                    if (possibleBranchAddress < resources.pc.getValue())
+                    int possibleBranchAddress = Int32.Parse(instruction.Split(" ")[2]) - 1;
+                    continuationAddress = resources.pc.getValue() + 1;
+                    oldPC = resources.pc.getValue();
+                    if (resources.branchPredictor.getResults(resources.pc.getValue()) == null)
                     {
-                        resources.pc.setValue(possibleBranchAddress);
-                        predictedTaken = true;
+                        if (possibleBranchAddress < resources.pc.getValue())
+                        {
+                            resources.pc.setValue(possibleBranchAddress);
+                            predictedTaken = true;
+                        }
+                        else
+                        {
+                            resources.pc.setValue(resources.pc.getValue() + 1);
+                        }
                     }
                     else
                     {
-                        resources.pc.setValue(resources.pc.getValue() + 1);
+                        if (possibleBranchAddress ==
+                            (int) resources.branchPredictor.getResults(resources.pc.getValue()))
+                        {
+                            resources.pc.setValue(possibleBranchAddress);
+                            predictedTaken = true;
+                        }
+                        else
+                        {
+                            resources.pc.setValue(resources.pc.getValue() + 1);
+                        }
                     }
                 }
                 else
-                {
-                    if (possibleBranchAddress == (int) resources.branchPredictor.getResults(resources.pc.getValue()))
-                    {
-                        resources.pc.setValue(possibleBranchAddress);
-                        predictedTaken = true;
-                    }
-                    else
-                    {
-                        resources.pc.setValue(resources.pc.getValue() + 1);
-                    }
-                }
+                    predictedTaken = true;
             }
             else if (instruction.Contains("Branch"))
             {
                 resources.pc.setValue(Int32.Parse(instruction.Split(" ")[1]) - 1);
+                if (!resources.speculativeExecution)
+                    predictedTaken = true;
             }
             else
             {

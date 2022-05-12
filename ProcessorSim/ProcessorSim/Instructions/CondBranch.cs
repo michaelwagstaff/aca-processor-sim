@@ -29,31 +29,48 @@ public class CondBranch : Instruction
 
     public bool execute(Resources resources, List<int> args)
     {
-        Instruction instruction = (Instruction) this;
-        int flagVal = args[0];
-        if (flagVal == 1)
+        if (resources.speculativeExecution)
         {
-            resources.branchPredictor.noteResult(originalAddress, newAddress - 1);
-            if (predictedTaken)
+            int flagVal = args[0];
+            if (flagVal == 1)
             {
-                return false;
+                resources.branchPredictor.noteResult(originalAddress, newAddress - 1);
+                if (predictedTaken)
+                {
+                    return false;
+                }
+                else
+                {
+                    resources.pc.setValue(newAddress - 1);
+                    resources.reorderBuffer.notifyBranchAddress(reorderBuffer, newAddress);
+                    return true;
+                }
             }
             else
             {
-                resources.pc.setValue(newAddress - 1);
-                resources.reorderBuffer.notifyBranchAddress(reorderBuffer, newAddress);
-                return true;
+                resources.branchPredictor.noteResult(originalAddress, backupAddress);
+                if (predictedTaken)
+                {
+                    resources.pc.setValue(backupAddress);
+                    resources.reorderBuffer.notifyBranchAddress(reorderBuffer, backupAddress + 1);
+                    return true;
+                }
             }
         }
         else
         {
-            resources.branchPredictor.noteResult(originalAddress, backupAddress);
-            if (predictedTaken)
+            int flagVal = args[0];
+            if (flagVal == 1)
             {
-                resources.pc.setValue(backupAddress);
-                resources.reorderBuffer.notifyBranchAddress(reorderBuffer, backupAddress + 1);
-                return true;
+                    resources.pc.setValue(newAddress - 1);
+                    resources.reorderBuffer.notifyBranchAddress(reorderBuffer, newAddress);
+                    return true;
             }
+            else
+            {
+                resources.pc.setValue(resources.pc.getValue() + 1);
+            }
+            return false;
         }
         return false; // Return true only if pipeline needs flushing
     }

@@ -208,6 +208,15 @@ public class ReservationQueueSlot
                     }
                 }
             }
+
+            if (!resources.speculativeExecution)
+            {
+                if (Op.GetType() == typeof(Branch) || Op.GetType() == typeof(CondBranch))
+                {
+                    if (!resources.reorderBuffer.allPreviousSlotsExecuted(Op.reorderBuffer))
+                        ready = false;
+                }
+            }
         }
     }
 

@@ -63,6 +63,14 @@ public class ReOrderBuffer
             return null;
         return internalQueue[slot].value;
     }
+
+    public ReOrderBufferState? getExecutionState(int slot)
+    {
+        if (internalQueue[slot] == null)
+            return null;
+        else
+            return internalQueue[slot].state;
+    }
     public int[]? getVectorValues(int slot)
     {
         if (this.internalQueue[slot].state == ReOrderBufferState.Execute)

@@ -44,7 +44,8 @@ class ProcessorSim
         // StreamReader reader = new StreamReader(@"Programs/add.mpl");
         // StreamReader reader = new StreamReader(@"Programs/add-perf.mpl");
         // StreamReader reader = new StreamReader(@"Programs/vectoradd.mpl");
-        StreamReader reader = new StreamReader(@"Programs/vectoradd-perf.mpl");
+        // StreamReader reader = new StreamReader(@"Programs/vectoradd-perf.mpl");
+        StreamReader reader = new StreamReader(@"Programs/vectoradd-unrolled-perf.mpl");
         // StreamReader reader = new StreamReader(@"Programs/vectormult-safe.mpl");
         int i = 0;
         string line;

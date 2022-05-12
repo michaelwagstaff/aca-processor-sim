@@ -206,28 +206,6 @@ public class ReservationQueueSlot
                     {
                         ready = false;
                     }
-                    /*
-                    if (Op.executionType == ExecutionTypes.Vector)
-
-                    {
-                        if (resources.reorderBuffer.getValue((int) Qs[i]) == null)
-                        {
-                            int[] tempValues = Op.inputRegisters[i].getValueVector();
-                            for (int j = 0; j < 4; j++)
-                            {
-                                Vs[i * 4 + j] = tempValues[j];
-                            }
-                        }
-                        else
-                        {
-                            ready = false;
-                        }
-                    }
-                    else
-                    {
-                        ready = false;
-                    }
-                    */
                 }
             }
         }
@@ -254,7 +232,7 @@ public class ReservationQueueSlot
             {
                 if (Op.executionType == ExecutionTypes.Vector)
                 {
-                    if (resources.reorderBuffer.getValue((int) Qs[i]) == null)
+                    if (resources.reorderBuffer.getExecutionState((int) Qs[i]) == null)
                     {
                         try
                         {
@@ -266,7 +244,11 @@ public class ReservationQueueSlot
 
                             Qs[i] = null;
                             ready = true;
-                            CDBupdate(-1,-1);
+                            for (int j = 0; j < Qs.Count; j++)
+                            {
+                                if (Qs[j] != null)
+                                    ready = false;
+                            }
                         }
                         catch
                         {
@@ -277,16 +259,6 @@ public class ReservationQueueSlot
                         ready = false;
                     }
                 }
-                else
-                {
-                    ready = false;
-                }
-                /*
-                else
-                {
-                    ready = false;
-                }
-                */
             }
         }
     }

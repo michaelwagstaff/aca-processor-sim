@@ -45,18 +45,16 @@ LoadI r1 0 -- Use r1 as loop counter
 LoadI r2 1
 LoadI r3 21
 LoadI r4 41 -- memory addresses for each array respectively
-LoadR r5 r2
-LoadR r6 r3
-LoadI r7 1 -- Increment
-Add r5 r6
-StoreR r5 r4 -- Store r5 in address in r4
+VLoadR v5 r2
+VLoadR v6 r3
+LoadI r7 4 -- Increment
+VAdd v5 v6
+VStoreR v5 r4 -- Store r5 in address in r4
 Add r1 r7
 Add r2 r7
 Add r3 r7
 Add r4 r7
-Print r5
 CompareI r9 r1 20
 Not r9
 CondBranch r9 48
-
 End

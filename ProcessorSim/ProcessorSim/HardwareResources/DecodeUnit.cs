@@ -10,7 +10,7 @@ public class DecodeUnit
     public DecodeUnit()
     {
     }
-    public Instruction decode(Resources resources, int? instructionRegister, (bool, int) branchDetails)
+    public Instruction decode(Resources resources, int? instructionRegister, (bool, int, int) branchDetails)
     {
         if (instructionRegister == null || instructionRegister == -1)
             return new Blank();
@@ -88,7 +88,7 @@ public class DecodeUnit
         return instruction;
     }
 
-    private Instruction findInstruction(string opCode, string op1, string op2, string op3, Register reg1, Register reg2, Register reg3, (bool, int) branchDetails)
+    private Instruction findInstruction(string opCode, string op1, string op2, string op3, Register reg1, Register reg2, Register reg3, (bool, int, int) branchDetails)
     {
         switch(opCode)
         {

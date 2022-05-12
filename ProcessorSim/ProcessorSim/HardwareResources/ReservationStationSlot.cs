@@ -80,6 +80,16 @@ public class ReservationStationSlot
         {
             if (Q[i] != null)
             {
+                /*
+                if (resources.reorderBuffer.getValue((int) Q[i]) == null)
+                {
+                    V[i] = Op.inputRegisters[i].getValue();
+                }
+                else
+                {
+                    ready = false;
+                }
+                */
                 ready = false;
             }
         }

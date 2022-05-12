@@ -27,7 +27,7 @@ Copy r12 r3
 Copy r3 r4
 Copy r4 r12
 CompareLT r7 r4 r5 -- See if in the right order, if so jump flag = true
-CondBranch r7 35
+CondBranch r7 34
 Copy r12 r4
 Copy r4 r5
 Copy r5 r12

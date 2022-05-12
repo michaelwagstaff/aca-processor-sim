@@ -202,10 +202,29 @@ public class ReservationQueueSlot
             {
                 for (int i = 0; i < Qs.Count; i++)
                 {
-                    if (Qs[i] != null)
+                    /*
+                    if (Op.executionType == ExecutionTypes.Vector)
+
+                    {
+                        if (resources.reorderBuffer.getValue((int) Qs[i]) == null)
+                        {
+                            int[] tempValues = Op.inputRegisters[i].getValueVector();
+                            for (int j = 0; j < 4; j++)
+                            {
+                                Vs[i * 4 + j] = tempValues[j];
+                            }
+                        }
+                        else
+                        {
+                            ready = false;
+                        }
+                    }
+                    else
                     {
                         ready = false;
                     }
+                    */
+                    ready = false;
                 }
             }
         }
@@ -230,7 +249,33 @@ public class ReservationQueueSlot
         {
             if (Qs[i] != null)
             {
+                /*
+                if (Op.executionType == ExecutionTypes.Vector)
+                {
+                    if (resources.reorderBuffer.getValue((int) Qs[i]) == null)
+                    {
+                        try
+                        {
+                            int[] tempValues = Op.inputRegisters[i].getValueVector();
+                            for (int j = 0; j < 4; j++)
+                            {
+                                Vs[i * 4 + j] = tempValues[j];
+                            }
+                        }
+                        catch{}
+                    }
+                    else
+                    {
+                        ready = false;
+                    }
+                    */
                 ready = false;
+                /*
+                else
+                {
+                    ready = false;
+                }
+                */
             }
         }
     }

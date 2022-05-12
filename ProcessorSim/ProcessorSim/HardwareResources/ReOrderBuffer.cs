@@ -77,7 +77,7 @@ public class ReOrderBuffer
             resources.registers[31 - i].available = true;
             resources.registers[31 - i].setInstruction("");
         }
-        resources.instructionsWaitingDecode = new List<(int, (bool, (bool, int)))>();
+        resources.instructionsWaitingDecode = new List<(int, (bool, (bool, int, int)))>();
         foreach (ReservationStation reservationStation in resources.reservationStations.Values)
         {
             reservationStation.flush(slot);

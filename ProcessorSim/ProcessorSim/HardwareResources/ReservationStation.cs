@@ -74,8 +74,15 @@ public class ReservationStation
         }
         else
         {
-            if(ReservationQueue.Count == 0 || ReservationQueue.Peek().ready != true)
+            if (ReservationQueue.Count == 0 || ReservationQueue.Peek().ready != true)
+            {
+                if (ReservationQueue.Count != 0)
+                {
+                    ReservationQueue.Peek().CDBupdate(-1,-1);
+                }
                 return (new Blank(), new List<int>());
+            }
+
             ReservationQueueSlot slotToReturn = ReservationQueue.Dequeue();
             Console.WriteLine(slotToReturn.getInstructionForExecution().ToString());
             return slotToReturn.getInstructionForExecution();

@@ -14,8 +14,9 @@ public class CondBranch : Instruction
     private int newAddress;
     public bool predictedTaken;
     public int backupAddress;
+    public int originalAddress;
 
-    public CondBranch(Register flag, int newAddress, (bool, int) branchDetails)
+    public CondBranch(Register flag, int newAddress, (bool, int, int) branchDetails)
     {
         inputRegisters = new List<Register>();
         inputRegisters.Add(flag);
@@ -23,6 +24,7 @@ public class CondBranch : Instruction
         this.executionType = ExecutionTypes.Branch;
         predictedTaken = branchDetails.Item1;
         backupAddress = branchDetails.Item2;
+        originalAddress = branchDetails.Item3;
     }
 
     public bool execute(Resources resources, List<int> args)
@@ -31,6 +33,7 @@ public class CondBranch : Instruction
         int flagVal = args[0];
         if (flagVal == 1)
         {
+            resources.branchPredictor.noteResult(originalAddress, newAddress - 1);
             if (predictedTaken)
             {
                 return false;
@@ -44,6 +47,7 @@ public class CondBranch : Instruction
         }
         else
         {
+            resources.branchPredictor.noteResult(originalAddress, backupAddress);
             if (predictedTaken)
             {
                 resources.pc.setValue(backupAddress);

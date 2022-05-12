@@ -2,7 +2,7 @@ namespace ProcessorSim.HardwareResources;
 
 public class FetchUnit
 {
-    public (int, (bool, (bool, int))) fetch(Resources resources, int superscalarCount)
+    public (int, (bool, (bool, int, int))) fetch(Resources resources, int superscalarCount)
     {
         try
         {
@@ -36,18 +36,35 @@ public class FetchUnit
             resources.registers[regAddress].available = false;
             bool predictedTaken = false;
             int continuationAddress = -1;
+            int oldPC = -1;
             if (instruction.Contains("CondBranch"))
             {
                 int possibleBranchAddress = Int32.Parse(instruction.Split(" ")[2]) - 1;
                 continuationAddress = resources.pc.getValue() + 1;
-                if (possibleBranchAddress < resources.pc.getValue())
+                oldPC = resources.pc.getValue();
+                if (resources.branchPredictor.getResults(resources.pc.getValue()) == null)
                 {
-                    resources.pc.setValue(possibleBranchAddress);
-                    predictedTaken = true;
+                    if (possibleBranchAddress < resources.pc.getValue())
+                    {
+                        resources.pc.setValue(possibleBranchAddress);
+                        predictedTaken = true;
+                    }
+                    else
+                    {
+                        resources.pc.setValue(resources.pc.getValue() + 1);
+                    }
                 }
                 else
                 {
-                    resources.pc.setValue(resources.pc.getValue() + 1);
+                    if (possibleBranchAddress == (int) resources.branchPredictor.getResults(resources.pc.getValue()))
+                    {
+                        resources.pc.setValue(possibleBranchAddress);
+                        predictedTaken = true;
+                    }
+                    else
+                    {
+                        resources.pc.setValue(resources.pc.getValue() + 1);
+                    }
                 }
             }
             else if (instruction.Contains("Branch"))
@@ -64,11 +81,11 @@ public class FetchUnit
             bool newArchitecturalRegisterNeeded = stringMatches.Any(s=>instructionType.Contains(s));
             //bool possibleBranch = instructionType.Contains("Branch");
             bool possibleBranch = false;
-            return (regAddress, (newArchitecturalRegisterNeeded, (predictedTaken, continuationAddress)));
+            return (regAddress, (newArchitecturalRegisterNeeded, (predictedTaken, continuationAddress, oldPC)));
         }
         catch (Exception e)
         {
-            return (-1, (false, (false, -1)));
+            return (-1, (false, (false, -1, -1)));
         }
     }
 }

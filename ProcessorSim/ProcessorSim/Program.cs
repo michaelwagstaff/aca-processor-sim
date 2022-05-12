@@ -17,9 +17,9 @@ class ProcessorSim
     {
         verbose = false;
         nextInstructionNeedsNewRegister = false;
-        superscalarCount = 4;
+        superscalarCount = 2;
         Resources resources = new Resources(32, 512, 1024, verbose, superscalarCount);
-        resources.setExecutionUnits(1,superscalarCount,superscalarCount,1, Math.Min(2, superscalarCount));
+        resources.setExecutionUnits(1,2,2,1, Math.Min(2, superscalarCount));
         loadProgram(resources);
         instructionRegister = null;
         bool fetchSuccessful = true;
@@ -35,12 +35,15 @@ class ProcessorSim
 
     public static void loadProgram(Resources resources)
     {
-        StreamReader reader = new StreamReader(@"Programs/bubblesort.mpl");
+        // StreamReader reader = new StreamReader(@"Programs/bubblesort.mpl");
+        // StreamReader reader = new StreamReader(@"Programs/bubblesort-perf.mpl");
         // StreamReader reader = new StreamReader(@"Programs/fact.mpl");
         // StreamReader reader = new StreamReader(@"Programs/fact-safe.mpl");
         // StreamReader reader = new StreamReader(@"Programs/gcd-original.mpl");
+        // StreamReader reader = new StreamReader(@"Programs/hamming.mpl");
         // StreamReader reader = new StreamReader(@"Programs/add.mpl");
         // StreamReader reader = new StreamReader(@"Programs/vectoradd.mpl");
+        StreamReader reader = new StreamReader(@"Programs/vectoradd-perf.mpl");
         // StreamReader reader = new StreamReader(@"Programs/vectormult-safe.mpl");
         int i = 0;
         string line;
@@ -95,8 +98,8 @@ class ProcessorSim
         // Returns true if we need to halt.
         if(verbose)
             Console.WriteLine("Decode Debug:");
-        (int, (bool, (bool, int)))[] instructionArray = resources.instructionsWaitingDecode.ToArray();
-        foreach ((int, (bool, (bool, int))) instruction in instructionArray)
+        (int, (bool, (bool, int, int)))[] instructionArray = resources.instructionsWaitingDecode.ToArray();
+        foreach ((int, (bool, (bool, int, int))) instruction in instructionArray)
         {
             int? instructionRegister = instruction.Item1;
             bool newRegisterNeeded = instruction.Item2.Item1;

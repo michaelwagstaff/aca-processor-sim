@@ -7,17 +7,17 @@ LoadI r7 17
 LoadI r8 8
 
 Compare r3 r1 r2
-CondBranch r3 r5
+CondBranch r3 21
 
 CompareLT r4 r1 r2 -- if b bigger than a
-CondBranch r4 r6
+CondBranch r4 16
 Subtract r1 r2
-Branch r7
+Branch 17
 Subtract r2 r1
 
 
 
-Branch r8
+Branch 8
 
 
 Print r1

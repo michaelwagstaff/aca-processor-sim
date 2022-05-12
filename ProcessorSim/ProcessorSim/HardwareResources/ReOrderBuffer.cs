@@ -32,7 +32,7 @@ public class ReOrderBuffer
     {
         if (frontOfQueue + currentSize > 8)
         {
-            Console.Write("");
+            //Console.Write("");
         }
         ReOrderBufferSlot slot = new ReOrderBufferSlot();
         slot.addItem(instruction);

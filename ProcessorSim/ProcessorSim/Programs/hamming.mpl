@@ -32,21 +32,21 @@ Store r11 11
 Store r12 12
 Store r13 13
 Store r14 14
-Store r15 1
+Store r15 15
 Store r16 16
 Store r17 17
 Store r18 18
 Store r19 19
 Store r20 20
 MonitorStart
-LoadI r5 1
+LoadI r5 1 -- Increment
 LoadI r3 0 -- Hamming sum
 LoadI r2 1 -- Loop Counter
 LoadR r1 r2
-CompareI r4 r1 1
-Add r3 r4
 Add r2 r5
-CompareI r6 r2 21
+Add r3 r1
+Store r3 1
+CompareI r6 r2 20
 Not r6
 CondBranch r6 45
 

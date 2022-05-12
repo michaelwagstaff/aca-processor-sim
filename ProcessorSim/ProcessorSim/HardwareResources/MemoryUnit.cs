@@ -23,7 +23,7 @@ public class MemoryUnit
                     resources.CDBBroadcast(instruction.reorderBuffer, instruction.result);
                     if (instruction.GetType() == typeof(Add))
                     {
-                        Console.Write("");
+                        // Console.Write("");
                     }
                 }
             }

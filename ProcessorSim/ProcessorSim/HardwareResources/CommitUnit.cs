@@ -20,7 +20,7 @@ public class CommitUnit
             instruction.targetRegister.setValue(instruction.result);
             if (instruction.GetType() == typeof(Add))
             {
-                Console.Write("");
+                //Console.Write("");
             }
             resources.reorderBuffer.notifyCommitted(instruction.reorderBuffer);
         }

@@ -68,7 +68,6 @@ public class CondBranch : Instruction
             }
             else
             {
-                resources.pc.setValue(resources.pc.getValue() + 1);
             }
             return false;
         }

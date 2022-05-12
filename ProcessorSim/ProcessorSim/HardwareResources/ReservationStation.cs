@@ -84,7 +84,7 @@ public class ReservationStation
             }
 
             ReservationQueueSlot slotToReturn = ReservationQueue.Dequeue();
-            Console.WriteLine(slotToReturn.getInstructionForExecution().ToString());
+            //Console.WriteLine(slotToReturn.getInstructionForExecution().ToString());
             return slotToReturn.getInstructionForExecution();
         }
 

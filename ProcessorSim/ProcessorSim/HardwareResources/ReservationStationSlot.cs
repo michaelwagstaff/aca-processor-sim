@@ -80,8 +80,7 @@ public class ReservationStationSlot
         {
             if (Q[i] != null)
             {
-                /*
-                if (resources.reorderBuffer.getValue((int) Q[i]) == null)
+                if (resources.reorderBuffer.getExecutionState((int) Q[i]) == null)
                 {
                     V[i] = Op.inputRegisters[i].getValue();
                 }
@@ -89,7 +88,6 @@ public class ReservationStationSlot
                 {
                     ready = false;
                 }
-                */
                 ready = false;
             }
         }

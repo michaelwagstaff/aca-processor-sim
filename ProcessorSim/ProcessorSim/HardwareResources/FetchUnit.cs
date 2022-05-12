@@ -21,7 +21,7 @@ public class FetchUnit
                 Console.WriteLine("  PC Value: {0}", resources.pc.getValue());
             }
             string instruction = resources.instructionMemory[resources.pc.getValue()].getInstruction();
-            Console.WriteLine(instruction);
+            // Console.WriteLine(instruction);
             if (instruction.Contains("MonitorStart"))
             {
                 resources.monitor.start();
@@ -71,7 +71,10 @@ public class FetchUnit
                     }
                 }
                 else
+                {
                     predictedTaken = true;
+                    resources.pc.setValue(resources.pc.getValue() + 1);
+                }
             }
             else if (instruction.Contains("Branch"))
             {

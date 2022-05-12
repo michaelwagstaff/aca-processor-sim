@@ -202,6 +202,10 @@ public class ReservationQueueSlot
             {
                 for (int i = 0; i < Qs.Count; i++)
                 {
+                    if (Qs[i] != null)
+                    {
+                        ready = false;
+                    }
                     /*
                     if (Op.executionType == ExecutionTypes.Vector)
 
@@ -224,7 +228,6 @@ public class ReservationQueueSlot
                         ready = false;
                     }
                     */
-                    ready = false;
                 }
             }
         }
@@ -249,7 +252,6 @@ public class ReservationQueueSlot
         {
             if (Qs[i] != null)
             {
-                /*
                 if (Op.executionType == ExecutionTypes.Vector)
                 {
                     if (resources.reorderBuffer.getValue((int) Qs[i]) == null)
@@ -261,15 +263,24 @@ public class ReservationQueueSlot
                             {
                                 Vs[i * 4 + j] = tempValues[j];
                             }
+
+                            Qs[i] = null;
+                            ready = true;
+                            CDBupdate(-1,-1);
                         }
-                        catch{}
+                        catch
+                        {
+                        }
                     }
                     else
                     {
                         ready = false;
                     }
-                    */
-                ready = false;
+                }
+                else
+                {
+                    ready = false;
+                }
                 /*
                 else
                 {

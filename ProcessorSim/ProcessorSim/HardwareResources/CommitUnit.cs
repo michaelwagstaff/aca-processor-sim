@@ -58,6 +58,7 @@ public class CommitUnit
         }
         else if (instruction.executionType == ExecutionTypes.Vector)
         {
+            resources.CDBVectorBroadcast(instruction.reorderBuffer, ((VInstruction)instruction).vectorResult);
             resources.reorderBuffer.notifyCommitted(instruction.reorderBuffer);
             if (instruction.targetRegister != null || instruction.executionType == ExecutionTypes.SimpleArithmetic)
             {

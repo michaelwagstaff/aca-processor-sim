@@ -8,7 +8,7 @@ namespace ProcessorSim;
 public class Resources
 {
     public bool verbose;
-    
+
     public Register[] registers;
     public Register[] vregisters;
     public Register pc;
@@ -68,12 +68,12 @@ public class Resources
             decodeUnits.Add(new DecodeUnit());
         }
         reservationStations = new Dictionary<ExecutionTypes, ReservationStation>();
-        reservationStations[ExecutionTypes.General] = new ReservationStation(ExecutionTypes.General, 16, this);
-        reservationStations[ExecutionTypes.SimpleArithmetic] = new ReservationStation(ExecutionTypes.SimpleArithmetic, 16, this);
-        reservationStations[ExecutionTypes.ComplexArithmetic] = new ReservationStation(ExecutionTypes.ComplexArithmetic, 16, this);
+        reservationStations[ExecutionTypes.General] = new ReservationStation(ExecutionTypes.General, 32, this);
+        reservationStations[ExecutionTypes.SimpleArithmetic] = new ReservationStation(ExecutionTypes.SimpleArithmetic, 32, this);
+        reservationStations[ExecutionTypes.ComplexArithmetic] = new ReservationStation(ExecutionTypes.ComplexArithmetic, 32, this);
         reservationStations[ExecutionTypes.LoadStore] = new ReservationStation(ExecutionTypes.LoadStore, 0, this);
         reservationStations[ExecutionTypes.Vector] = new ReservationStation(ExecutionTypes.Vector, 0, this);
-        reservationStations[ExecutionTypes.Branch] = new ReservationStation(ExecutionTypes.Branch, 8, this);
+        reservationStations[ExecutionTypes.Branch] = new ReservationStation(ExecutionTypes.Branch, 16, this);
         instructionsWaitingMemory = new List<Instruction>();
         memoryUnit = new MemoryUnit();
         commitUnit = new CommitUnit();

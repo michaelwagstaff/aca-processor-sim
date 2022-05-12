@@ -15,8 +15,8 @@ public class BranchPredictor
 
     public int? getResults(int pc)
     {
-        /*if (previousBranches.ContainsKey(pc))
-            return previousBranches[pc];*/
+        if (previousBranches.ContainsKey(pc))
+            return previousBranches[pc];
         return null;
     }
 }

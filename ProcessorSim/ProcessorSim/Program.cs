@@ -17,9 +17,9 @@ class ProcessorSim
     {
         verbose = false;
         nextInstructionNeedsNewRegister = false;
-        superscalarCount = 2;
+        superscalarCount = 1;
         Resources resources = new Resources(32, 512, 1024, verbose, superscalarCount);
-        resources.setExecutionUnits(1,2,2,1, Math.Min(2, superscalarCount));
+        resources.setExecutionUnits(1,(int)Math.Floor(superscalarCount/(double)2) + 1,(int)Math.Floor(superscalarCount/(double)2) + 1,1, Math.Min(2, superscalarCount));
         loadProgram(resources);
         instructionRegister = null;
         bool fetchSuccessful = true;
@@ -42,6 +42,7 @@ class ProcessorSim
         // StreamReader reader = new StreamReader(@"Programs/gcd-original.mpl");
         // StreamReader reader = new StreamReader(@"Programs/hamming.mpl");
         // StreamReader reader = new StreamReader(@"Programs/add.mpl");
+        // StreamReader reader = new StreamReader(@"Programs/add-perf.mpl");
         // StreamReader reader = new StreamReader(@"Programs/vectoradd.mpl");
         StreamReader reader = new StreamReader(@"Programs/vectoradd-perf.mpl");
         // StreamReader reader = new StreamReader(@"Programs/vectormult-safe.mpl");

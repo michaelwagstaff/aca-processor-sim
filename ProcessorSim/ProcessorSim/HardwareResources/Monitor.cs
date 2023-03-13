@@ -4,27 +4,62 @@ public class Monitor
 {
     private int instructionsExecuted;
     private int cyclesTaken;
+    private int vectorInstructionsExecuted;
+    private bool enabled;
 
-    public void incrementInsructionsExecuted()
+    public Monitor()
     {
-        instructionsExecuted++;
+        enabled = false;
+    }
+
+    public void incrementInstructionsExecuted()
+    {
+        if(enabled)
+            instructionsExecuted++;
     }
     public void incrementCyclesTaken()
     {
-        cyclesTaken++;
+        if(enabled)
+            cyclesTaken++;
     }
 
-    public int getInstructionsExecuted()
+    public void incrementVectorInstructions()
     {
-        return instructionsExecuted;
+        if(enabled)
+            vectorInstructionsExecuted++;
     }
-    public int getCyclesTaken()
+    public bool vectorInstructionsUsed()
     {
-        return cyclesTaken;
+        return vectorInstructionsExecuted != 0;
+    }
+
+    public void start()
+    {
+        // Enables benchmarking of core kernels
+        enabled = true;
     }
 
     public float getIPC()
     {
         return (float) instructionsExecuted / (float) cyclesTaken;
+    }
+    public float getAdjustedIPC()
+    {
+        return (float) (instructionsExecuted + 3 * vectorInstructionsExecuted) / (float) cyclesTaken;
+    }
+
+    public void printStats()
+    {
+        Console.WriteLine("Instructions Executed: {0}", instructionsExecuted);
+        Console.WriteLine("Cycles Executed: {0}", cyclesTaken);
+        Console.WriteLine("IPC: {0}", getIPC());
+        if (vectorInstructionsUsed())
+        {
+            Console.WriteLine();
+            Console.WriteLine("Adjusted for Vector Ops");
+            Console.WriteLine("Instructions Executed: {0}", instructionsExecuted + 3 * vectorInstructionsExecuted);
+            Console.WriteLine("Cycles Executed: {0}", cyclesTaken);
+            Console.WriteLine("IPC: {0}", getAdjustedIPC());
+        }
     }
 }

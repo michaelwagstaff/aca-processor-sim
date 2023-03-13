@@ -9,17 +9,20 @@ public class Branch : Instruction
     public Register targetRegister { get; set; }
     public int result { get; set; }
     public int registerFile { get; set; }
-    private Register newAddress;
+    public List<Register> inputRegisters { get; set; }
+    public int reorderBuffer { get; set; }
+    private int newAddress;
 
-    public Branch(Register newAddress)
+    public Branch(int newAddress)
     {
+        inputRegisters = new List<Register>();
         this.newAddress = newAddress;
         this.executionType = ExecutionTypes.Branch;
     }
 
-    public bool execute(Resources resources)
+    public bool execute(Resources resources, List<int> args)
     {
-        resources.pc.setValue(newAddress.getValue() - 1);
+        result = -1;
         return true;
     }
 }

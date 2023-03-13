@@ -13,34 +13,19 @@ public class MemoryUnit
             if (resources.verbose)
             {
                 Console.WriteLine("  Instruction {0}", instruction);
-                Console.WriteLine("  Register File {0}", instruction.registerFile);
                 Console.WriteLine("  Actual Output Register: {0}", instruction.targetRegister);
-                //Console.WriteLine("Actual Output Register: {0}",
-                //    resources.registerFile.getPhysicalRegister(instruction.registerFile, instruction.targetRegister));
             }
-            //Register actualTargetRegister =
-            //    resources.registerFile.getPhysicalRegister(instruction.registerFile, instruction.targetRegister);
-            if (instruction.executionType == ExecutionTypes.SimpleArithmetic)
-            {
-                /*
-                if (resources.verbose)
-                {
-                    Console.WriteLine("Memory stage for arithmetic instruction {0}: saving result {1} to register file",
-                        instruction, instruction.result);
-                }
-                */
 
+            if (instruction.executionType == ExecutionTypes.SimpleArithmetic || instruction.executionType == ExecutionTypes.ComplexArithmetic)
+            {
                 if (instruction.targetRegister != null)
                 {
-                    resources.forwardedResults[instruction.targetRegister] = instruction.result;
-                    resources.registerInstructionsInFlight[instruction.targetRegister]--;
-                    resources.reservationStation.markRegisterUnblocked(instruction.targetRegister);
+                    resources.CDBBroadcast(instruction.reorderBuffer, instruction.result);
+                    if (instruction.GetType() == typeof(Add))
+                    {
+                        // Console.Write("");
+                    }
                 }
-            }
-            else if (instruction.executionType == ExecutionTypes.ComplexArithmetic)
-            {
-                resources.registerInstructionsInFlight[instruction.targetRegister]--;
-                resources.reservationStation.markRegisterUnblocked(instruction.targetRegister);
             }
             else if (instruction.executionType == ExecutionTypes.LoadStore)
             {
@@ -56,13 +41,43 @@ public class MemoryUnit
                 {
                     // i.e. we're doing a load
                     // Do loads get forwarded here or do we have to wait until writeback??
-                    resources.forwardedResults[instruction.targetRegister] = instruction.result;
-                    resources.registerInstructionsInFlight[instruction.targetRegister] --;
-                    resources.reservationStation.markRegisterUnblocked(instruction.targetRegister);
+                    resources.CDBBroadcast(instruction.reorderBuffer, instruction.result);
                 }
-                // Else do nothing until writeback?
+                else
+                {
+                    resources.dataMemory[((StoreInstruction) instruction).memoryIndex].setValue(instruction.result);
+                    resources.reorderBuffer.notifyCommitted(instruction.reorderBuffer);
+                }
             }
-            resources.instructionsWaitingWriteback.Add(instruction);
+            else if (instruction.executionType == ExecutionTypes.General || instruction.executionType == ExecutionTypes.Branch)
+            {
+                resources.CDBBroadcast(instruction.reorderBuffer, instruction.result);
+            }
+            else if (instruction.executionType == ExecutionTypes.Vector)
+            {
+                if (instruction.GetType() == typeof(VLoad) || instruction.GetType() == typeof(VLoadI)
+                    || instruction.GetType() == typeof(VAdd) || instruction.GetType() == typeof(VLoadR) 
+                    || instruction.GetType() == typeof(VPrint))
+                {
+                    resources.CDBVectorBroadcast(instruction.reorderBuffer, ((VInstruction)instruction).vectorResult);
+                }
+                else
+                {
+                    /*
+                    for (int i = 0; i < 4; i++)
+                    {
+                        resources.dataMemory[((StoreInstruction) instruction).memoryIndex+i].setValue(
+                            ((VInstruction)instruction).vectorResult[i]);
+                    }
+                    resources.reorderBuffer.notifyCommitted(instruction.reorderBuffer);
+                    */
+                    resources.CDBVectorBroadcast(instruction.reorderBuffer, ((VInstruction)instruction).vectorResult);
+                }
+            }
+            else if (instruction.executionType == ExecutionTypes.General)
+            {
+                resources.CDBBroadcast(instruction.reorderBuffer, -1);
+            }
             resources.instructionsWaitingMemory.Remove(instruction);
         }
 

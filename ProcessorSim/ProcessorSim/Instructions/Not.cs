@@ -9,18 +9,19 @@ public class Not : Instruction
     public Register targetRegister { get; set; }
     public int result { get; set; }
     public int registerFile { get; set; }
-    private Register reg;
+    public List<Register> inputRegisters { get; set; }
+    public int reorderBuffer { get; set; }
     public Not(Register target, Register reg)
     {
-        this.reg = reg;
+        inputRegisters = new List<Register>();
+        inputRegisters.Add(reg);
         this.targetRegister = target;
         this.executionType = ExecutionTypes.SimpleArithmetic;
     }
 
-    public bool execute(Resources resources)
+    public bool execute(Resources resources, List<int> args)
     {
-        Instruction instruction = (Instruction) this;
-        int val = instruction.getVal(resources, reg);
+        int val = args[0];
 
         this.result = val == 1 ? 0 : 1;
         return true;

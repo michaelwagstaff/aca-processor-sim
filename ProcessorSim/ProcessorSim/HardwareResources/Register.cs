@@ -9,9 +9,14 @@ public class Register
     public bool isInstruction;
     public bool available;
     public int index;
-    public Register()
+    public bool vector;
+
+    private int[] vectorValue;
+    
+    public Register(bool vector = false)
     {
         available = true;
+        this.vector = vector;
     }
 
     public bool setValue(int value)
@@ -23,6 +28,18 @@ public class Register
     public int getValue()
     {
         return this.value;
+    }
+    
+    public bool setValue(int[] value)
+    {
+        this.vectorValue = value;
+        this.isInstruction = false;
+        return true;
+    }
+
+    public int[] getValueVector()
+    {
+        return vectorValue;
     }
 
     public string getInstruction()

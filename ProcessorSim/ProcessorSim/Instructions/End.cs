@@ -9,23 +9,17 @@ public class End : Instruction
     public Register targetRegister { get; set; }
     public int result { get; set; }
     public int registerFile { get; set; }
+    public List<Register> inputRegisters { get; set; }
+    public int reorderBuffer { get; set; }
+
     public End()
     {
+        inputRegisters = new List<Register>();
         this.executionType = ExecutionTypes.General;
     }
 
-    public bool execute(Resources resources)
+    public bool execute(Resources resources, List<int> args)
     {
-        Console.WriteLine();
-        Console.WriteLine("-- Fin --");
-        Console.WriteLine();
-        Console.WriteLine("Program Stats:");
-        Console.WriteLine("Instructions Executed: {0}", resources.monitor.getInstructionsExecuted());
-        Console.WriteLine("Cycles Executed: {0}", resources.monitor.getCyclesTaken());
-        Console.WriteLine("IPC: {0}", resources.monitor.getIPC());
-        
-        
-        Environment.Exit(0);
         return true;
     }
 }

@@ -6,81 +6,49 @@ namespace ProcessorSim.HardwareResources;
 public class ReservationStation
 {
     private ExecutionTypes executionType;
-    private ReservationStationSlot[] internalArray;
+    private List<ReservationStationSlot> internalArray;
+    private Queue<ReservationQueueSlot> ReservationQueue;
     private int emptySlots;
     private int size;
-    public ReservationStation(ExecutionTypes executionType, int items)
+    private Resources resources;
+    public ReservationStation(ExecutionTypes executionType, int items, Resources resources)
     {
         this.executionType = executionType;
-        internalArray = new ReservationStationSlot[items];
+        internalArray = new List<ReservationStationSlot>();
         emptySlots = items;
         size = items;
-        for (int i = 0; i < items; i++)
-        {
-            internalArray[i] = new ReservationStationSlot();
-        }
+        this.resources = resources;
+        if (executionType == ExecutionTypes.LoadStore || executionType == ExecutionTypes.Vector)
+            ReservationQueue = new Queue<ReservationQueueSlot>();
     }
 
     public bool hasSpace()
     {
-        return this.emptySlots != 0;
-    }
-
-    public bool addItem((Instruction, Dictionary<Register, int>) instructionObject)
-    {
-        if (hasSpace())
+        if (executionType != ExecutionTypes.LoadStore && executionType != ExecutionTypes.Vector)
         {
-            for (int i = 0; i < size; i++)
-            {
-                if (this.internalArray[i].isEmpty)
-                {
-                    this.internalArray[i].addItem(instructionObject);
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public Instruction getItem(ExecutionTypes executionType)
-    {
-        for (int i = 0; i < size; i++)
-        {
-            if (this.internalArray[i].hasType(executionType) && this.internalArray[i].isUnblocked)
-            {
-                if(executionType != ExecutionTypes.Branch)
-                    return this.internalArray[i].removeItem();
-                else
-                {
-                    if (onlyBranches())
-                    {
-                        return this.internalArray[i].removeItem();
-                    }
-                }
-            }
-        }
-
-        return new Blank();
-    }
-
-    private bool onlyBranches()
-    {
-        for (int i = 0; i < size; i++)
-        {
-            if (!this.internalArray[i].hasType(ExecutionTypes.Branch) && !this.internalArray[i].isEmpty)
-            {
-                return false;
-            }
+            return this.emptySlots != 0;
         }
         return true;
     }
 
-    public bool hasType(ExecutionTypes executionType)
+    public bool addItem(Instruction instruction)
     {
-        for (int i = 0; i < size; i++)
+        if (hasSpace())
         {
-            if (this.internalArray[i].hasType(executionType))
+            if (executionType != ExecutionTypes.LoadStore && executionType != ExecutionTypes.Vector)
             {
+                ReservationStationSlot newSlot = new ReservationStationSlot(resources);
+                newSlot.addItem(instruction);
+                internalArray.Add(newSlot);
+                this.emptySlots--;
+                return true;
+            }
+            else
+            {
+                ReservationQueueSlot newSlot =
+                    new ReservationQueueSlot(instruction, resources);
+                size++;
+                this.ReservationQueue.Enqueue(newSlot);
                 return true;
             }
         }
@@ -88,35 +56,131 @@ public class ReservationStation
         return false;
     }
 
-    public bool markRegisterUnblocked(Register register)
+    public (Instruction, List<int>) getItem()
     {
-        for (int i = 0; i < size; i++)
+        if (executionType != ExecutionTypes.LoadStore && executionType != ExecutionTypes.Vector)
         {
-            if (!this.internalArray[i].isEmpty && !this.internalArray[i].isUnblocked)
+            for (int i = 0; i < size-emptySlots; i++)
             {
-                this.internalArray[i].decrementRegisterCount(register);
+                internalArray[i].CDBupdate(-1,-1);
+                if (internalArray[i].ready && !internalArray[i].dispatched)
+                {
+                    this.emptySlots++;
+                    (Instruction, List<int>) returnVal = this.internalArray[i].getInstructionForExecution();
+                    internalArray.RemoveAt(i);
+                    return returnVal;
+                }
             }
         }
-        return true;
+        else
+        {
+            if (ReservationQueue.Count == 0 || ReservationQueue.Peek().ready != true)
+            {
+                if (ReservationQueue.Count != 0)
+                {
+                    ReservationQueue.Peek().CDBupdate(-1,-1);
+                }
+                return (new Blank(), new List<int>());
+            }
+
+            ReservationQueueSlot slotToReturn = ReservationQueue.Dequeue();
+            //Console.WriteLine(slotToReturn.getInstructionForExecution().ToString());
+            return slotToReturn.getInstructionForExecution();
+        }
+
+        return (new Blank(), new List<int>());
     }
 
+    public void CDBUpdate(int bufferSlot, int value)
+    {
+        if (executionType != ExecutionTypes.LoadStore && executionType != ExecutionTypes.Vector)
+        {
+            for (int i = 0; i < size - emptySlots; i++)
+            {
+                if (internalArray[i] != null && this.internalArray[i].Busy)
+                {
+                    this.internalArray[i].CDBupdate(bufferSlot, value);
+                }
+            }
+        }
+        else
+        {
+            foreach (ReservationQueueSlot queuedItem in ReservationQueue)
+            {
+                queuedItem.CDBupdate(bufferSlot, value);
+            }
+        }
+    }
+    public void CDBUpdate(int bufferSlot, int[] value)
+    {
+        foreach (ReservationQueueSlot queuedItem in ReservationQueue)
+        {
+            queuedItem.CDBupdate(bufferSlot, value);
+        }
+    }
+
+    public void flush(int branchSlot)
+    {
+        if (executionType != ExecutionTypes.LoadStore)
+        {
+            foreach (ReservationStationSlot slot in internalArray.ToArray())
+            {
+                if (slot.Op.reorderBuffer < branchSlot)
+                {
+                    // It stays!
+                    
+                    
+                }
+                else
+                {
+                    // It's culled :(
+                    internalArray.Remove(slot);
+                    emptySlots++;
+                    resources.instructionsWaitingMemory.Remove(slot.Op);
+                }
+            }
+        }
+        else
+        {
+            Queue<ReservationQueueSlot> tempReservationQueue = new Queue<ReservationQueueSlot>();
+            emptySlots = size;
+            foreach (ReservationQueueSlot slot in ReservationQueue.ToList())
+            {
+                if (slot.Op.reorderBuffer < branchSlot)
+                {
+                    // It stays!
+                    tempReservationQueue.Enqueue(slot);
+                    emptySlots--;
+                }
+                else
+                {
+                    // It's culled :(
+                    resources.instructionsWaitingMemory.Remove(slot.Op);
+                }
+            }
+            ReservationQueue = tempReservationQueue;
+        }
+    }
+    
     public void printContents()
     {
-        for (int i = 0; i < internalArray.Length; i++)
+        for (int i = 0; i < internalArray.Count; i++)
         {
             ReservationStationSlot slot = internalArray[i];
-            if (!slot.isEmpty)
+            if (slot.Busy)
             {
-                Console.WriteLine("    Slot {0}: {1}, blocked: {2}", i, slot.instructionObject.Item1, !slot.isUnblocked);
+                Console.WriteLine("    Slot {0}: {1}, blocked: {2}", i, slot.number, !slot.ready);
+                /*
                 Dictionary<Register, int> registerDict = slot.getRegisterDict();
                 foreach (KeyValuePair<Register, int> entry in registerDict)
                 {
                     Console.WriteLine("      Register {0} Count {1}", entry.Key.index, entry.Value);
                 }
+                */
             }
         }
     }
-
+    /*
     public bool flush(Resources resources)
     {
         // Used for pipeline flush
@@ -128,5 +192,6 @@ public class ReservationStation
         resources.instructionsWaitingDecode.Clear();
         return true;
     }
+    */
     
 }

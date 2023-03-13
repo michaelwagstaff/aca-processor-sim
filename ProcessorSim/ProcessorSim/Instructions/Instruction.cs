@@ -8,20 +8,10 @@ public interface Instruction
     Register targetRegister { get; set; }
     int result { get; set; }
     int registerFile { get; set; }
-    public bool execute(Resources resources)
+    List<Register> inputRegisters { get; set; }
+    int reorderBuffer { get; set; }
+    public bool execute(Resources resources, List<int> vals)
     {
         return true;
-    }
-
-    public int getVal(Resources resources, Register register)
-    {
-        int val = register.getValue();
-        if (resources.forwardedResults[register] != null)
-        {
-            val = (int) resources.forwardedResults[register];
-            resources.forwardedResults[register] = null;
-        }
-
-        return val;
     }
 }

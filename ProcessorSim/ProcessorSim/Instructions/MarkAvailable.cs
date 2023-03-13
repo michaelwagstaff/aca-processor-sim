@@ -9,6 +9,8 @@ public class MarkAvailable : Instruction
     public Register targetRegister { get; set; }
     public int result { get; set; }
     public int registerFile { get; set; }
+    public List<Register> inputRegisters { get; set; }
+    public int reorderBuffer { get; set; }
     private Register reg;
 
     public MarkAvailable(Register register)
@@ -17,7 +19,7 @@ public class MarkAvailable : Instruction
         this.executionType = ExecutionTypes.General;
     }
 
-    public bool execute(Resources resources)
+    public bool execute(Resources resources, List<int> args)
     {
         this.reg.available = true;
         return true;

@@ -8,17 +8,17 @@ public class LoadI : Instruction
     public Register targetRegister { get; set; }
     public int result { get; set; }
     public int registerFile { get; set; }
-    private Register reg;
+    public List<Register> inputRegisters { get; set; }
+    public int reorderBuffer { get; set; }
     private int value;
     public LoadI(Register register, int value)
     {
-        this.reg = register;
-        targetRegister = reg;
+        inputRegisters = new List<Register>();
+        targetRegister = register;
         this.value = value;
         this.executionType = ExecutionTypes.SimpleArithmetic;
-        this.reg.available = false;
     }
-    public bool execute(Resources resources)
+    public bool execute(Resources resources, List<int> args)
     {
         result = value;
         return true;

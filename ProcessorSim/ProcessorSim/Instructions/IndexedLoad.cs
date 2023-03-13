@@ -11,8 +11,14 @@ public class IndexedLoad : Instruction
     private Register memoryIndexRegister;
     private Register offset;
     public int registerFile { get; set; }
+    public List<Register> inputRegisters { get; set; }
+    public int reorderBuffer { get; set; }
+
     public IndexedLoad(Register register, Register memoryIndexRegister, Register offset)
     {
+        inputRegisters = new List<Register>();
+        inputRegisters.Add(memoryIndexRegister);
+        inputRegisters.Add(offset);
         this.reg = register;
         this.memoryIndexRegister = memoryIndexRegister;
         this.offset = offset;
@@ -20,10 +26,10 @@ public class IndexedLoad : Instruction
         this.reg.available = false;
         // Rather important, once decoded, we can't change register, so need to make sure nothing else uses it!
     }
-    public bool execute(Resources resources)
+    public bool execute(Resources resources, List<int> args)
     {
         Instruction instruction = (Instruction) this;
-        result = resources.dataMemory[instruction.getVal(resources, memoryIndexRegister) + instruction.getVal(resources, offset)].getValue();
+        result = resources.dataMemory[args[0] + args[1]].getValue();
         targetRegister = reg;
         return true;
     }

@@ -1,70 +1,115 @@
 using ProcessorSim.Enums;
 using ProcessorSim.Instructions;
+using ProcessorSim.HardwareResources;
 
 namespace ProcessorSim.HardwareResources;
 
 public class ReservationStationSlot
 {
-    public bool isEmpty;
-    public (Instruction, Dictionary<Register, int>) instructionObject;
-    public bool isUnblocked;
+    public Instruction Op;
+    public List<int?> Q;
+    public List<int?> V;
+    public bool Busy;
+    public (ExecutionTypes, int) number;
+    public Resources resources;
+    public int destination;
+    public bool ready;
+    public bool dispatched;
 
-    public ReservationStationSlot()
+    public ReservationStationSlot(Resources resources)
     {
-        this.instructionObject = (null, null);
-        isEmpty = true;
+        this.number = number;
+        this.resources = resources;
+        Busy = false;
+        ready = false;
+        dispatched = false;
+        this.Q = new List<int?>();
+        this.V = new List<int?>();
     }
-    public bool addItem((Instruction, Dictionary<Register, int>) instruction)
+    public bool addItem(Instruction instruction)
     {
-        if (instruction != (null, null))
+        if (instruction == null)
+            return false;
+        Op = instruction;
+        ready = true;
+        for (int i = 0; i < instruction.inputRegisters.Count; i++)
         {
-            this.instructionObject = instruction;
-            isUnblocked = true;
-            updateUnblocked();
-            this.isEmpty = false;
+            Register inputRegister = instruction.inputRegisters[i];
+            if (resources.reorderBuffer.getROBDependency(inputRegister, instruction.reorderBuffer) != -1)
+            {
+                int possibleDependency = resources.reorderBuffer.getROBDependency(inputRegister, instruction.reorderBuffer);
+                if (resources.reorderBuffer.getValue(possibleDependency) == null || resources.reorderBuffer.getValue(possibleDependency) == -1)
+                {
+                    Q.Add(possibleDependency);
+                    V.Add(null);
+                    ready = false;
+                }
+                else
+                {
+                    Q.Add(null);
+                    V.Add(resources.reorderBuffer.getValue(possibleDependency));
+                }
+            }
+            else
+            {
+                Q.Add(null);
+                V.Add(instruction.inputRegisters[i].getValue());
+            }
         }
+        if (Op.GetType() == typeof(Print))
+        {
+            Console.Write("");
+        }
+        Busy = true;
         return true;
     }
 
-    public Dictionary<Register, int> getRegisterDict()
+    public void CDBupdate(int bufferSlot, int value)
     {
-        return instructionObject.Item2;
-    }
-    public void updateUnblocked()
-    {
-        isUnblocked = true;
-        foreach (KeyValuePair<Register, int> registerEntry in instructionObject.Item2)
+        for (int i = 0; i < Q.Count; i++)
         {
-            if (registerEntry.Value > 0)
+            if (bufferSlot == Q[i])
             {
-                isUnblocked = false;
-                // Console.WriteLine("Blocked by register {0}", registerEntry.Key.index);
+                Q[i] = null;
+                V[i] = value;
             }
         }
-    }
-
-    public Instruction removeItem()
-    {
-        Instruction instruction = this.instructionObject.Item1;
-        this.instructionObject = (null, null);
-        this.isEmpty = true;
-        this.isUnblocked = true;
-        return instruction;
-    }
-
-    public bool hasType(ExecutionTypes executionType)
-    {
-        if (!this.isEmpty)
-            return instructionObject.Item1.executionType == executionType;
-        return false;
-    }
-
-    public void decrementRegisterCount(Register register)
-    {
-        if (instructionObject.Item2.Keys.Contains(register))
+        if(Busy && Op != null)
+            ready = true;
+        for (int i = 0; i < Q.Count; i++)
         {
-            instructionObject.Item2[register]--;
-            updateUnblocked();
+            if (Q[i] != null)
+            {
+                if (resources.reorderBuffer.getExecutionState((int) Q[i]) == null)
+                {
+                    V[i] = Op.inputRegisters[i].getValue();
+                }
+                else
+                {
+                    ready = false;
+                }
+                ready = false;
+            }
         }
+        /*
+        if (Op.GetType() == typeof(Branch) || Op.GetType() == typeof(CondBranch))
+        {
+            if (!resources.reorderBuffer.allPreviousSlotsExecuted(Op.reorderBuffer))
+                ready = false;
+        }
+        */
+        //else if (!resources.reorderBuffer.allPreviousBranchesExecuted(Op.reorderBuffer))
+        //        ready = false;
+    }
+
+    public (Instruction, List<int>) getInstructionForExecution()
+    {
+        List<int> returnV = new List<int>(V.Where(x => x != null).Cast<int>().ToList());
+        if (Op.GetType() == typeof(Copy))
+        {
+            Console.Write("");
+        }
+        Busy = false;
+        return (Op, returnV);
     }
 }
